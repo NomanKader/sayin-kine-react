@@ -13,6 +13,7 @@
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-41.0.0.tar.gz",
+    "react-native-keyboard-aware-scrollview": "^2.1.0",
     "react-native-paper": "^4.9.1",
     "react-native-web": "^0.16.3"
   },
