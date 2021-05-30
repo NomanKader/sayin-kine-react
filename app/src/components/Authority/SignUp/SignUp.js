@@ -5,7 +5,7 @@ import {
   Image,
   Text,
   KeyboardAvoidingView,
-  SafeAreaView,
+  View,
 } from "react-native";
 // import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview'
 import { TextInput, Button } from "react-native-paper";
@@ -15,7 +15,7 @@ const SignUp = () => {
   const [password, setPassword] = React.useState("");
   const [confirmpassword, setConfirmPassword] = React.useState("");
   return (
-    <SafeAreaView style={signup_styles.container}>
+    <View style={signup_styles.container}>
       <StatusBar style="light" backgroundColor="#467ca4" />
       <KeyboardAvoidingView
         keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 10}
@@ -82,7 +82,7 @@ const SignUp = () => {
       </KeyboardAvoidingView>
       {/* <Text style={signup_styles.login}>If you already have an account, <Text style={signup_styles.loginText}>please login</Text></Text> */}
       <Text style={signup_styles.login}>If you already have an account, please<Text style={signup_styles.loginText}> Login</Text></Text>
-    </SafeAreaView>
+    </View>
   );
 };
 export default SignUp;
