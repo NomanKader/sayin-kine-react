@@ -1,5 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React from "react";
+import { render } from "react-dom";
 import {
   StyleSheet,
   Image,
@@ -14,6 +15,59 @@ const SignUp = () => {
   const [name, setName] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [confirmpassword, setConfirmPassword] = React.useState("");
+  const [signup_icon,setIcon]=React.useState("");
+  // error variables
+  const [phoneNumberErr, setPhoneNumberErr] = React.useState(false);
+  const [NameErr, setNameErr] = React.useState(false);
+  const [PasswordErr, setPasswordErr] = React.useState(false);
+  const [ConfirmPasswordErr, setConfirmPasswordErr] = React.useState(false);
+
+  const Submit = (e) =>{
+    e.preventDefault();
+    if(phonenumber == "" ){
+      setPhoneNumberErr({
+        phoneNumberErr:true
+      })
+    }
+    else if(phonenumber!=""){
+      setIcon({
+        signup_icon:"camera"
+      })
+      //alert('no error')
+      
+    }
+    if(name == "" ){
+        setNameErr({
+          NameErr:true
+        })
+      }
+    if(password == "" || password.length<8 ){
+          setPasswordErr({
+            PasswrodErr:true
+          })
+        }
+    if(confirmpassword == "" || confirmpassword<8 ){
+            setConfirmPasswordErr({
+              ConfirmPasswordErr:true
+            })
+          }
+    if(password!=confirmpassword){
+      setPasswordErr({
+        PasswordErr:true
+      })
+      setConfirmPasswordErr({
+        ConfirmPasswordErr:true
+      })
+    }
+    if(phoneNumberErr==false){
+      //alert("Hello")
+    }        
+    // const formData = {
+    //   Phone_Number : phonenumber,
+    //   User_Name: name,
+    //   User_Password: password
+    // }
+  }
   return (
     <View style={signup_styles.container}>
       <StatusBar style="light" backgroundColor="#467ca4" />
@@ -39,6 +93,8 @@ const SignUp = () => {
           label="Enter Account Phone Number"
           value={phonenumber}
           onChangeText={(phonenumber) => setPhoneNumber(phonenumber)}
+          keyboardType="phone-pad"
+          error = {phoneNumberErr}
         />
         {/*  Second input */}
         <TextInput
@@ -47,6 +103,8 @@ const SignUp = () => {
           label="Enter Your Name"
           value={name}
           onChangeText={(name) => setName(name)}
+          keyboardType="default"
+          error = {NameErr}
         />
         {/* Password */}
         <TextInput
@@ -57,6 +115,8 @@ const SignUp = () => {
           value={password}
           onChangeText={(password) => setPassword(password)}
           secureTextEntry={true}
+          keyboardType="default"
+          error = {PasswordErr}
         />
         {/* Confirm Password */}
         <TextInput
@@ -67,15 +127,16 @@ const SignUp = () => {
           secureTextEntry={true}
           focusable={true}
           showSoftInputOnFocus={true}
-          onChangeText={(confirmpassword) =>
-            setConfirmPassword(confirmpassword)
-          }
+          onChangeText={(confirmpassword) =>setConfirmPassword(confirmpassword)}
+          keyboardType="default"
+          error = {ConfirmPasswordErr}
         />
         <Button
           labelStyle={{ fontSize: 17 }}
           style={signup_styles.signup_btn}
           mode="contained"
-          onPress={() => console.log("Pressed")}
+          onPress={Submit}
+          icon={signup_icon}
         >
           Sign Up
         </Button>
