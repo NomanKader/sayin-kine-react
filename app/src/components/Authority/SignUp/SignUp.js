@@ -30,6 +30,9 @@ const SignUp = () => {
       })
     }
     else if(phonenumber!=""){
+      setPhoneNumberErr({
+        phoneNumberErr:false
+      })
       setIcon({
         signup_icon:"camera"
       })
@@ -41,27 +44,26 @@ const SignUp = () => {
           NameErr:true
         })
       }
-    if(password == "" || password.length<8 ){
+      else if(name != "" ){
+        setNameErr({
+          NameErr:false
+        })
+      }
+    if(password == "" && password.length<8 ){
           setPasswordErr({
             PasswrodErr:true
           })
         }
-    if(confirmpassword == "" || confirmpassword<8 ){
-            setConfirmPasswordErr({
-              ConfirmPasswordErr:true
-            })
-          }
-    if(password!=confirmpassword){
+    else if(password != "" || password.length>=8 ){
       setPasswordErr({
-        PasswordErr:true
+        PasswrodErr:false
       })
+    }
+    if(confirmpassword==""){
       setConfirmPasswordErr({
         ConfirmPasswordErr:true
       })
-    }
-    if(phoneNumberErr==false){
-      //alert("Hello")
-    }        
+    }    
     // const formData = {
     //   Phone_Number : phonenumber,
     //   User_Name: name,
@@ -94,7 +96,7 @@ const SignUp = () => {
           value={phonenumber}
           onChangeText={(phonenumber) => setPhoneNumber(phonenumber)}
           keyboardType="phone-pad"
-          error = {phoneNumberErr}
+          error = {phoneNumberErr && phonenumber==""}
         />
         {/*  Second input */}
         <TextInput
@@ -104,7 +106,7 @@ const SignUp = () => {
           value={name}
           onChangeText={(name) => setName(name)}
           keyboardType="default"
-          error = {NameErr}
+          error = {NameErr && name==""}
         />
         {/* Password */}
         <TextInput
@@ -116,7 +118,7 @@ const SignUp = () => {
           onChangeText={(password) => setPassword(password)}
           secureTextEntry={true}
           keyboardType="default"
-          error = {PasswordErr}
+          error = {PasswordErr  && password.length<8}
         />
         {/* Confirm Password */}
         <TextInput
@@ -128,8 +130,9 @@ const SignUp = () => {
           focusable={true}
           showSoftInputOnFocus={true}
           onChangeText={(confirmpassword) =>setConfirmPassword(confirmpassword)}
+          //onChangeText={ChangeConfirmPassword(confirmpassword)}
           keyboardType="default"
-          error = {ConfirmPasswordErr}
+          error = {ConfirmPasswordErr && confirmpassword=="" || confirmpassword!=password}
         />
         <Button
           labelStyle={{ fontSize: 17 }}
