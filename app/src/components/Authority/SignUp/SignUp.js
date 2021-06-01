@@ -1,6 +1,6 @@
+import axios from "axios";
 import { StatusBar } from "expo-status-bar";
-import React from "react";
-import { render } from "react-dom";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Image,
@@ -8,68 +8,91 @@ import {
   KeyboardAvoidingView,
   View,
 } from "react-native";
-// import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview'
 import { TextInput, Button } from "react-native-paper";
+
+const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
+
 const SignUp = () => {
+
+  // data variables
   const [phonenumber, setPhoneNumber] = React.useState("");
   const [name, setName] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [confirmpassword, setConfirmPassword] = React.useState("");
-  const [signup_icon,setIcon]=React.useState("");
+
+  // loader controller
+  const [isSibmitted, setIsSubmitted] = React.useState(false);
+  
   // error variables
   const [phoneNumberErr, setPhoneNumberErr] = React.useState(false);
   const [NameErr, setNameErr] = React.useState(false);
   const [PasswordErr, setPasswordErr] = React.useState(false);
   const [ConfirmPasswordErr, setConfirmPasswordErr] = React.useState(false);
 
-  const Submit = (e) =>{
+  const Submit = (e) => {
     e.preventDefault();
-    if(phonenumber == "" ){
+    if (phonenumber == "") {
       setPhoneNumberErr({
-        phoneNumberErr:true
-      })
-    }
-    else if(phonenumber!=""){
+        phoneNumberErr: true,
+      });
+    } else if (phonenumber != "") {
       setPhoneNumberErr({
-        phoneNumberErr:false
-      })
-      setIcon({
-        signup_icon:"camera"
-      })
-      //alert('no error')
-      
+        phoneNumberErr: false,
+      });
     }
-    if(name == "" ){
-        setNameErr({
-          NameErr:true
-        })
-      }
-      else if(name != "" ){
-        setNameErr({
-          NameErr:false
-        })
-      }
-    if(password == "" && password.length<8 ){
-          setPasswordErr({
-            PasswrodErr:true
-          })
-        }
-    else if(password != "" || password.length>=8 ){
+    if (name == "") {
+      setNameErr({
+        NameErr: true,
+      });
+    } else if (name != "") {
+      setNameErr({
+        NameErr: false,
+      });
+    }
+    if (password == "" && password.length < 8) {
       setPasswordErr({
-        PasswrodErr:false
-      })
+        PasswrodErr: true,
+      });
+    } else if (password != "" || password.length >= 8) {
+      setPasswordErr({
+        PasswrodErr: false,
+      });
     }
-    if(confirmpassword==""){
+    if (confirmpassword == "") {
       setConfirmPasswordErr({
-        ConfirmPasswordErr:true
-      })
-    }    
-    // const formData = {
-    //   Phone_Number : phonenumber,
-    //   User_Name: name,
-    //   User_Password: password
-    // }
-  }
+        ConfirmPasswordErr: true,
+      });
+    }
+
+    if (
+      phonenumber == "" ||
+      name == "" ||
+      password == "" ||
+      confirmpassword == ""
+    ) {
+      setIsSubmitted(false);
+    } else if (
+      phonenumber != "" &&
+      name != "" &&
+      password != "" &&
+      confirmpassword != ""
+    ) {
+      setIsSubmitted(true);
+    }
+    const formData = {
+      User_Name: name,
+      Business_Or_Personal_Use: "Personal",
+      Business_Name: "",
+      Business_Address: "",
+      Phone_Number: phonenumber,
+      User_Password: password,
+    };
+
+    axios
+      .post(`${root_url}api/Login`, formData)
+      .then((res) => alert(res.data))
+      .catch((err) => alert(err));
+  };
   return (
     <View style={signup_styles.container}>
       <StatusBar style="light" backgroundColor="#467ca4" />
@@ -85,28 +108,27 @@ const SignUp = () => {
           style={signup_styles.logo}
           source={require("../../../assets/images/logo.png")}
         />
-        {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss}> */}
-        {/* <View style={signup_styles.inner}> */}
-
         {/*  First input */}
         <TextInput
           style={signup_styles.input}
           theme={{ colors: { primary: "#467ca4" } }}
           label="Enter Account Phone Number"
+          name="phonenumber"
           value={phonenumber}
           onChangeText={(phonenumber) => setPhoneNumber(phonenumber)}
           keyboardType="phone-pad"
-          error = {phoneNumberErr && phonenumber==""}
+          error={phoneNumberErr && phonenumber == ""}
         />
         {/*  Second input */}
         <TextInput
           style={signup_styles.input}
           theme={{ colors: { primary: "#467ca4" } }}
           label="Enter Your Name"
+          name="name"
           value={name}
           onChangeText={(name) => setName(name)}
           keyboardType="default"
-          error = {NameErr && name==""}
+          error={NameErr && name == ""}
         />
         {/* Password */}
         <TextInput
@@ -114,38 +136,52 @@ const SignUp = () => {
           theme={{ colors: { primary: "#467ca4" } }}
           label="Enter Password"
           showSoftInputOnFocus={true}
+          name="password"
           value={password}
           onChangeText={(password) => setPassword(password)}
           secureTextEntry={true}
           keyboardType="default"
-          error = {PasswordErr  && password.length<8}
+          error={PasswordErr && password.length < 8}
         />
         {/* Confirm Password */}
         <TextInput
           style={signup_styles.input}
           theme={{ colors: { primary: "#467ca4" } }}
           label="Enter Confirm Password"
+          name="confirmpassword"
           value={confirmpassword}
           secureTextEntry={true}
           focusable={true}
           showSoftInputOnFocus={true}
-          onChangeText={(confirmpassword) =>setConfirmPassword(confirmpassword)}
-          //onChangeText={ChangeConfirmPassword(confirmpassword)}
+          onChangeText={(confirmpassword) =>
+            setConfirmPassword(confirmpassword)
+          }
           keyboardType="default"
-          error = {ConfirmPasswordErr && confirmpassword=="" || confirmpassword!=password}
+          error={
+            (ConfirmPasswordErr && confirmpassword == "") ||
+            confirmpassword != password
+          }
         />
-        <Button
-          labelStyle={{ fontSize: 17 }}
-          style={signup_styles.signup_btn}
-          mode="contained"
-          onPress={Submit}
-          icon={signup_icon}
-        >
-          Sign Up
-        </Button>
+        {!isSibmitted ? (
+          <Button
+            labelStyle={{ fontSize: 17 }}
+            style={signup_styles.signup_btn}
+            mode="contained"
+            onPress={Submit}
+          >
+            Sign Up
+          </Button>
+        ) : (
+          <Image
+            source={require("../../../assets/images/sayinkine_loading.gif")}
+            style={signup_styles.styleGif}
+          />
+        )}
       </KeyboardAvoidingView>
-      {/* <Text style={signup_styles.login}>If you already have an account, <Text style={signup_styles.loginText}>please login</Text></Text> */}
-      <Text style={signup_styles.login}>If you already have an account, please<Text style={signup_styles.loginText}> Login</Text></Text>
+      <Text style={signup_styles.login}>
+        If you already have an account, please
+        <Text style={signup_styles.loginText}> Login</Text>
+      </Text>
     </View>
   );
 };
@@ -173,7 +209,7 @@ const signup_styles = StyleSheet.create({
     backgroundColor: "#fff",
     color: "#467ca4",
     width: 320,
-    alignSelf: "center"
+    alignSelf: "center",
   },
   signup_btn: {
     backgroundColor: "#467ca4",
@@ -184,11 +220,15 @@ const signup_styles = StyleSheet.create({
   },
   login: {
     top: -15,
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   loginText: {
-    color: '#467ca4',
-    fontWeight: 'bold',
-    fontSize: 16
-  }
+    color: "#467ca4",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  styleGif: {
+    top: -25,
+    alignSelf: "center",
+  },
 });
