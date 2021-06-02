@@ -13,7 +13,6 @@ import { TextInput, Button } from "react-native-paper";
 const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
 
 const SignUp = () => {
-
   // data variables
   const [phonenumber, setPhoneNumber] = React.useState("");
   const [name, setName] = React.useState("");
@@ -22,7 +21,7 @@ const SignUp = () => {
 
   // loader controller
   const [isSibmitted, setIsSubmitted] = React.useState(false);
-  
+
   // error variables
   const [phoneNumberErr, setPhoneNumberErr] = React.useState(false);
   const [NameErr, setNameErr] = React.useState(false);
@@ -49,11 +48,11 @@ const SignUp = () => {
         NameErr: false,
       });
     }
-    if (password == "" && password.length < 8) {
+    if (password==""  && password.length < 8) {
       setPasswordErr({
         PasswrodErr: true,
       });
-    } else if (password != "" || password.length >= 8) {
+    } else if (password != "" && password.length >= 8) {
       setPasswordErr({
         PasswrodErr: false,
       });
@@ -64,21 +63,6 @@ const SignUp = () => {
       });
     }
 
-    if (
-      phonenumber == "" ||
-      name == "" ||
-      password == "" ||
-      confirmpassword == ""
-    ) {
-      setIsSubmitted(false);
-    } else if (
-      phonenumber != "" &&
-      name != "" &&
-      password != "" &&
-      confirmpassword != ""
-    ) {
-      setIsSubmitted(true);
-    }
     const formData = {
       User_Name: name,
       Business_Or_Personal_Use: "Personal",
@@ -88,10 +72,26 @@ const SignUp = () => {
       User_Password: password,
     };
 
-    axios
-      .post(`${root_url}api/Login`, formData)
-      .then((res) => alert(res.data))
-      .catch((err) => alert(err));
+    if (
+      phonenumber == "" ||
+      name == "" ||
+      password == "" ||
+      confirmpassword == ""
+    ) {
+      setIsSubmitted(false);
+      alert("Please fill all fields correctly");
+    } else if (
+      phonenumber != "" &&
+      name != "" &&
+      password != "" &&
+      confirmpassword != ""
+    ) {
+      setIsSubmitted(true);
+      axios
+        .post(`${root_url}api/Login`, formData)
+        .then((res) => alert(res.data))
+        .catch((err) => alert(err));
+    }
   };
   return (
     <View style={signup_styles.container}>
@@ -138,7 +138,14 @@ const SignUp = () => {
           showSoftInputOnFocus={true}
           name="password"
           value={password}
-          onChangeText={(password) => setPassword(password)}
+          onChangeText={(password) => {
+            setPassword(password);
+            if (password.length > 0 && password.length < 8) {
+              setPasswordErr(true)
+            } else {
+              setPasswordErr(false)
+            }
+          }}
           secureTextEntry={true}
           keyboardType="default"
           error={PasswordErr && password.length < 8}
