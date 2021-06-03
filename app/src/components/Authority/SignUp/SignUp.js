@@ -48,7 +48,7 @@ const SignUp = () => {
         NameErr: false,
       });
     }
-    if (password==""  && password.length < 8) {
+    if (password == "" && password.length < 8) {
       setPasswordErr({
         PasswrodErr: true,
       });
@@ -76,7 +76,8 @@ const SignUp = () => {
       phonenumber == "" ||
       name == "" ||
       password == "" ||
-      confirmpassword == ""
+      confirmpassword == "" ||
+      confirmpassword != password
     ) {
       setIsSubmitted(false);
       alert("Please fill all fields correctly");
@@ -84,13 +85,17 @@ const SignUp = () => {
       phonenumber != "" &&
       name != "" &&
       password != "" &&
-      confirmpassword != ""
+      confirmpassword != "" &&
+      confirmpassword == password
     ) {
       setIsSubmitted(true);
       axios
         .post(`${root_url}api/Login`, formData)
         .then((res) => alert(res.data))
-        .catch((err) => alert(err));
+        .catch((err) => {
+          alert(err);
+          setIsSubmitted(false);
+        });
     }
   };
   return (
@@ -141,9 +146,9 @@ const SignUp = () => {
           onChangeText={(password) => {
             setPassword(password);
             if (password.length > 0 && password.length < 8) {
-              setPasswordErr(true)
+              setPasswordErr(true);
             } else {
-              setPasswordErr(false)
+              setPasswordErr(false);
             }
           }}
           secureTextEntry={true}
@@ -198,7 +203,7 @@ const signup_styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   gradient: {
-    top: 0,
+    top: 10,
     left: 0,
     width: "100%",
     height: 220,
