@@ -12,8 +12,7 @@ import { TextInput, Button } from "react-native-paper";
 import axios from "axios";
 
 const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
-const [param_url,setParamUrl]=React.useState("");
-const local = AsyncStorage.getItem("token")
+const token="";
 const Login = () => {
   const [phonenumber, setPhoneNumber] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -22,33 +21,21 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const formData = {
+    const formData = {  
       Phone_Number: phonenumber,
       User_Password: password,
     };
-    if(AsyncStorage.getItem('token')==""){
-      setParamUrl({
-        param_url:`${root_url}api/Login?phone_number=${formData.Phone_Number}&user_password=${formData.User_Password}&token`
-      })
-    }
-    else{
-      setParamUrl({
-        param_url:`${root_url}api/Login?phone_number=${formData.Phone_Number}&user_password=${formData.User_Password}&token=${AsyncStorage.getItem('token')}`,
-      })
-    }
     axios
-      .post(
-        param_url
-        //`${root_url}api/Login?phone_number=${formData.Phone_Number}&user_password=${formData.User_Password}&token`,
-        //alert(token+'')
-        )
+      .post(`${root_url}api/Login?token=`, formData)
       .then((res) => {
-        if (res.data == "202") {
-          AsyncStorage
-          .setItem("token", res.data);
-          
+        if(res.data!="401"){
+          alert(res.data)
+          AsyncStorage.setItem("token",res.data);
         }
-        alert(res.data)
+        if(res.data=="401"){
+          alert("Phone Number Or Password Incorrect");
+        }
+        //AsyncStorage.getItem("token",(err,item)=>alert(item));
       })
       .catch((err) => console.log(err));
   };
