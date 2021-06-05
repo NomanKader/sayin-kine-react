@@ -1,6 +1,5 @@
 import axios from "axios";
-import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React from "react";
 import {
   StyleSheet,
   Image,
@@ -12,7 +11,7 @@ import { TextInput, Button } from "react-native-paper";
 
 const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
 
-const SignUp = () => {
+const SignUp = ({ history }) => {
   // data variables
   const [phonenumber, setPhoneNumber] = React.useState("");
   const [name, setName] = React.useState("");
@@ -90,7 +89,7 @@ const SignUp = () => {
     ) {
       setIsSubmitted(true);
       axios
-        .post(`${root_url}api/Login`, formData)
+        .post(`${root_url}api/SignUp`, formData)
         .then((res) => alert(res.data))
         .catch((err) => {
           alert(err);
@@ -100,7 +99,6 @@ const SignUp = () => {
   };
   return (
     <View style={signup_styles.container}>
-      <StatusBar style="light" backgroundColor="#467ca4" />
       <KeyboardAvoidingView
         keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 10}
         behavior="position"
@@ -192,7 +190,13 @@ const SignUp = () => {
       </KeyboardAvoidingView>
       <Text style={signup_styles.login}>
         If you already have an account, please
-        <Text style={signup_styles.loginText}> Login</Text>
+        <Text
+          style={signup_styles.loginText}
+          onPress={() => history.push("/login")}
+        >
+          {" "}
+          Login
+        </Text>
       </Text>
     </View>
   );

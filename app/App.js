@@ -1,16 +1,22 @@
-import { StatusBar } from 'expo-status-bar';
-import React,{Component} from 'react';
-import { StyleSheet, Text,Image, View } from 'react-native';
-import SignUpComponent from './src/components/Authority/SignUp/SignUp'
-class  App extends React.Component{
-  render(){
-    return(
+import { StatusBar } from "expo-status-bar";
+import React from "react";
+import { View } from "react-native";
+import { NativeRouter, Route, Switch } from "react-router-native";
+import SignUpComponent from "./src/components/Authority/SignUp/SignUp";
+import LoginComponent from "./src/components/Authority/SignUp/Login";
+class App extends React.Component {
+  render() {
+    return (
       <View>
-      <SignUpComponent/>
-      {/* <Text>asfsdf</Text> */}
+        <NativeRouter>
+          <StatusBar style="light" backgroundColor="#467ca4" />
+          <Switch>
+            <Route exact path="/" component={SignUpComponent}/>
+            <Route exact path="/login" component={LoginComponent}/>
+          </Switch>
+        </NativeRouter>
       </View>
-    )
+    );
   }
 }
-export default App
-
+export default App;
