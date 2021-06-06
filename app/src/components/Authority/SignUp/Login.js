@@ -10,14 +10,12 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { TextInput, Button } from "react-native-paper";
 import axios from "axios";
-import history from 'history';
-import { Router } from "react-router";
+
 const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
-const token="";
+
 const Login = ({history}) => {
   const [phonenumber, setPhoneNumber] = React.useState("");
   const [password, setPassword] = React.useState("");
-  //const [token, setToken] = React.useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -31,8 +29,7 @@ const Login = ({history}) => {
       .then((res) => {
         if(res.data!="401"){
           alert(res.data)
-          var token=res.data;
-          AsyncStorage.setItem("@token",token);
+          AsyncStorage.setItem("token",res.data);
           history.push("/home");
         }
         if(res.data=="401"){
