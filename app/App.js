@@ -1,14 +1,15 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect } from "react";
+import React, { Component, useEffect } from "react";
 import { View } from "react-native";
-import { NativeRouter, Route, Switch } from "react-router-native";
+import { NativeRouter, Route, Router, Switch } from "react-router-native";
 import SignUpComponent from "./src/components/Authority/SignUp/SignUp";
 import LoginComponent from "./src/components/Authority/SignUp/Login";
 import HomeComponent from "./src/components/Home/Home";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from 'axios';
 const App = () => {
   const [token, setToken] = React.useState("");
-
+  const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
   useEffect(() => {
     isSignedIn();
   }, []);
@@ -16,8 +17,28 @@ const App = () => {
   const isSignedIn = async () => {
     try {
       const localData = await AsyncStorage.getItem("@token");
-      console.log(localData);
-      setToken(localData);
+      if(localData!="" && localData!=null){//that means token exist
+        axios
+      .post(`${root_url}api/ValidateToken?phone_number=09969119949&token=${localData}`)
+      .then((res) => {
+        if(res.data=="401"){//if it is not valid token
+          alert('Token not valid');
+          AsyncStorage.removeItem("@token");
+          localData = AsyncStorage.getItem("@token");
+          setToken(localData);
+          setComponent(LoginComponent);
+          // history.push("/home");
+        }
+        else{//if token is valid
+         console.log(token);
+        }
+      })
+      .catch((err) => console.log(err));
+      }
+      else{//if token not exist 
+        setToken(localData)
+      }
+      // setToken(localData);
     } catch (error) {
       console.log(error);
     }
@@ -28,7 +49,7 @@ const App = () => {
       <NativeRouter>
         <StatusBar style="light" backgroundColor="#467ca4" />
         <Switch>
-          {token != "" && token != null ? (
+          {token != null  ? (
             <Route exact path="/" component={HomeComponent} />
             ) : (
             <Route exact path="/" component={LoginComponent} />
