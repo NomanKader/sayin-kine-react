@@ -1,4 +1,3 @@
-import { StatusBar } from "expo-status-bar";
 import React from "react";
 import {
   StyleSheet,
@@ -6,14 +5,16 @@ import {
   Platform,
   KeyboardAvoidingView,
   View,
+  Text
 } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { TextInput, Button } from "react-native-paper";
 import axios from "axios";
-
+import history from 'history';
+import { Router } from "react-router";
 const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
 const token="";
-const Login = () => {
+const Login = ({history}) => {
   const [phonenumber, setPhoneNumber] = React.useState("");
   const [password, setPassword] = React.useState("");
   //const [token, setToken] = React.useState("");
@@ -30,7 +31,9 @@ const Login = () => {
       .then((res) => {
         if(res.data!="401"){
           alert(res.data)
-          AsyncStorage.setItem("token",res.data);
+          var token=res.data;
+          AsyncStorage.setItem("@token",token);
+          history.push("/home");
         }
         if(res.data=="401"){
           alert("Phone Number Or Password Incorrect");
@@ -42,7 +45,6 @@ const Login = () => {
 
   return (
     <View>
-      <StatusBar style="light" backgroundColor="#467ca4" />
       <KeyboardAvoidingView
         keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 10}
         behavior="position"
@@ -88,6 +90,16 @@ const Login = () => {
         >
           Login
         </Button>
+        <Text style={login_styles.signup}>
+        If you do not have an account, please
+        <Text
+          style={login_styles.signupText}
+          onPress={() => history.push("/signup")}
+        >
+          {" "}
+          SignUp
+        </Text>
+      </Text>
       </KeyboardAvoidingView>
     </View>
   );
@@ -124,5 +136,14 @@ const login_styles = StyleSheet.create({
     width: 250,
     top: -30,
     alignSelf: "center",
+  },
+  signup: {
+    top: -15,
+    alignSelf: "center",
+  },
+  signupText: {
+    color: "#467ca4",
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });
