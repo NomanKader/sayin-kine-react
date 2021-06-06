@@ -29,13 +29,12 @@ const Login = ({history}) => {
       .then((res) => {
         if(res.data!="401"){
           alert(res.data)
-          AsyncStorage.setItem("token",res.data);
+          AsyncStorage.setItem("@token",res.data);
           history.push("/home");
         }
         if(res.data=="401"){
           alert("Phone Number Or Password Incorrect");
         }
-        //AsyncStorage.getItem("token",(err,item)=>alert(item));
       })
       .catch((err) => console.log(err));
   };

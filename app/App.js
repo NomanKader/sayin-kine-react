@@ -9,28 +9,33 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const App = () => {
   const [token, setToken] = React.useState("");
 
-  AsyncStorage.getItem("token", (item) => setToken(item));
-  // useEffect(() => {
-  //   isSignedIn();
-  // }, []);
+  useEffect(() => {
+    isSignedIn();
+  }, []);
 
-  // const isSignedIn = () => {
-  //   AsyncStorage.getItem("token", (item) => setToken(item));
-  // };
+  const isSignedIn = async () => {
+    try {
+      const localData = await AsyncStorage.getItem("@token");
+      console.log(localData);
+      setToken(localData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <View>
       <NativeRouter>
         <StatusBar style="light" backgroundColor="#467ca4" />
         <Switch>
-          {token != "" ? (
-            <Route path="/" component={HomeComponent} />
-          ) : (
-            <Route path="/" component={LoginComponent} />
+          {token != "" && token != null ? (
+            <Route exact path="/" component={HomeComponent} />
+            ) : (
+            <Route exact path="/" component={LoginComponent} />
           )}
-          <Route path="/signup" component={SignUpComponent} />
-          <Route path="/login" component={LoginComponent} />
-          <Route path="/home" component={HomeComponent} />
+          <Route exact path="/signup" component={SignUpComponent} />
+          <Route exact path="/home" component={HomeComponent} />
+          <Route exact path="/login" component={LoginComponent} />
         </Switch>
       </NativeRouter>
     </View>
