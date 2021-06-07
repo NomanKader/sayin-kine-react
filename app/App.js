@@ -5,6 +5,7 @@ import { NativeRouter, Route, Router, Switch } from "react-router-native";
 import SignUpComponent from "./src/components/Authority/SignUp/SignUp";
 import LoginComponent from "./src/components/Authority/SignUp/Login";
 import HomeComponent from "./src/components/Home/Home";
+import StartingBudget from './src/components/StartingBudget';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 const App = () => {
@@ -63,6 +64,7 @@ const App = () => {
           <Route exact path="/signup" component={SignUpComponent} />
           <Route exact path="/home" component={HomeComponent} />
           <Route exact path="/login" component={LoginComponent} />
+          <Route exact path="/starting_budget" component={StartingBudget} />
         </Switch>
       </NativeRouter>
     </View>
