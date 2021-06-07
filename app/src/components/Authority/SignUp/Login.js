@@ -29,6 +29,7 @@ const Login = ({history}) => {
       .then((res) => {
         if(res.data!="401"){
           alert(res.data)
+          AsyncStorage.setItem('@ph_number', formData.Phone_Number);
           AsyncStorage.setItem("@token",res.data);
           history.push("/home");
         }
