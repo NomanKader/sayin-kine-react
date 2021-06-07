@@ -1,8 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, Image, Text } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 
 const StartingBudget = () => {
+  // data handling
+  const [budgetData, setBudgetData] = useState("");
+
+  // error handling
+  const [numberCheckErr, setnumberCheckErr] = useState(false);
+
+  const sendData = (e) => {
+    e.preventDefault();
+    if (budgetData != "") {
+      alert(`Your Starting budget is ${budgetData}.`);
+    } else {
+      alert("Please fill the starting amount.")
+      setnumberCheckErr(true);
+    }
+  };
   return (
     <View style={budget_form.root}>
       <Image
@@ -16,6 +31,10 @@ const StartingBudget = () => {
         label="Enter your Budget Money"
         keyboardType="numeric"
         outlineColor="#0D3858"
+        name="budgetData"
+        value={budgetData}
+        onChangeText={(budgetData) => setBudgetData(budgetData)}
+        error={numberCheckErr && budgetData == ""}
       />
       <Text style={budget_form.textStyle}>
         Hey ! let me know your {"\n    "} starting budget 😊
@@ -25,7 +44,7 @@ const StartingBudget = () => {
         labelStyle={{ fontSize: 18 }}
         uppercase={false}
         mode="contained"
-        onPress={() => alert("hello")}
+        onPress={sendData}
       >
         Let's Go !
       </Button>

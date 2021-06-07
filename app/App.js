@@ -19,6 +19,7 @@ const App = () => {
     try {
       const localData = await AsyncStorage.getItem("@token");
       const localPhone = await AsyncStorage.getItem("@ph_number")
+      // console.log(localPhone, localData)
       if (localData != "" && localData != null) {
         //that means token exist
         axios
@@ -57,7 +58,7 @@ const App = () => {
         <StatusBar style="light" backgroundColor="#467ca4" />
         <Switch>
           {token != null ? (
-            <Route exact path="/" component={HomeComponent} />
+            <Route exact path="/" component={StartingBudget} />
           ) : (
             <Route exact path="/" component={LoginComponent} />
           )}

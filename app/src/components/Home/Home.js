@@ -5,7 +5,7 @@ import {Button} from 'react-native-paper';
 const Home = ({history}) => {
     return (
         <View style={home_styles.container}>
-            <Button  style={home_styles.heading} onPress={()=>history.push('/starting_budget')}>This is home page.</Button>
+            <Button  style={home_styles.heading}>This is home page.</Button>
         </View>
     );
 

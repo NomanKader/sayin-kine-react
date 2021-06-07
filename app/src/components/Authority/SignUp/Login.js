@@ -5,39 +5,50 @@ import {
   Platform,
   KeyboardAvoidingView,
   View,
-  Text
+  Text,
 } from "react-native";
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TextInput, Button } from "react-native-paper";
 import axios from "axios";
 
 const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
 
-const Login = ({history}) => {
+const Login = ({ history }) => {
   const [phonenumber, setPhoneNumber] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [isSibmitted, setIsSubmitted] = React.useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const formData = {  
+    const formData = {
       Phone_Number: phonenumber,
       User_Password: password,
     };
-    axios
-      .post(`${root_url}api/Login?token=`, formData)
-      .then((res) => {
-        if(res.data!="401"){
-          alert(res.data)
-          AsyncStorage.setItem('@ph_number', formData.Phone_Number);
-          AsyncStorage.setItem("@token",res.data);
-          history.push("/home");
-        }
-        if(res.data=="401"){
-          alert("Phone Number Or Password Incorrect");
-        }
-      })
-      .catch((err) => console.log(err));
+
+    if (phonenumber != "" && password != "") {
+      setIsSubmitted(true);
+      axios
+        .post(`${root_url}api/Login?token=`, formData)
+        .then((res) => {
+          if (res.data != "401") {
+            AsyncStorage.setItem("@ph_number", formData.Phone_Number);
+            AsyncStorage.setItem("@token", res.data);
+            history.push("/starting_budget");
+          }
+          if (res.data == "401") {
+            setIsSubmitted(false);
+            alert("Phone Number Or Password Incorrect");
+          }
+        })
+        .catch((err) => {
+          setIsSubmitted(false);
+          alert(err);
+        });
+    } else {
+      alert("Please fill all fields correctly!");
+      setIsSubmitted(false);
+    }
   };
 
   return (
@@ -79,24 +90,32 @@ const Login = ({history}) => {
           keyboardType="default"
         />
 
-        <Button
-          labelStyle={{ fontSize: 17 }}
-          style={login_styles.login_btn}
-          mode="contained"
-          onPress={handleSubmit}
-        >
-          Login
-        </Button>
+        {!isSibmitted ? (
+          <Button
+            labelStyle={{ fontSize: 17 }}
+            style={login_styles.login_btn}
+            mode="contained"
+            onPress={handleSubmit}
+          >
+            Login
+          </Button>
+        ) : (
+          <Image
+            source={require("../../../assets/images/sayinkine_loading.gif")}
+            style={login_styles.styleGif}
+          />
+        )}
+
         <Text style={login_styles.signup}>
-        If you do not have an account, please
-        <Text
-          style={login_styles.signupText}
-          onPress={() => history.push("/signup")}
-        >
-          {" "}
-          SignUp
+          If you do not have an account, please
+          <Text
+            style={login_styles.signupText}
+            onPress={() => history.push("/signup")}
+          >
+            {" "}
+            SignUp
+          </Text>
         </Text>
-      </Text>
       </KeyboardAvoidingView>
     </View>
   );
@@ -106,7 +125,7 @@ export default Login;
 
 const login_styles = StyleSheet.create({
   gradient: {
-    top: 10,
+    top: 0,
     left: 0,
     width: "100%",
     height: 220,
@@ -132,6 +151,10 @@ const login_styles = StyleSheet.create({
     borderRadius: 10,
     width: 250,
     top: -30,
+    alignSelf: "center",
+  },
+  styleGif: {
+    top: -25,
     alignSelf: "center",
   },
   signup: {
