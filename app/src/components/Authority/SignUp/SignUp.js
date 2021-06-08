@@ -13,7 +13,7 @@ const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
 
 const SignUp = ({ history }) => {
   // data variables
-  const [phonenumber, setPhoneNumber] = React.useState("");
+  const [phonenumberoremail, setPhoneNumberOrEmail] = React.useState("");
   const [name, setName] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [confirmpassword, setConfirmPassword] = React.useState("");
@@ -22,19 +22,19 @@ const SignUp = ({ history }) => {
   const [isSibmitted, setIsSubmitted] = React.useState(false);
 
   // error variables
-  const [phoneNumberErr, setPhoneNumberErr] = React.useState(false);
+  const [phoneNumberErr, setPhoneNumberOrEmailErr] = React.useState(false);
   const [NameErr, setNameErr] = React.useState(false);
   const [PasswordErr, setPasswordErr] = React.useState(false);
   const [ConfirmPasswordErr, setConfirmPasswordErr] = React.useState(false);
 
   const Submit = (e) => {
     e.preventDefault();
-    if (phonenumber == "") {
-      setPhoneNumberErr({
+    if (phonenumberoremail == "") {
+      setPhoneNumberOrEmailErr({
         phoneNumberErr: true,
       });
-    } else if (phonenumber != "") {
-      setPhoneNumberErr({
+    } else if (phonenumberoremail != "") {
+      setPhoneNumberOrEmailErr({
         phoneNumberErr: false,
       });
     }
@@ -67,12 +67,12 @@ const SignUp = ({ history }) => {
       Business_Or_Personal_Use: "Personal",
       Business_Name: "",
       Business_Address: "",
-      Phone_Number: phonenumber,
+      Phone_Number: phonenumberoremail,
       User_Password: password,
     };
 
     if (
-      phonenumber == "" ||
+      phonenumberoremail == "" ||
       name == "" ||
       password == "" ||
       confirmpassword == "" ||
@@ -81,7 +81,7 @@ const SignUp = ({ history }) => {
       setIsSubmitted(false);
       alert("Please fill all fields correctly");
     } else if (
-      phonenumber != "" &&
+      phonenumberoremail != "" &&
       name != "" &&
       password != "" &&
       confirmpassword != "" &&
@@ -115,12 +115,12 @@ const SignUp = ({ history }) => {
         <TextInput
           style={signup_styles.input}
           theme={{ colors: { primary: "#467ca4" } }}
-          label="Enter Account Phone Number"
-          name="phonenumber"
-          value={phonenumber}
-          onChangeText={(phonenumber) => setPhoneNumber(phonenumber)}
+          label="Enter Account Phone Number or Email"
+          name="phonenumberoremail"
+          value={phonenumberoremail}
+          onChangeText={(phonenumberoremail) => setPhoneNumberOrEmail(phonenumberoremail)}
           keyboardType="phone-pad"
-          error={phoneNumberErr && phonenumber == ""}
+          error={phoneNumberErr && phonenumberoremail == ""}
         />
         {/*  Second input */}
         <TextInput

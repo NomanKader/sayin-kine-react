@@ -14,25 +14,27 @@ import axios from "axios";
 const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
 
 const Login = ({ history }) => {
-  const [phonenumber, setPhoneNumber] = React.useState("");
+  const [phonenumberoremail, setPhoneNumber] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [isSibmitted, setIsSubmitted] = React.useState(false);
+
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const formData = {
-      Phone_Number: phonenumber,
+      Phone_Number_Or_Email: phonenumberoremail,
       User_Password: password,
     };
 
-    if (phonenumber != "" && password != "") {
+    if (phonenumberoremail != "" && password != "") {
       setIsSubmitted(true);
       axios
         .post(`${root_url}api/Login?token=`, formData)
         .then((res) => {
           if (res.data != "401") {
-            AsyncStorage.setItem("@ph_number", formData.Phone_Number);
+            AsyncStorage.setItem("@ph_number", formData.Phone_Number_Or_Email);
             AsyncStorage.setItem("@token", res.data);
             history.push("/starting_budget");
           }
@@ -69,10 +71,10 @@ const Login = ({ history }) => {
         <TextInput
           style={login_styles.input}
           theme={{ colors: { primary: "#467ca4" } }}
-          label="Enter Account Phone Number"
-          name="phonenumber"
-          value={phonenumber}
-          onChangeText={(phonenumber) => setPhoneNumber(phonenumber)}
+          label="Enter Account Phone Number or Email"
+          name="phonenumberoremail"
+          value={phonenumberoremail}
+          onChangeText={(phonenumberoremail) => setPhoneNumber(phonenumberoremail)}
           keyboardType="phone-pad"
         />
 

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, StyleSheet, Image, Text } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 
+
 const StartingBudget = () => {
   // data handling
   const [budgetData, setBudgetData] = useState("");
@@ -9,13 +10,15 @@ const StartingBudget = () => {
   // error handling
   const [numberCheckErr, setnumberCheckErr] = useState(false);
 
+  let budgetAmount = parseInt(budgetData.replace(/[%()*/+-]/g, ""))
+
   const sendData = (e) => {
     e.preventDefault();
-    if (budgetData != "") {
-      alert(`Your Starting budget is ${budgetData}.`);
+    if (budgetAmount > 0) {
+      alert(`Your Starting budget is ${budgetAmount}.`);
     } else {
-      alert("Please fill the starting amount.")
       setnumberCheckErr(true);
+      alert("Please fill the starting amount.");
     }
   };
   return (

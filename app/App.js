@@ -5,21 +5,33 @@ import { NativeRouter, Route, Router, Switch } from "react-router-native";
 import SignUpComponent from "./src/components/Authority/SignUp/SignUp";
 import LoginComponent from "./src/components/Authority/SignUp/Login";
 import HomeComponent from "./src/components/Home/Home";
-import StartingBudget from './src/components/StartingBudget';
+import StartingBudget from "./src/components/StartingBudget";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 const App = () => {
   const [token, setToken] = React.useState("");
   const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
   useEffect(() => {
+
     isSignedIn();
+
   }, []);
+
+  // const checkToken = async () =>{
+  //   try {
+  //     const validToken = await AsyncStorage.getItem("@checkSession")
+  //     if (validToken == "invalid token") {
+  //       alert("Session expire")
+  //     } 
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
 
   const isSignedIn = async () => {
     try {
       const localData = await AsyncStorage.getItem("@token");
-      const localPhone = await AsyncStorage.getItem("@ph_number")
-      // console.log(localPhone, localData)
+      const localPhone = await AsyncStorage.getItem("@ph_number");
       if (localData != "" && localData != null) {
         //that means token exist
         axios
@@ -27,18 +39,19 @@ const App = () => {
             `${root_url}api/ValidateToken?phone_number=${localPhone}&token=${localData}`
           )
           .then((res) => {
-            if (res.data == "401") {
+            //console.log(res.data);
+            if (res.data == "401" || res.data == null) {
               //if it is not valid token
               alert("Token not valid");
               AsyncStorage.removeItem("@token");
-              AsyncStorage.removeItem('@ph_number')
-              // localData = AsyncStorage.getItem("@token");
-              setToken(localData);
-              setComponent(LoginComponent);
-              // history.push("/home");
-            } else {
+              AsyncStorage.removeItem("@ph_number");
+              AsyncStorage.setItem("@checkSession", "invalid token");
+              // checkToken();
+              // history.push('/login')
+            } else if (res.data == "202") {
               //if token is valid
-              console.log(token);
+              console.log("is valid");
+              AsyncStorage.removeItem("@checkSession")
             }
           })
           .catch((err) => console.log(err));
