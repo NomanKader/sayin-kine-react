@@ -36,11 +36,15 @@ const Login = ({ history }) => {
           if (res.data != "401") {
             AsyncStorage.setItem("@ph_number", formData.Phone_Number_Or_Email);
             AsyncStorage.setItem("@token", res.data);
+            alert('Login successfull !')
             history.push("/starting_budget");
           }
-          if (res.data == "401") {
+          else if (res.data == "401") {
             setIsSubmitted(false);
             alert("Phone Number Or Password Incorrect");
+          } else if(res.data == 'System Error'){
+            alert("System Error! Please, try again later.")
+            setIsSubmitted(false)
           }
         })
         .catch((err) => {
@@ -75,7 +79,6 @@ const Login = ({ history }) => {
           name="phonenumberoremail"
           value={phonenumberoremail}
           onChangeText={(phonenumberoremail) => setPhoneNumber(phonenumberoremail)}
-          keyboardType="phone-pad"
         />
 
         <TextInput

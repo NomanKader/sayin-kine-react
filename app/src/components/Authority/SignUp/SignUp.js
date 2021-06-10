@@ -27,6 +27,24 @@ const SignUp = ({ history }) => {
   const [PasswordErr, setPasswordErr] = React.useState(false);
   const [ConfirmPasswordErr, setConfirmPasswordErr] = React.useState(false);
 
+  // validate email
+  const validatePhoneOrEmail = (inputData) =>{
+    if (!isNaN(inputData)) {
+      setPhoneNumberOrEmail(inputData)
+    } else {
+      let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+      if (reg.test(inputData) === false) {
+        console.log("Email is Not Correct");
+        setPhoneNumberOrEmail(inputData)
+        return false;
+      }
+      else {
+        setPhoneNumberOrEmail(inputData)
+        console.log("Email is Correct");
+      }
+    }
+  }
+
   const Submit = (e) => {
     e.preventDefault();
     if (phonenumberoremail == "") {
@@ -67,7 +85,7 @@ const SignUp = ({ history }) => {
       Business_Or_Personal_Use: "Personal",
       Business_Name: "",
       Business_Address: "",
-      Phone_Number: phonenumberoremail,
+      Phone_Number_Or_Email: phonenumberoremail,
       User_Password: password,
     };
 
@@ -90,7 +108,20 @@ const SignUp = ({ history }) => {
       setIsSubmitted(true);
       axios
         .post(`${root_url}api/SignUp`, formData)
-        .then((res) => alert(res.data))
+        .then((res) => {
+          console.log(formData)
+          if (res.data == "409") {
+            alert("Account already exists, Please try with another")
+            setIsSubmitted(false)
+          } else if (res.data == "System Error"){
+            alert("System error")
+            setIsSubmitted(false)
+          }
+           else if (res.data == "202"){
+            alert("Congratulations you account is successfully created. Please Login")
+            history.push('/login')
+          }
+        })
         .catch((err) => {
           alert(err);
           setIsSubmitted(false);
@@ -118,8 +149,7 @@ const SignUp = ({ history }) => {
           label="Enter Account Phone Number or Email"
           name="phonenumberoremail"
           value={phonenumberoremail}
-          onChangeText={(phonenumberoremail) => setPhoneNumberOrEmail(phonenumberoremail)}
-          keyboardType="phone-pad"
+          onChangeText={(phonenumberoremail) => validatePhoneOrEmail(phonenumberoremail)}
           error={phoneNumberErr && phonenumberoremail == ""}
         />
         {/*  Second input */}

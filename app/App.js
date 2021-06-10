@@ -10,26 +10,27 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 const App = () => {
   const [token, setToken] = React.useState("");
+  const [session, setSession] = React.useState("");
   const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
   useEffect(() => {
-
     isSignedIn();
-
   }, []);
 
-  // const checkToken = async () =>{
-  //   try {
-  //     const validToken = await AsyncStorage.getItem("@checkSession")
-  //     if (validToken == "invalid token") {
-  //       alert("Session expire")
-  //     } 
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
+  const checkToken = async () => {
+    try {
+      const validToken = await AsyncStorage.getItem("@checkSession");
+      if (validToken == "invalid token") {
+        alert("Session expire");
+        setSession(validToken);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const isSignedIn = async () => {
     try {
+      // AsyncStorage.clear();
       const localData = await AsyncStorage.getItem("@token");
       const localPhone = await AsyncStorage.getItem("@ph_number");
       if (localData != "" && localData != null) {
@@ -39,19 +40,17 @@ const App = () => {
             `${root_url}api/ValidateToken?phone_number=${localPhone}&token=${localData}`
           )
           .then((res) => {
-            //console.log(res.data);
+            console.log(res.data);
             if (res.data == "401" || res.data == null) {
               //if it is not valid token
-              alert("Token not valid");
               AsyncStorage.removeItem("@token");
               AsyncStorage.removeItem("@ph_number");
               AsyncStorage.setItem("@checkSession", "invalid token");
-              // checkToken();
-              // history.push('/login')
+              checkToken();
             } else if (res.data == "202") {
               //if token is valid
               console.log("is valid");
-              AsyncStorage.removeItem("@checkSession")
+              AsyncStorage.removeItem("@checkSession");
             }
           })
           .catch((err) => console.log(err));
@@ -59,7 +58,6 @@ const App = () => {
         //if token not exist
         setToken(localData);
       }
-      // setToken(localData);
     } catch (error) {
       console.log(error);
     }
@@ -70,7 +68,7 @@ const App = () => {
       <NativeRouter>
         <StatusBar style="light" backgroundColor="#467ca4" />
         <Switch>
-          {token != null ? (
+          {token != null && session != "invalid token" ? (
             <Route exact path="/" component={StartingBudget} />
           ) : (
             <Route exact path="/" component={LoginComponent} />
