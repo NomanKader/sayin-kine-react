@@ -8,6 +8,7 @@ import HomeComponent from "./src/components/Home/Home";
 import StartingBudget from "./src/components/StartingBudget";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import Navigation from "./src/components/Navigation/Navigation";
 const App = () => {
   const [token, setToken] = React.useState("");
   const [session, setSession] = React.useState("");
@@ -64,22 +65,31 @@ const App = () => {
   };
 
   return (
-    <View>
-      <NativeRouter>
-        <StatusBar style="light" backgroundColor="#467ca4" />
-        <Switch>
-          {token != null && session != "invalid token" ? (
-            <Route exact path="/" component={StartingBudget} />
-          ) : (
-            <Route exact path="/" component={LoginComponent} />
-          )}
-          <Route exact path="/signup" component={SignUpComponent} />
-          <Route exact path="/home" component={HomeComponent} />
-          <Route exact path="/login" component={LoginComponent} />
-          <Route exact path="/starting_budget" component={StartingBudget} />
-        </Switch>
-      </NativeRouter>
-    </View>
+    <NativeRouter>
+      <View
+        style={{
+          backgroundColor: "#467ca4",
+          height: Platform.OS === "ios" ? 38 : StatusBar.currentHeight,
+        }}
+      >
+        <StatusBar
+          style='light'
+          backgroundColor="#467ca4"          
+        />
+      </View>
+      <Switch>
+        {token != null && session != "invalid token" ? (
+          <Route exact path="/" component={Navigation} />
+        ) : (
+          <Route exact path="/" component={LoginComponent} />
+        )}
+        <Route exact path="/signup" component={SignUpComponent} />
+        <Route exact path="/home" component={HomeComponent} />
+        <Route exact path="/login" component={LoginComponent} />
+        <Route exact path="/starting_budget" component={StartingBudget} />
+        <Route exact path="/navigation" component={Navigation} />
+      </Switch>
+    </NativeRouter>
   );
 };
 export default App;

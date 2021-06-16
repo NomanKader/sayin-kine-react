@@ -3,7 +3,7 @@ import { View, StyleSheet, Image, Text } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 
 
-const StartingBudget = () => {
+const StartingBudget = ({history}) => {
   // data handling
   const [budgetData, setBudgetData] = useState("");
 
@@ -16,6 +16,7 @@ const StartingBudget = () => {
     e.preventDefault();
     if (budgetAmount > 0) {
       alert(`Your Starting budget is ${budgetAmount}.`);
+      history.push('/home')
     } else {
       setnumberCheckErr(true);
       alert("Please fill the starting amount.");

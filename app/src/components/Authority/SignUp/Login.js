@@ -37,7 +37,7 @@ const Login = ({ history }) => {
             AsyncStorage.setItem("@ph_number", formData.Phone_Number_Or_Email);
             AsyncStorage.setItem("@token", res.data);
             alert('Login successfull !')
-            history.push("/starting_budget");
+            history.push("/navigation");
           }
           else if (res.data == "401") {
             setIsSubmitted(false);
