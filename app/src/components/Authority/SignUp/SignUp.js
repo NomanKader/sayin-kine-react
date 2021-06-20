@@ -6,6 +6,7 @@ import {
   Text,
   KeyboardAvoidingView,
   View,
+  Platform
 } from "react-native";
 import { TextInput, Button } from "react-native-paper";
 

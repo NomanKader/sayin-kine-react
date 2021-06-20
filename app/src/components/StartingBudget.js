@@ -39,6 +39,7 @@ const StartingBudget = ({history}) => {
         value={budgetData}
         onChangeText={(budgetData) => setBudgetData(budgetData)}
         error={numberCheckErr && budgetData == ""}
+      
       />
       <Text style={budget_form.textStyle}>
         Hey ! let me know your {"\n    "} starting budget 😊
@@ -74,12 +75,14 @@ const budget_form = StyleSheet.create({
     width: 320,
     backgroundColor: "#fff",
     borderColor: "#0D3858",
+    fontFamily:'Cambria'
   },
   textStyle: {
     marginTop: 40,
     fontSize: 16,
     fontWeight: "600",
     color: "#0D3858",
+    fontFamily:'SegoeUI'
   },
   button: {
     width: "60%",
@@ -88,5 +91,6 @@ const budget_form = StyleSheet.create({
     marginTop: 150,
     justifyContent: "center",
     backgroundColor: "#0D3858",
+    fontFamily:'SegoeUI'
   },
 });

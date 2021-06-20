@@ -247,9 +247,11 @@ const home_style = StyleSheet.create({
   },
   listExpense: {
     color: "#f11010",
+    fontFamily:'Cambria'
   },
   listIncome: {
     color: "#069c42",
+    fontFamily:"Cambria"
   },
   scrollContainer: {
     marginBottom: 35,
