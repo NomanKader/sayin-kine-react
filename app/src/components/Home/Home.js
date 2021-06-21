@@ -13,7 +13,9 @@ import IonIcons from "react-native-vector-icons/AntDesign";
 import Speedometer from "react-native-speedometer-chart";
 const Home = () => {
   return (
-    <SafeAreaView style={{ height: "100%" }}>
+    <SafeAreaView
+      style={{ height: "100%", backgroundColor: "#fff", width: "100%" }}
+    >
       <View style={home_style.header}>
         <Image
           style={home_style.logo}
@@ -69,7 +71,11 @@ const Home = () => {
           <IonIcons name="pluscircleo" style={home_style.addMore} size={30} />
         </TouchableOpacity>
         <Text style={home_style.today_text}>Today</Text>
-        <ScrollView style={home_style.scrollContainer} persistentScrollbar={true} indicatorStyle="white">
+        <ScrollView
+          style={home_style.scrollContainer}
+          persistentScrollbar={true}
+          indicatorStyle="white"
+        >
           <Card.Content>
             <List.Section>
               <List.Item
@@ -216,9 +222,9 @@ const home_style = StyleSheet.create({
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    flexDirection: 'row',
+    flexDirection: "row",
   },
-  chart:{
+  chart: {
     backgroundColor: "#fff",
     padding: 5,
     borderRadius: 15,
@@ -247,11 +253,11 @@ const home_style = StyleSheet.create({
   },
   listExpense: {
     color: "#f11010",
-    fontFamily:'Cambria'
+    // fontFamily:'Cambria'
   },
   listIncome: {
     color: "#069c42",
-    fontFamily:"Cambria"
+    // fontFamily:"Cambria"
   },
   scrollContainer: {
     marginBottom: 35,

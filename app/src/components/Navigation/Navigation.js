@@ -1,20 +1,20 @@
 import * as React from "react";
 import { BottomNavigation, Text } from "react-native-paper";
-import About from "../Home/About";
+import Category from "../Category/Category";
 import Home from "../Home/Home";
 
 const HomeRoute = () => <Home/>;
 
-const CategoryRoute = () => <About/>;
+const CategoryRoute = () => <Category/>;
 
 const DashboardRoute = () => <Text>Recents</Text>;
 
 const Navigation = () => {
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    { key: "home", title: "Home", icon: require("../../assets/images/home.png") },
-    { key: "category", title: "Category", icon: require("../../assets/images/menu.png") },
-    { key: "dashboard", title: "Dashboard", icon: require("../../assets/images/dashboard.png") },
+    { key: "home", title: "Home", icon: "home" },
+    { key: "category", title: "Category", icon: "grid" },
+    { key: "dashboard", title: "Dashboard", icon: "chart-pie" },
   ]);
 
   const renderScene = BottomNavigation.SceneMap({
