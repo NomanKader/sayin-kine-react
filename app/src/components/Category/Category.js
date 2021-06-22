@@ -12,60 +12,104 @@ import { Button, Card, TextInput, Provider, Title } from "react-native-paper";
 
 const topics = [
   {
-    emoji: "🍻",
-    text: "Entertainment",
+    id: 1,
+    emoji: "🍔",
+    text: "Food",
   },
   {
-    emoji: "🐈",
-    text: "Cats",
+    id: 2,
+    emoji: "🍹",
+    text: "Drink",
   },
   {
-    emoji: "🦾",
-    text: "Robots",
-  },
-  {
-    emoji: "🎉",
-    text: "Party",
-  },
-  {
-    emoji: "🌍",
-    text: "World",
-  },
-  {
-    emoji: "📚",
-    text: "Books",
-  },
-  {
-    emoji: "👘",
-    text: "Fashion",
-  },
-  {
-    emoji: "📱",
-    text: "Applications",
-  },
-  {
-    emoji: "📸",
-    text: "Photography",
-  },
-  {
-    emoji: "🧠",
-    text: "Ideas",
-  },
-  {
-    emoji: "⚔️",
-    text: "War",
-  },
-  {
+    id: 3,
     emoji: "💼",
-    text: "Business",
+    text: "Work",
   },
   {
-    emoji: "🎭",
-    text: "Theater",
+    id: 4,
+    emoji: "☕",
+    text: "Coffee",
   },
   {
-    emoji: "📮",
-    text: "Job",
+    id: 5,
+    emoji: "🏥",
+    text: "Health",
+  },
+  {
+    id: 6,
+    emoji: "🏠",
+    text: "Home",
+  },
+  {
+    id: 7,
+    emoji: "🚗",
+    text: "Car",
+  },
+  {
+    id: 8,
+    emoji: "🚌",
+    text: "Bus",
+  },
+  {
+    id: 9,
+    emoji: "🏪",
+    text: "Market",
+  },
+  {
+    id: 10,
+    emoji: "🏫",
+    text: "School",
+  },
+  {
+    id: 11,
+    emoji: "💑🏻",
+    text: "Wedding",
+  },
+  {
+    id: 12,
+    emoji: "👶🏻",
+    text: "Baby",
+  },
+  {
+    id: 13,
+    emoji: "🏦",
+    text: "Bank",
+  },
+  {
+    id: 14,
+    emoji: "👢",
+    text: "Shoes(man)",
+  },
+  {
+    id: 15,
+    emoji: "👡",
+    text: "Shoes(lady)",
+  },
+  {
+    id: 16,
+    emoji: "👔",
+    text: "Clothes(man)",
+  },
+  {
+    id: 17,
+    emoji: "🧥",
+    text: "Clothes(lady)",
+  },
+  {
+    id: 18,
+    emoji: "🌿",
+    text: "Plants",
+  },
+  {
+    id: 19,
+    emoji: "🐶",
+    text: "Animal(dog)",
+  },
+  {
+    id: 20,
+    emoji: "🐱",
+    text: "Animal(cat)",
   },
 ];
 
@@ -109,10 +153,11 @@ const Category = () => {
                 {topics.map((category) => {
                   return (
                     <TouchableOpacity
+                      key={category.id}
                       onPress={() => setSticker(category.emoji)}
                     >
                       <Card style={carousel_style.iconsCard}>
-                        <Text key={category.text} style={carousel_style.icons}>
+                        <Text style={carousel_style.icons}>
                           {category.emoji}
                         </Text>
                       </Card>
@@ -126,7 +171,7 @@ const Category = () => {
         <Text style={category_style.displayTxt}>
           Your Categoy: {"  "}
           <Text style={category_style.displayInnterTxt}>
-            {category}  {sticker}
+            {category} {sticker}
           </Text>
         </Text>
         <Button
@@ -197,9 +242,9 @@ const category_style = StyleSheet.create({
     fontWeight: "bold",
     color: "#0d3858",
   },
-  displayInnterTxt:{
-    color: "#000"
-  },  
+  displayInnterTxt: {
+    color: "#000",
+  },
   createBtn: {
     backgroundColor: "#467ca4",
     borderRadius: 20,
@@ -216,20 +261,21 @@ const carousel_style = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  title:{
+  title: {
     fontSize: 13,
     textAlign: "center",
     marginBottom: 0,
     color: "#fff",
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   cardStyle: {
     width: 320,
     height: 90,
     backgroundColor: "#0d3858",
+    borderRadius: 15,
   },
   iconsCard: {
-    margin: (0,8,8,8),
+    margin: (0, 8, 8, 8),
   },
   icons: {
     padding: 5,
