@@ -1,3 +1,5 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 import React from "react";
 import {
   View,
@@ -9,6 +11,11 @@ import {
   ScrollView,
 } from "react-native";
 import { Button, Card, TextInput, Provider, Title } from "react-native-paper";
+import {
+  BottomAlert,
+  useRefBottomAlert,
+} from "react-native-modal-bottom-alert";
+import { showBottomAlert } from "react-native-modal-bottom-alert";
 
 const topics = [
   {
@@ -113,9 +120,50 @@ const topics = [
   },
 ];
 
+const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
+
 const Category = () => {
   const [category, setCategory] = React.useState("");
   const [sticker, setSticker] = React.useState("");
+
+  const sendCategory = async (e) => {
+    e.preventDefault();
+    const checkNumber = await AsyncStorage.getItem("@ph_number");
+    const categoryData = {
+      Phone_Number_Or_Email: checkNumber,
+      Category_Title: category,
+      Category_Sticker: sticker,
+    };
+    try {
+      if (category != "" && sticker != "") {
+        axios
+          .post(`${root_url}api/category`, categoryData)
+          .then((res) => {
+            if (res.data == "202") {
+              showBottomAlert("success", "Congratulation!", "Category Created");
+            } else if (res.data == "409") {
+              showBottomAlert("info", "Warning!", "Category already exists");
+            } else if (res.data == "System Error At Category Create") {
+              showBottomAlert(
+                "error",
+                "Error",
+                "Please check your internet connection!"
+              );
+            }
+          })
+          .catch((err) => console.log(err));
+      } else if (
+        (category != "" && sticker == "") ||
+        (category == "" && sticker != "")
+      ) {
+        showBottomAlert("info", "Warning!", "Please check your input or choose a sticker!");
+      } else {
+        showBottomAlert("info", "Warning!", "Please fill all fields correctly!");
+      }
+    } catch (error) {
+      alert(error);
+    }
+  };
 
   return (
     <Provider>
@@ -128,7 +176,7 @@ const Category = () => {
             source={require("../../assets/images/logo.png")}
           />
           <Text style={category_style.headerText}>
-            "Hey, let's create {"\n"} category & choose icon to use in your
+            "Hey, let's create {"\n"} category & choose sticker to use in your
             income and expense."
           </Text>
         </View>
@@ -176,12 +224,14 @@ const Category = () => {
         </Text>
         <Button
           mode="contained"
-          labelStyle={{ fontSize: 16, paddingTop: 7 }}
+          labelStyle={{ fontSize: 16 }}
           style={category_style.createBtn}
           uppercase={false}
+          onPress={sendCategory}
         >
           Let's Create
         </Button>
+        <BottomAlert ref={(ref) => useRefBottomAlert(ref)} />
       </SafeAreaView>
     </Provider>
   );
@@ -248,7 +298,7 @@ const category_style = StyleSheet.create({
   createBtn: {
     backgroundColor: "#467ca4",
     borderRadius: 20,
-    height: 55,
+    // height: 55,
     width: 150,
     top: 120,
     alignSelf: "center",
@@ -270,12 +320,13 @@ const carousel_style = StyleSheet.create({
   },
   cardStyle: {
     width: 320,
-    height: 90,
+    height: 93,
     backgroundColor: "#0d3858",
     borderRadius: 15,
   },
   iconsCard: {
-    margin: (0, 8, 8, 8),
+    margin: (0, 7, 7, 7),
+    borderRadius: 10,
   },
   icons: {
     padding: 5,

@@ -1,13 +1,15 @@
 import * as React from "react";
 import { BottomNavigation, Text } from "react-native-paper";
 import Category from "../Category/Category";
+// import CalendarComponent from "../Dashboard/CalendarComponent.js";
+import Dashboard from "../Dashboard/Dashboard";
 import Home from "../Home/Home";
 
 const HomeRoute = () => <Home/>;
 
 const CategoryRoute = () => <Category/>;
 
-const DashboardRoute = () => <Text>Recents</Text>;
+const DashboardRoute = () => <Dashboard/>;
 
 const Navigation = () => {
   const [index, setIndex] = React.useState(0);
