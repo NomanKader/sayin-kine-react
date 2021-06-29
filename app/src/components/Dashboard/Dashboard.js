@@ -39,7 +39,7 @@ const Dashboard = () => {
         ref={refRBSheet}
         closeOnDragDown={true}
         closeOnPressMask={true}
-        height={500}
+        height={600}
         customStyles={{
           container: {
             borderTopRightRadius: 20,
@@ -51,7 +51,6 @@ const Dashboard = () => {
           },
         }}
       >
-        <CalendarComponent />
         <TouchableOpacity>
           <Icon
             name="close"
@@ -60,6 +59,7 @@ const Dashboard = () => {
             onPress={() => refRBSheet.current.close()}
           />
         </TouchableOpacity>
+        <CalendarComponent />
       </RBSheet>
     </SafeAreaView>
   );

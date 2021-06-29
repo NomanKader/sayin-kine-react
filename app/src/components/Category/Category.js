@@ -10,12 +10,13 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import { Button, Card, TextInput, Provider, Title } from "react-native-paper";
+import { Button, Card, TextInput, Title, List } from "react-native-paper";
 import {
   BottomAlert,
   useRefBottomAlert,
 } from "react-native-modal-bottom-alert";
 import { showBottomAlert } from "react-native-modal-bottom-alert";
+import { useEffect } from "react";
 
 const topics = [
   {
@@ -122,9 +123,16 @@ const topics = [
 
 const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
 
+// const categoryArray = [];
+
 const Category = () => {
   const [category, setCategory] = React.useState("");
   const [sticker, setSticker] = React.useState("");
+  const [categoryData, setCategoryData] = React.useState([]);
+
+  useEffect(() => {
+    getCategory();
+  }, []);
 
   const sendCategory = async (e) => {
     e.preventDefault();
@@ -141,6 +149,9 @@ const Category = () => {
           .then((res) => {
             if (res.data == "202") {
               showBottomAlert("success", "Congratulation!", "Category Created");
+              getCategory();
+              setCategory("");
+              setSticker("")
             } else if (res.data == "409") {
               showBottomAlert("info", "Warning!", "Category already exists");
             } else if (res.data == "System Error At Category Create") {
@@ -156,33 +167,59 @@ const Category = () => {
         (category != "" && sticker == "") ||
         (category == "" && sticker != "")
       ) {
-        showBottomAlert("info", "Warning!", "Please check your input or choose a sticker!");
+        showBottomAlert(
+          "info",
+          "Warning!",
+          "Please check your input or choose a sticker!"
+        );
       } else {
-        showBottomAlert("info", "Warning!", "Please fill all fields correctly!");
+        showBottomAlert(
+          "info",
+          "Warning!",
+          "Please fill all fields correctly!"
+        );
       }
     } catch (error) {
       alert(error);
     }
   };
 
+  const getCategory = async () => {
+    const checkNumber = await AsyncStorage.getItem("@ph_number");
+    try {
+      axios
+        .get(`${root_url}api/Category?phonenumber_or_email=${checkNumber}`)
+        .then((res) => setCategoryData(res.data))
+        .catch((err) => console.log(err));
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+  console.log(categoryData)
+
   return (
-    <Provider>
-      <SafeAreaView
-        style={{ backgroundColor: "#fff", height: "100%", width: "100%" }}
-      >
-        <View style={category_style.header}>
-          <Image
-            style={category_style.logo}
-            source={require("../../assets/images/logo.png")}
-          />
-          <Text style={category_style.headerText}>
-            "Hey, let's create {"\n"} category & choose sticker to use in your
-            income and expense."
-          </Text>
-        </View>
+    <SafeAreaView
+      style={{ backgroundColor: "#fff", height: "100%", width: "100%" }}
+    >
+      <View style={category_style.header}>
+        <Image
+          style={category_style.logo}
+          source={require("../../assets/images/logo.png")}
+        />
+        <Text style={category_style.headerText}>
+          "Hey, let's create {"\n"} category & choose sticker to use in your
+          income and expense."
+        </Text>
+      </View>
+      <View style={category_style.categoryContainer}>
         <TextInput
           mode="outlined"
-          theme={{ colors: { primary: "#0D3858" }, roundness: 15 }}
+          theme={{
+            colors: { primary: "#fff", placeholder: "#fff", text: "#fff" },
+            roundness: 15,
+          }}
+          outlineColor="#fff"
           label="Enter category title"
           style={category_style.input}
           name="category"
@@ -224,16 +261,50 @@ const Category = () => {
         </Text>
         <Button
           mode="contained"
-          labelStyle={{ fontSize: 16 }}
+          labelStyle={{ fontSize: 15 }}
           style={category_style.createBtn}
           uppercase={false}
           onPress={sendCategory}
         >
           Let's Create
         </Button>
+        <ScrollView
+          style={category_style.scrollContainer}
+          persistentScrollbar={true}
+          indicatorStyle="white"
+        >
+          {categoryData.map((categorylist) => {
+            return (
+              <Card.Content key={categorylist.No}>
+                <List.Section>
+                  <List.Item
+                    style={category_style.listItem}
+                    titleStyle={{ color: "#fff" }}
+                    title={categorylist.Category_Title}
+                    left={(props) => (
+                      <List.Subheader>
+                      {" "}
+                      {categorylist.Category_Sticker}
+                    </List.Subheader>
+                    )}
+                    right={(props) => (
+                      <TouchableOpacity onPress={() => console.log("hello")}>
+                        <List.Icon
+                          {...props}
+                          icon="trash-can-outline"
+                          color="#F44336"
+                        />
+                      </TouchableOpacity>
+                    )}
+                  />
+                </List.Section>
+              </Card.Content>
+            );
+          })}
+        </ScrollView>
         <BottomAlert ref={(ref) => useRefBottomAlert(ref)} />
-      </SafeAreaView>
-    </Provider>
+      </View>
+    </SafeAreaView>
   );
 };
 
@@ -245,38 +316,46 @@ const category_style = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     flexDirection: "row",
+    marginTop: 20,
   },
   logo: {
-    top: 40,
+    top: 10,
     left: 20,
     width: 88,
     height: 123,
   },
   headerText: {
-    top: 30,
     width: 250,
     fontSize: 16,
     textAlign: "center",
     color: "#0d3858",
     fontWeight: "bold",
   },
+  categoryContainer: {
+    backgroundColor: "#0d3858",
+    width: "100%",
+    height: "100%",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
   input: {
-    top: 80,
-    marginBottom: 20,
-    borderRadius: 20,
+    top: 50,
+    marginBottom: 30,
     width: 320,
     alignSelf: "center",
+    backgroundColor: "#124d78",
+    color: "#fff",
   },
   inputExp: {
-    top: 60,
+    top: 30,
     alignSelf: "flex-start",
     left: 55,
-    color: "#0d3858",
+    color: "#fff",
     fontWeight: "bold",
   },
   stickerCard: {
     alignSelf: "center",
-    top: 80,
+    top: 40,
     width: "50%",
   },
   addSticker: {
@@ -286,22 +365,42 @@ const category_style = StyleSheet.create({
     alignSelf: "center",
   },
   displayTxt: {
-    top: 100,
+    top: 50,
     left: 60,
     fontSize: 16,
     fontWeight: "bold",
-    color: "#0d3858",
+    color: "#fff",
   },
   displayInnterTxt: {
-    color: "#000",
+    color: "#fff",
   },
   createBtn: {
     backgroundColor: "#467ca4",
-    borderRadius: 20,
-    // height: 55,
+    borderRadius: 10,
     width: 150,
-    top: 120,
+    top: 65,
     alignSelf: "center",
+  },
+  listItem: {
+    backgroundColor: "#124d78",
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    borderTopRightRadius: 20,
+    borderTopLeftRadius: 20,
+    marginBottom: 20,
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderColor: "#5397c8",
+  },
+  listExpense: {
+    color: "#ff7070",
+  },
+  listIncome: {
+    color: "#36c46f",
+  },
+  scrollContainer: {
+    marginTop: 80,
+    marginBottom: 120,
   },
 });
 
@@ -321,8 +420,11 @@ const carousel_style = StyleSheet.create({
   cardStyle: {
     width: 320,
     height: 93,
-    backgroundColor: "#0d3858",
+    backgroundColor: "#124d78",
     borderRadius: 15,
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderColor: "#5397c8",
   },
   iconsCard: {
     margin: (0, 7, 7, 7),

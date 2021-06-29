@@ -80,75 +80,99 @@ const Home = () => {
             <List.Section>
               <List.Item
                 style={home_style.listItem}
+                titleStyle={{ color: "#fff" }}
                 title="Food"
+                descriptionStyle={{ color: "#fff" }}
                 description="Expense"
-                left={(props) => <List.Icon {...props} icon="food" />}
+                left={(props) => (
+                  <List.Icon {...props} icon="food" color="#fff" />
+                )}
                 right={(props) => (
                   <List.Subheader style={home_style.listExpense}>
                     {" "}
-                    - 1900 mmk
+                    - 1900 <Text style={{ color: "#fff" }}>mmk</Text>
                   </List.Subheader>
                 )}
               />
               <List.Item
                 style={home_style.listItem}
+                titleStyle={{ color: "#fff" }}
                 title="Work"
+                descriptionStyle={{ color: "#fff" }}
                 description="Income"
-                left={(props) => <List.Icon {...props} icon="food" />}
+                left={(props) => (
+                  <List.Icon {...props} icon="food" color="#fff" />
+                )}
                 right={(props) => (
                   <List.Subheader style={home_style.listIncome}>
                     {" "}
-                    + 15000 mmk
+                    + 15000 <Text style={{ color: "#fff" }}>mmk</Text>
                   </List.Subheader>
                 )}
               />
 
               <List.Item
                 style={home_style.listItem}
+                titleStyle={{ color: "#fff" }}
                 title="Food"
+                descriptionStyle={{ color: "#fff" }}
                 description="Expense"
-                left={(props) => <List.Icon {...props} icon="food" />}
+                left={(props) => (
+                  <List.Icon {...props} icon="food" color="#fff" />
+                )}
                 right={(props) => (
                   <List.Subheader style={home_style.listExpense}>
                     {" "}
-                    - 1900 mmk
+                    - 1900 <Text style={{ color: "#fff" }}>mmk</Text>
                   </List.Subheader>
                 )}
               />
               <List.Item
                 style={home_style.listItem}
+                titleStyle={{ color: "#fff" }}
                 title="Food"
+                descriptionStyle={{ color: "#fff" }}
                 description="Expense"
-                left={(props) => <List.Icon {...props} icon="food" />}
+                left={(props) => (
+                  <List.Icon {...props} icon="food" color="#fff" />
+                )}
                 right={(props) => (
                   <List.Subheader style={home_style.listExpense}>
                     {" "}
-                    - 1900 mmk
+                    - 1900 <Text style={{ color: "#fff" }}>mmk</Text>
                   </List.Subheader>
                 )}
               />
               <List.Item
                 style={home_style.listItem}
+                titleStyle={{ color: "#fff" }}
                 title="Food"
+                descriptionStyle={{ color: "#fff" }}
                 description="Expense"
-                left={(props) => <List.Icon {...props} icon="food" />}
+                left={(props) => (
+                  <List.Icon {...props} icon="food" color="#fff" />
+                )}
                 right={(props) => (
                   <List.Subheader style={home_style.listExpense}>
                     {" "}
-                    - 1900 mmk
+                    - 1900 <Text style={{ color: "#fff" }}>mmk</Text>
                   </List.Subheader>
                 )}
               />
               <List.Item
                 style={home_style.listItem}
+                titleStyle={{ color: "#fff" }}
                 title="Food"
+                descriptionStyle={{ color: "#fff" }}
                 description="Expense"
-                left={(props) => <List.Icon {...props} icon="food" />}
+                left={(props) => (
+                  <List.Icon {...props} icon="food" color="#fff" />
+                )}
                 right={(props) => (
                   <List.Subheader style={home_style.listExpense}>
-                    {" "}
-                    - 1900 mmk
-                  </List.Subheader>
+                  {" "}
+                  - 1900 <Text style={{ color: "#fff" }}>mmk</Text>
+                </List.Subheader>
                 )}
               />
             </List.Section>
@@ -187,12 +211,14 @@ const home_style = StyleSheet.create({
     borderTopRightRadius: 20,
   },
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: "#124d78",
     width: 317,
     height: 100,
     alignSelf: "center",
     marginTop: 30,
     borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#5397c8'
   },
   cardContent: {
     display: "flex",
@@ -201,13 +227,13 @@ const home_style = StyleSheet.create({
   },
   cardText: {
     fontSize: 20,
-    color: "#0d3858",
+    color: "#fff",
     paddingBottom: 10,
   },
   budgetAmount: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#0d3858",
+    color: "#fff",
   },
   chartHeader: {
     top: 20,
@@ -244,22 +270,28 @@ const home_style = StyleSheet.create({
     alignSelf: "flex-end",
   },
   listItem: {
-    backgroundColor: "white",
+    backgroundColor: "#124d78",
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
     marginBottom: 20,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderColor: '#5397c8'
   },
   listExpense: {
-    color: "#f11010",
-    // fontFamily:'Cambria'
+    color: "#ff7070",
   },
   listIncome: {
-    color: "#069c42",
-    // fontFamily:"Cambria"
+    color: "#36c46f",
   },
   scrollContainer: {
-    marginBottom: 35,
+    marginBottom: 120,
   },
 });
+
+// #5397c8 border color
+// #124d78 background color
+// #ff7070 expense
+// #36c46f income
