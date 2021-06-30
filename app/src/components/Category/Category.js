@@ -10,13 +10,21 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import { Button, Card, TextInput, Title, List } from "react-native-paper";
+import {
+  Button,
+  Card,
+  TextInput,
+  Title,
+  List,
+  Avatar,
+} from "react-native-paper";
 import {
   BottomAlert,
   useRefBottomAlert,
 } from "react-native-modal-bottom-alert";
 import { showBottomAlert } from "react-native-modal-bottom-alert";
 import { useEffect } from "react";
+// import { Icon } from "react-native-paper/lib/typescript/components/Avatar/Avatar";
 
 const topics = [
   {
@@ -71,7 +79,7 @@ const topics = [
   },
   {
     id: 11,
-    emoji: "💑🏻",
+    emoji: "🥳",
     text: "Wedding",
   },
   {
@@ -129,9 +137,11 @@ const Category = () => {
   const [category, setCategory] = React.useState("");
   const [sticker, setSticker] = React.useState("");
   const [categoryData, setCategoryData] = React.useState([]);
+  const categoryList = categoryData.reverse();
 
   useEffect(() => {
     getCategory();
+    // deleteCategoryData();
   }, []);
 
   const sendCategory = async (e) => {
@@ -151,10 +161,10 @@ const Category = () => {
               showBottomAlert("success", "Congratulation!", "Category Created");
               getCategory();
               setCategory("");
-              setSticker("")
+              setSticker("");
             } else if (res.data == "409") {
               showBottomAlert("info", "Warning!", "Category already exists");
-            } else if (res.data == "System Error At Category Create") {
+            } else if (res.data == "500") {
               showBottomAlert(
                 "error",
                 "Error",
@@ -196,7 +206,22 @@ const Category = () => {
     }
   };
 
-  console.log(categoryData)
+  const deleteCategoryData = (id) => {
+    axios
+      .delete(`${root_url}api/Category?id=${id}`)
+      .then((res) => {
+        console.log(res.data);
+        if (res.data == "200") {
+          getCategory();
+        }
+        if (res.data == "500") {
+          showBottomAlert("error", "Error", "System Error");
+        }
+      })
+      .catch((err) => console.log(err.message));
+  };
+
+  console.log(categoryData);
 
   return (
     <SafeAreaView
@@ -273,7 +298,7 @@ const Category = () => {
           persistentScrollbar={true}
           indicatorStyle="white"
         >
-          {categoryData.map((categorylist) => {
+          {categoryList.map((categorylist) => {
             return (
               <Card.Content key={categorylist.No}>
                 <List.Section>
@@ -282,17 +307,21 @@ const Category = () => {
                     titleStyle={{ color: "#fff" }}
                     title={categorylist.Category_Title}
                     left={(props) => (
-                      <List.Subheader>
-                      {" "}
-                      {categorylist.Category_Sticker}
-                    </List.Subheader>
+                      <List.Subheader
+                        style={{ color: "rgba(0,0,0,0.87)", fontSize: 20 }}
+                      >
+                        {categorylist.Category_Sticker}
+                      </List.Subheader>
                     )}
                     right={(props) => (
-                      <TouchableOpacity onPress={() => console.log("hello")}>
+                      <TouchableOpacity
+                        onPress={() => deleteCategoryData(categorylist.No)}
+                        style={{ alignSelf: "center" }}
+                      >
                         <List.Icon
                           {...props}
                           icon="trash-can-outline"
-                          color="#F44336"
+                          color="#CD6155"
                         />
                       </TouchableOpacity>
                     )}
@@ -387,10 +416,11 @@ const category_style = StyleSheet.create({
     borderBottomRightRadius: 20,
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
-    marginBottom: 20,
+    marginBottom: 5,
     borderStyle: "solid",
     borderWidth: 1,
     borderColor: "#5397c8",
+    // backgroundColor: '#fff'
   },
   listExpense: {
     color: "#ff7070",
@@ -400,7 +430,7 @@ const category_style = StyleSheet.create({
   },
   scrollContainer: {
     marginTop: 80,
-    marginBottom: 120,
+    marginBottom: 150,
   },
 });
 
