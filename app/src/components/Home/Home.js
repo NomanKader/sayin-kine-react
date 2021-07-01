@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useEffect} from "react";
 import {
   View,
   Image,
@@ -8,10 +8,28 @@ import {
   ScrollView,
   SafeAreaView,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 import { Card, List } from "react-native-paper";
 import IonIcons from "react-native-vector-icons/AntDesign";
 import Speedometer from "react-native-speedometer-chart";
 const Home = () => {
+  const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
+  const [user_name,setUserName]=React.useState("");
+  useEffect(() => {
+    getUserName()
+  }, [])
+  const getUserName = async () => {
+    const phonenumber_or_email = await AsyncStorage.getItem("@ph_number");
+    try {
+      axios
+        .get(`${root_url}api/UserName?phone_number_or_email=${phonenumber_or_email}`)
+        .then((res) => setUserName(res.data))
+        .catch((err) => console.log(err));
+    } catch (error) {
+      alert(error);
+    }
+  };
   return (
     <SafeAreaView
       style={{ height: "100%", backgroundColor: "#fff", width: "100%" }}
@@ -22,7 +40,7 @@ const Home = () => {
           source={require("../../assets/images/logo.png")}
         />
         <Text style={home_style.headerText}>
-          Good Morning, {"\n     "} <Text>Tin Win Hlaing</Text>
+          Good Morning, {"\n     "} <Text>{user_name}</Text>
         </Text>
       </View>
       <View style={home_style.body}>
