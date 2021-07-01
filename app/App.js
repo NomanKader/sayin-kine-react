@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect } from "react";
-import { View , Platform } from "react-native";
+import { View, Platform } from "react-native";
 import { NativeRouter, Route, Router, Switch } from "react-router-native";
 import SignUpComponent from "./src/components/Authority/SignUp/SignUp";
 import LoginComponent from "./src/components/Authority/SignUp/Login";
@@ -72,10 +72,7 @@ const App = () => {
           height: Platform.OS === "ios" ? 38 : StatusBar.currentHeight,
         }}
       >
-        <StatusBar
-          style='light'
-          backgroundColor="#467ca4"          
-        />
+        <StatusBar style="light" backgroundColor="#467ca4" />
       </View>
       <Switch>
         {token != null && session != "invalid token" ? (
@@ -83,11 +80,10 @@ const App = () => {
         ) : (
           <Route exact path="/" component={LoginComponent} />
         )}
+        <Route exact path="/" component={Navigation} />
         <Route exact path="/signup" component={SignUpComponent} />
-        <Route exact path="/home" component={HomeComponent} />
         <Route exact path="/login" component={LoginComponent} />
         <Route exact path="/starting_budget" component={StartingBudget} />
-        <Route exact path="/navigation" component={Navigation} />
       </Switch>
     </NativeRouter>
   );

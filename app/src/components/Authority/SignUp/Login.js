@@ -42,7 +42,7 @@ const Login = ({ history }) => {
           else if (res.data == "401") {
             setIsSubmitted(false);
             alert("Phone Number Or Password Incorrect");
-          } else if(res.data == 'System Error'){
+          } else if(res.data == '500'){
             alert("System Error! Please, try again later.")
             setIsSubmitted(false)
           }

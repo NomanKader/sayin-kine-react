@@ -1,4 +1,4 @@
-import React,{useEffect} from "react";
+import React, { useEffect, Suspense } from "react";
 import {
   View,
   Image,
@@ -13,19 +13,62 @@ import axios from "axios";
 import { Card, List } from "react-native-paper";
 import IonIcons from "react-native-vector-icons/AntDesign";
 import Speedometer from "react-native-speedometer-chart";
+import {
+  BottomAlert,
+  useRefBottomAlert,
+} from "react-native-modal-bottom-alert";
+import { showBottomAlert } from "react-native-modal-bottom-alert";
 const Home = () => {
   const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
-  const [user_name,setUserName]=React.useState("");
+  const [user_name, setUserName] = React.useState("");
+  const [budgetAmount, setBudgetAmount] = React.useState("");
   useEffect(() => {
-    getUserName()
-  }, [])
+    getUserName();
+    getBudgetAmount();
+  }, []);
   const getUserName = async () => {
     const phonenumber_or_email = await AsyncStorage.getItem("@ph_number");
     try {
       axios
-        .get(`${root_url}api/UserName?phone_number_or_email=${phonenumber_or_email}`)
-        .then((res) => setUserName(res.data))
+        .get(
+          `${root_url}api/UserName?phone_number_or_email=${phonenumber_or_email}`
+        )
+        .then((res) => {
+          if (res.data != "500") {
+            setUserName(res.data);
+          } else if (res.data == "500") {
+            showBottomAlert(
+              "error",
+              "Error",
+              "Please check your internet connection!"
+            );
+          }
+        })
         .catch((err) => console.log(err));
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+  const getBudgetAmount = async () => {
+    const phonenumber_or_email = await AsyncStorage.getItem("@ph_number");
+    try {
+      axios
+        .get(
+          `${root_url}api/UserData/getbudget?phonenumber_or_email=${phonenumber_or_email}`
+        )
+        .then((res) => {
+          if (res.data != "500") {
+            setBudgetAmount(res.data);
+          } else if (res.data == "500") {
+            showBottomAlert(
+              "error",
+              "Error",
+              "Please check your internet connection!"
+            );
+          }
+        })
+        .catch((err) => console.log(err.message));
     } catch (error) {
       alert(error);
     }
@@ -40,14 +83,14 @@ const Home = () => {
           source={require("../../assets/images/logo.png")}
         />
         <Text style={home_style.headerText}>
-          Good Morning, {"\n     "} <Text>{user_name}</Text>
+          Good Morning, {"\n     "} <Suspense fallback={}><Text>{user_name}</Text></Suspense>
         </Text>
       </View>
       <View style={home_style.body}>
         <Card style={home_style.card}>
           <Card.Content style={home_style.cardContent}>
             <Text style={home_style.cardText}>Budget Left</Text>
-            <Text style={home_style.budgetAmount}>1,000,000 MMK</Text>
+            <Text style={home_style.budgetAmount}>{budgetAmount}</Text>
           </Card.Content>
         </Card>
         <Text style={home_style.chartHeader}>Jun 2021</Text>
@@ -188,15 +231,16 @@ const Home = () => {
                 )}
                 right={(props) => (
                   <List.Subheader style={home_style.listExpense}>
-                  {" "}
-                  - 1900 <Text style={{ color: "#fff" }}>mmk</Text>
-                </List.Subheader>
+                    {" "}
+                    - 1900 <Text style={{ color: "#fff" }}>mmk</Text>
+                  </List.Subheader>
                 )}
               />
             </List.Section>
           </Card.Content>
         </ScrollView>
       </View>
+      <BottomAlert ref={(ref) => useRefBottomAlert(ref)} />
     </SafeAreaView>
   );
 };
@@ -236,7 +280,7 @@ const home_style = StyleSheet.create({
     marginTop: 30,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#5397c8'
+    borderColor: "#5397c8",
   },
   cardContent: {
     display: "flex",
@@ -294,9 +338,9 @@ const home_style = StyleSheet.create({
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
     marginBottom: 20,
-    borderStyle: 'solid',
+    borderStyle: "solid",
     borderWidth: 1,
-    borderColor: '#5397c8'
+    borderColor: "#5397c8",
   },
   listExpense: {
     color: "#ff7070",

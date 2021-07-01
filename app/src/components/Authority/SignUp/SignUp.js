@@ -114,7 +114,7 @@ const SignUp = ({ history }) => {
           if (res.data == "409") {
             alert("Account already exists, Please try with another")
             setIsSubmitted(false)
-          } else if (res.data == "System Error"){
+          } else if (res.data == "500"){
             alert("System error")
             setIsSubmitted(false)
           }
