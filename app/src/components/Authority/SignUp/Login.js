@@ -36,7 +36,6 @@ const Login = ({ history }) => {
           if (res.data != "401") {
             AsyncStorage.setItem("@ph_number", formData.Phone_Number_Or_Email);
             AsyncStorage.setItem("@token", res.data);
-            alert('Login successfull !')
             history.push("/navigation");
           }
           else if (res.data == "401") {

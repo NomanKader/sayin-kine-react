@@ -80,7 +80,7 @@ const App = () => {
         ) : (
           <Route exact path="/" component={LoginComponent} />
         )}
-        <Route exact path="/" component={Navigation} />
+        {/* <Route exact path="/" component={Navigation} /> */}
         <Route exact path="/signup" component={SignUpComponent} />
         <Route exact path="/login" component={LoginComponent} />
         <Route exact path="/starting_budget" component={StartingBudget} />

@@ -23,63 +23,78 @@ const Home = () => {
   const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
   const [user_name, setUserName] = React.useState("");
   const [budgetAmount, setBudgetAmount] = React.useState("");
-  const [loadingName, setLoadingName] = React.useState(false);
-  const [loadingAmount, setLoadingAmount] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
   useEffect(() => {
-    getUserName();
-    getBudgetAmount();
-    setLoadingName(true);
-    setLoadingAmount(true);
+    getUserNameAndBudget();
+    setLoading(true)
   }, []);
-  const getUserName = async () => {
-    const phonenumber_or_email = await AsyncStorage.getItem("@ph_number");
-    try {
-      axios
-        .get(
-          `${root_url}api/UserName?phone_number_or_email=${phonenumber_or_email}`
-        )
-        .then((res) => {
-          if (res.data != "500") {
-            setUserName(res.data);
-            setLoadingName(false);
-          } else if (res.data == "500") {
-            showBottomAlert(
-              "error",
-              "Error",
-              "Please check your internet connection!"
-            );
-          }
-        })
-        .catch((err) => console.log(err));
-    } catch (error) {
-      alert(error);
-    }
-  };
 
-  const getBudgetAmount = async () => {
-    const phonenumber_or_email = await AsyncStorage.getItem("@ph_number");
+  const getUserNameAndBudget = async () =>{
+    const phone_number_or_email = await AsyncStorage.getItem('@ph_number');
     try {
-      axios
-        .get(
-          `${root_url}api/UserData/getbudget?phonenumber_or_email=${phonenumber_or_email}`
-        )
-        .then((res) => {
-          if (res.data != "500") {
-            setBudgetAmount(res.data);
-            setLoadingAmount(false);
-          } else if (res.data == "500") {
-            showBottomAlert(
-              "error",
-              "Error",
-              "Please check your internet connection!"
-            );
-          }
-        })
-        .catch((err) => console.log(err.message));
+      axios.get(`${root_url}api/home?phonenumber_or_email=${phone_number_or_email}`)
+      .then((res)=>{
+        res.data.forEach(element => {
+          setUserName(element.User_Name);
+          setBudgetAmount(element.Budget);
+          setLoading(false)
+        });
+      })
+      .catch(err=>console.log(err.message))
     } catch (error) {
-      alert(error);
+      
     }
-  };
+  }
+
+  // const getUserName = async () => {
+  //   const phonenumber_or_email = await AsyncStorage.getItem("@ph_number");
+  //   try {
+  //     axios
+  //       .get(
+  //         `${root_url}api/UserName?phone_number_or_email=${phonenumber_or_email}`
+  //       )
+  //       .then((res) => {
+  //         if (res.data != "500") {
+  //           setUserName(res.data);
+  //           setLoadingName(false);
+  //         } else if (res.data == "500") {
+  //           showBottomAlert(
+  //             "error",
+  //             "Error",
+  //             "Please check your internet connection!"
+  //           );
+  //         }
+  //       })
+  //       .catch((err) => console.log(err));
+  //   } catch (error) {
+  //     alert(error);
+  //   }
+  // };
+
+  // const getBudgetAmount = async () => {
+  //   const phonenumber_or_email = await AsyncStorage.getItem("@ph_number");
+  //   try {
+  //     axios
+  //       .get(
+  //         `${root_url}api/UserData/getbudget?phonenumber_or_email=${phonenumber_or_email}`
+  //       )
+  //       .then((res) => {
+  //         if (res.data != "500") {
+  //           setBudgetAmount(res.data);
+  //           setLoadingAmount(false);
+  //         } else if (res.data == "500") {
+  //           showBottomAlert(
+  //             "error",
+  //             "Error",
+  //             "Please check your internet connection!"
+  //           );
+  //         }
+  //       })
+  //       .catch((err) => console.log(err.message));
+  //   } catch (error) {
+  //     alert(error);
+  //   }
+  // };
 
   return (
     <SafeAreaView
@@ -92,7 +107,7 @@ const Home = () => {
         />
         <Text style={home_style.headerText}>
           Good Morning, {"\n     "}{" "}
-          {loadingName === true ? (
+          {loading === true ? (
             <Image source={require("../../assets/images/sayinkine.gif")} />
           ) : (
             <Text>{user_name}</Text>
@@ -103,8 +118,8 @@ const Home = () => {
         <Card style={home_style.card}>
           <Card.Content style={home_style.cardContent}>
             <Text style={home_style.cardText}>Budget Left</Text>
-            {loadingAmount === true ? (
-              <Image source={require("../../assets/images/sayinkine.gif")} />
+            {loading === true ? (
+              <Image source={require("../../assets/images/sayinkine_loader.gif")} />
             ) : (
               <Text style={home_style.budgetAmount}>{budgetAmount}</Text>
             )}
@@ -369,8 +384,3 @@ const home_style = StyleSheet.create({
     marginBottom: 120,
   },
 });
-
-// #5397c8 border color
-// #124d78 background color
-// #ff7070 expense
-// #36c46f income

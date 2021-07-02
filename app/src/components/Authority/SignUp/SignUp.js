@@ -6,9 +6,9 @@ import {
   Text,
   KeyboardAvoidingView,
   View,
-  Platform
+  Platform,
 } from "react-native";
-import { TextInput, Button } from "react-native-paper";
+import { TextInput, Button, Snackbar } from "react-native-paper";
 
 const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
 
@@ -28,23 +28,25 @@ const SignUp = ({ history }) => {
   const [PasswordErr, setPasswordErr] = React.useState(false);
   const [ConfirmPasswordErr, setConfirmPasswordErr] = React.useState(false);
 
+  // snackbar control
+  // const [visible, setVisible] = React.useState(false);
+
   // validate email
-  const validatePhoneOrEmail = (inputData) =>{
+  const validatePhoneOrEmail = (inputData) => {
     if (!isNaN(inputData)) {
-      setPhoneNumberOrEmail(inputData)
+      setPhoneNumberOrEmail(inputData);
     } else {
       let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
       if (reg.test(inputData) === false) {
         console.log("Email is Not Correct");
-        setPhoneNumberOrEmail(inputData)
+        setPhoneNumberOrEmail(inputData);
         return false;
-      }
-      else {
-        setPhoneNumberOrEmail(inputData)
+      } else {
+        setPhoneNumberOrEmail(inputData);
         console.log("Email is Correct");
       }
     }
-  }
+  };
 
   const Submit = (e) => {
     e.preventDefault();
@@ -110,17 +112,19 @@ const SignUp = ({ history }) => {
       axios
         .post(`${root_url}api/SignUp`, formData)
         .then((res) => {
-          console.log(formData)
+          console.log(formData);
           if (res.data == "409") {
-            alert("Account already exists, Please try with another")
-            setIsSubmitted(false)
-          } else if (res.data == "500"){
-            alert("System error")
-            setIsSubmitted(false)
-          }
-           else if (res.data == "202"){
-            alert("Congratulations you account is successfully created. Please Login")
-            history.push('/login')
+            alert("Account already exists, Please try with another");
+            setIsSubmitted(false);
+          } else if (res.data == "500") {
+            alert("System error");
+            setIsSubmitted(false);
+          } else if (res.data == "202") {
+            // setVisible(true);
+            alert(
+              "Congratulations you account is successfully created. Please Login"
+            );
+            history.push("/login");
           }
         })
         .catch((err) => {
@@ -150,7 +154,9 @@ const SignUp = ({ history }) => {
           label="Enter Account Phone Number or Email"
           name="phonenumberoremail"
           value={phonenumberoremail}
-          onChangeText={(phonenumberoremail) => validatePhoneOrEmail(phonenumberoremail)}
+          onChangeText={(phonenumberoremail) =>
+            validatePhoneOrEmail(phonenumberoremail)
+          }
           error={phoneNumberErr && phonenumberoremail == ""}
         />
         {/*  Second input */}
@@ -229,6 +235,14 @@ const SignUp = ({ history }) => {
           Login
         </Text>
       </Text>
+      {/* <Snackbar
+        visible={visible}
+        // onDismiss={setVisible(false)}
+        action={{ label: "Undo" }}
+        style={{ marginBottom: 0 }}
+      >
+        Congratulations you account is successfully created. Please Login
+      </Snackbar> */}
     </View>
   );
 };
