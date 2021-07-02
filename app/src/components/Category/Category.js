@@ -138,10 +138,11 @@ const Category = () => {
   const [sticker, setSticker] = React.useState("");
   const [categoryData, setCategoryData] = React.useState([]);
   const categoryList = categoryData.reverse();
+  const [loading, setLoading] = React.useState(false);
 
   useEffect(() => {
+    setLoading(true);
     getCategory();
-    // deleteCategoryData();
   }, []);
 
   const sendCategory = async (e) => {
@@ -199,7 +200,10 @@ const Category = () => {
     try {
       axios
         .get(`${root_url}api/Category?phonenumber_or_email=${checkNumber}`)
-        .then((res) => setCategoryData(res.data))
+        .then((res) => {
+          setCategoryData(res.data);
+          setLoading(false)
+        })
         .catch((err) => console.log(err));
     } catch (error) {
       alert(error);
@@ -293,44 +297,52 @@ const Category = () => {
         >
           Let's Create
         </Button>
-        <ScrollView
-          style={category_style.scrollContainer}
-          persistentScrollbar={true}
-          indicatorStyle="white"
-        >
-          {categoryList.map((categorylist) => {
-            return (
-              <Card.Content key={categorylist.No}>
-                <List.Section>
-                  <List.Item
-                    style={category_style.listItem}
-                    titleStyle={{ color: "#fff" }}
-                    title={categorylist.Category_Title}
-                    left={(props) => (
-                      <List.Subheader
-                        style={{ color: "rgba(0,0,0,0.87)", fontSize: 20 }}
-                      >
-                        {categorylist.Category_Sticker}
-                      </List.Subheader>
-                    )}
-                    right={(props) => (
-                      <TouchableOpacity
-                        onPress={() => deleteCategoryData(categorylist.No)}
-                        style={{ alignSelf: "center" }}
-                      >
-                        <List.Icon
-                          {...props}
-                          icon="trash-can-outline"
-                          color="#CD6155"
-                        />
-                      </TouchableOpacity>
-                    )}
-                  />
-                </List.Section>
-              </Card.Content>
-            );
-          })}
-        </ScrollView>
+        {loading === true ? (
+          <Image
+            source={require("../../assets/images/sayinkine.gif")}
+            style={category_style.loader}
+          />
+        ) : (
+          <ScrollView
+            style={category_style.scrollContainer}
+            persistentScrollbar={true}
+            indicatorStyle="white"
+          >
+            {categoryList.map((categorylist) => {
+              return (
+                <Card.Content key={categorylist.No}>
+                  <List.Section>
+                    <List.Item
+                      style={category_style.listItem}
+                      titleStyle={{ color: "#fff" }}
+                      title={categorylist.Category_Title}
+                      left={(props) => (
+                        <List.Subheader
+                          style={{ color: "rgba(0,0,0,0.87)", fontSize: 20 }}
+                        >
+                          {categorylist.Category_Sticker}
+                        </List.Subheader>
+                      )}
+                      right={(props) => (
+                        <TouchableOpacity
+                          onPress={() => deleteCategoryData(categorylist.No)}
+                          style={{ alignSelf: "center" }}
+                        >
+                          <List.Icon
+                            {...props}
+                            icon="trash-can-outline"
+                            color="#CD6155"
+                          />
+                        </TouchableOpacity>
+                      )}
+                    />
+                  </List.Section>
+                </Card.Content>
+              );
+            })}
+          </ScrollView>
+        )}
+
         <BottomAlert ref={(ref) => useRefBottomAlert(ref)} />
       </View>
     </SafeAreaView>
@@ -409,6 +421,10 @@ const category_style = StyleSheet.create({
     width: 150,
     top: 65,
     alignSelf: "center",
+  },
+  loader:{
+    alignSelf: 'center',
+    top: 100
   },
   listItem: {
     backgroundColor: "#124d78",

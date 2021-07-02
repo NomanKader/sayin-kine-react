@@ -84,6 +84,7 @@ const App = () => {
         <Route exact path="/signup" component={SignUpComponent} />
         <Route exact path="/login" component={LoginComponent} />
         <Route exact path="/starting_budget" component={StartingBudget} />
+        <Route exact path="/navigation" component={Navigation} />
       </Switch>
     </NativeRouter>
   );

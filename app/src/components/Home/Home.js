@@ -1,4 +1,4 @@
-import React, { useEffect, Suspense } from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Image,
@@ -18,13 +18,18 @@ import {
   useRefBottomAlert,
 } from "react-native-modal-bottom-alert";
 import { showBottomAlert } from "react-native-modal-bottom-alert";
+
 const Home = () => {
   const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
   const [user_name, setUserName] = React.useState("");
   const [budgetAmount, setBudgetAmount] = React.useState("");
+  const [loadingName, setLoadingName] = React.useState(false);
+  const [loadingAmount, setLoadingAmount] = React.useState(false);
   useEffect(() => {
     getUserName();
     getBudgetAmount();
+    setLoadingName(true);
+    setLoadingAmount(true);
   }, []);
   const getUserName = async () => {
     const phonenumber_or_email = await AsyncStorage.getItem("@ph_number");
@@ -36,6 +41,7 @@ const Home = () => {
         .then((res) => {
           if (res.data != "500") {
             setUserName(res.data);
+            setLoadingName(false);
           } else if (res.data == "500") {
             showBottomAlert(
               "error",
@@ -60,6 +66,7 @@ const Home = () => {
         .then((res) => {
           if (res.data != "500") {
             setBudgetAmount(res.data);
+            setLoadingAmount(false);
           } else if (res.data == "500") {
             showBottomAlert(
               "error",
@@ -73,6 +80,7 @@ const Home = () => {
       alert(error);
     }
   };
+
   return (
     <SafeAreaView
       style={{ height: "100%", backgroundColor: "#fff", width: "100%" }}
@@ -83,14 +91,23 @@ const Home = () => {
           source={require("../../assets/images/logo.png")}
         />
         <Text style={home_style.headerText}>
-          Good Morning, {"\n     "} <Suspense fallback={}><Text>{user_name}</Text></Suspense>
+          Good Morning, {"\n     "}{" "}
+          {loadingName === true ? (
+            <Image source={require("../../assets/images/sayinkine.gif")} />
+          ) : (
+            <Text>{user_name}</Text>
+          )}
         </Text>
       </View>
       <View style={home_style.body}>
         <Card style={home_style.card}>
           <Card.Content style={home_style.cardContent}>
             <Text style={home_style.cardText}>Budget Left</Text>
-            <Text style={home_style.budgetAmount}>{budgetAmount}</Text>
+            {loadingAmount === true ? (
+              <Image source={require("../../assets/images/sayinkine.gif")} />
+            ) : (
+              <Text style={home_style.budgetAmount}>{budgetAmount}</Text>
+            )}
           </Card.Content>
         </Card>
         <Text style={home_style.chartHeader}>Jun 2021</Text>
