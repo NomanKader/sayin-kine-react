@@ -225,8 +225,6 @@ const Category = () => {
       .catch((err) => console.log(err.message));
   };
 
-  console.log(categoryData);
-
   return (
     <SafeAreaView
       style={{ backgroundColor: "#fff", height: "100%", width: "100%" }}

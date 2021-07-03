@@ -19,6 +19,7 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-41.0.0.tar.gz",
     "react-native-calendar-range-picker": "^1.5.3",
     "react-native-chart-kit": "^6.11.0",
+    "react-native-chooser": "^1.7.0",
     "react-native-common-date-picker": "^2.3.4",
     "react-native-fontawesome": "^7.0.0",
     "react-native-gesture-handler": "^1.10.3",

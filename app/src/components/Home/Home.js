@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   View,
   Image,
@@ -8,93 +8,80 @@ import {
   ScrollView,
   SafeAreaView,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
-import { Card, List } from "react-native-paper";
-import IonIcons from "react-native-vector-icons/AntDesign";
-import Speedometer from "react-native-speedometer-chart";
+import {
+  Card,
+  IconButton,
+  List,
+  Button,
+  RadioButton,
+  TextInput,
+} from "react-native-paper";
 import {
   BottomAlert,
   useRefBottomAlert,
 } from "react-native-modal-bottom-alert";
 import { showBottomAlert } from "react-native-modal-bottom-alert";
+import { Select, Option } from "react-native-chooser";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Speedometer from "react-native-speedometer-chart";
+import RBSheet from "react-native-raw-bottom-sheet";
+import Icon from "react-native-vector-icons/EvilIcons";
 
 const Home = () => {
   const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
   const [user_name, setUserName] = React.useState("");
   const [budgetAmount, setBudgetAmount] = React.useState("");
   const [loading, setLoading] = React.useState(false);
+  const [checked, setChecked] = React.useState("income");
+  const [selected, setSelected] = React.useState("");
+  const [categoryList, setCategoryList] = React.useState([]);
+
+  const refRBSheet = useRef();
   useEffect(() => {
     getUserNameAndBudget();
-    setLoading(true)
+    setLoading(true);
   }, []);
 
-  const getUserNameAndBudget = async () =>{
-    const phone_number_or_email = await AsyncStorage.getItem('@ph_number');
+  const getUserNameAndBudget = async () => {
+    const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
     try {
-      axios.get(`${root_url}api/home?phonenumber_or_email=${phone_number_or_email}`)
-      .then((res)=>{
-        res.data.forEach(element => {
-          setUserName(element.User_Name);
-          setBudgetAmount(element.Budget);
-          setLoading(false)
-        });
-      })
-      .catch(err=>console.log(err.message))
-    } catch (error) {
-      
-    }
-  }
+      axios
+        .get(
+          `${root_url}api/home?phonenumber_or_email=${phone_number_or_email}`
+        )
+        .then((res) => {
+          if (res.data !== 500) {
+            res.data.forEach((element) => {
+              setUserName(element.User_Name);
+              setBudgetAmount(element.Budget);
+              setLoading(false);
+            });
+          } else {
+            showBottomAlert(
+              "error",
+              "Error",
+              "Please check your internet connection!"
+            );
+          }
+        })
+        .catch((err) => console.log(err.message));
+    } catch (error) {}
+  };
 
-  // const getUserName = async () => {
-  //   const phonenumber_or_email = await AsyncStorage.getItem("@ph_number");
-  //   try {
-  //     axios
-  //       .get(
-  //         `${root_url}api/UserName?phone_number_or_email=${phonenumber_or_email}`
-  //       )
-  //       .then((res) => {
-  //         if (res.data != "500") {
-  //           setUserName(res.data);
-  //           setLoadingName(false);
-  //         } else if (res.data == "500") {
-  //           showBottomAlert(
-  //             "error",
-  //             "Error",
-  //             "Please check your internet connection!"
-  //           );
-  //         }
-  //       })
-  //       .catch((err) => console.log(err));
-  //   } catch (error) {
-  //     alert(error);
-  //   }
-  // };
+  const getSelectData = async () => {
+    const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
+    try {
+      axios
+        .get(
+          `${root_url}api/Category?phonenumber_or_email=${phone_number_or_email}`
+        )
+        .then((res) => setCategoryList(res.data))
+        .catch((err) => console.log(err));
+    } catch (error) {}
+  };
 
-  // const getBudgetAmount = async () => {
-  //   const phonenumber_or_email = await AsyncStorage.getItem("@ph_number");
-  //   try {
-  //     axios
-  //       .get(
-  //         `${root_url}api/UserData/getbudget?phonenumber_or_email=${phonenumber_or_email}`
-  //       )
-  //       .then((res) => {
-  //         if (res.data != "500") {
-  //           setBudgetAmount(res.data);
-  //           setLoadingAmount(false);
-  //         } else if (res.data == "500") {
-  //           showBottomAlert(
-  //             "error",
-  //             "Error",
-  //             "Please check your internet connection!"
-  //           );
-  //         }
-  //       })
-  //       .catch((err) => console.log(err.message));
-  //   } catch (error) {
-  //     alert(error);
-  //   }
-  // };
+  console.log(selected);
 
   return (
     <SafeAreaView
@@ -105,21 +92,23 @@ const Home = () => {
           style={home_style.logo}
           source={require("../../assets/images/logo.png")}
         />
-        <Text style={home_style.headerText}>
-          Good Morning, {"\n     "}{" "}
-          {loading === true ? (
-            <Image source={require("../../assets/images/sayinkine.gif")} />
-          ) : (
-            <Text>{user_name}</Text>
-          )}
-        </Text>
+        {loading === true ? (
+          <Image
+            source={require("../../assets/images/sayinkine.gif")}
+            style={{ top: 40 }}
+          />
+        ) : (
+          <Text style={home_style.headerText}>
+            Good Morning, {"\n     "} <Text>{user_name}</Text>
+          </Text>
+        )}
       </View>
       <View style={home_style.body}>
         <Card style={home_style.card}>
           <Card.Content style={home_style.cardContent}>
             <Text style={home_style.cardText}>Budget Left</Text>
             {loading === true ? (
-              <Image source={require("../../assets/images/sayinkine_loader.gif")} />
+              <Image source={require("../../assets/images/sayinkine.gif")} />
             ) : (
               <Text style={home_style.budgetAmount}>{budgetAmount}</Text>
             )}
@@ -160,9 +149,16 @@ const Home = () => {
             style={home_style.chart}
           />
         </Card.Content>
-        <TouchableOpacity>
-          <IonIcons name="pluscircleo" style={home_style.addMore} size={30} />
-        </TouchableOpacity>
+        <IconButton
+          icon="plus-circle-outline"
+          color="#fff"
+          size={30}
+          onPress={() => {
+            refRBSheet.current.open();
+            getSelectData();
+          }}
+          style={home_style.addMore}
+        />
         <Text style={home_style.today_text}>Today</Text>
         <ScrollView
           style={home_style.scrollContainer}
@@ -272,6 +268,95 @@ const Home = () => {
           </Card.Content>
         </ScrollView>
       </View>
+      <RBSheet
+        ref={refRBSheet}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        height={350}
+        customStyles={{
+          container: {
+            borderTopRightRadius: 20,
+            borderTopLeftRadius: 20,
+          },
+          draggableIcon: {
+            backgroundColor: "#B2BABB",
+            width: 50,
+          },
+        }}
+      >
+        <TouchableOpacity>
+          <Icon
+            name="close"
+            size={24}
+            style={home_style.close_tbn}
+            onPress={() => refRBSheet.current.close()}
+          />
+        </TouchableOpacity>
+        <View>
+          <View style={dialog_style.radioContainer}>
+            <RadioButton
+              value="income"
+              status={checked === "income" ? "checked" : "unchecked"}
+              onPress={() => setChecked("income")}
+              color="#0d3858"
+            />
+            <Text style={{ marginRight: 20 }}>Income</Text>
+            <RadioButton
+              value="expense"
+              status={checked === "expense" ? "checked" : "unchecked"}
+              onPress={() => setChecked("expense")}
+              color="#0d3858"
+            />
+            <Text>Expense</Text>
+          </View>
+          <View style={dialog_style.inputFields}>
+            <TextInput
+              mode="outlined"
+              style={dialog_style.input}
+              theme={{ colors: { primary: "#0D3858" }, roundness: 10 }}
+              label="Income Amount"
+              keyboardType="numeric"
+              outlineColor="#0D3858"
+              //   name="budgetData"
+              //   value={budgetData}
+              //   onChangeText={(budgetData) => setBudgetData(budgetData)}
+              //   error={numberCheckErr && budgetData == ""}
+            />
+            <Select
+              defaultText="Choose Category"
+              style={dialog_style.selectionInput}
+              textStyle={{ marginTop: 8 }}
+              backdropStyle={{ backgroundColor: "#0d3858" }}
+              optionListStyle={{
+                backgroundColor: "#F5FCFF",
+                borderRadius: 20,
+                height: 300,
+                padding: 20,
+              }}
+              indicator="down"
+              indicatorColor="#0d3858"
+              indicatorStyle={{ marginTop: 8 }}
+            >
+              {categoryList.map((category) => {
+                return (
+                  <Option key={category.No}>
+                    <Text >{category.Category_Title}</Text>
+                    {"   "}
+                    <Text >{category.Category_Sticker}</Text>
+                  </Option>
+                );
+              })}
+            </Select>
+          </View>
+          <Button
+            mode="contained"
+            style={dialog_style.saveBtn}
+            onPress={() => console.log(selected)}
+          >
+            Save
+          </Button>
+        </View>
+      </RBSheet>
       <BottomAlert ref={(ref) => useRefBottomAlert(ref)} />
     </SafeAreaView>
   );
@@ -382,5 +467,43 @@ const home_style = StyleSheet.create({
   },
   scrollContainer: {
     marginBottom: 120,
+  },
+  close_tbn: {
+    left: 20,
+  },
+});
+
+const dialog_style = StyleSheet.create({
+  radioContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+  },
+  inputFields: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  input: {
+    width: 320,
+    marginTop: 10,
+    marginBottom: 20,
+    backgroundColor: "#fff",
+    borderColor: "#0D3858",
+  },
+  selectionInput: {
+    borderWidth: 1,
+    borderColor: "#0D3858",
+    width: 320,
+    borderRadius: 10,
+    height: 55,
+  },
+  saveBtn: {
+    marginTop: 50,
+    width: 200,
+    alignSelf: "center",
+    borderRadius: 10,
+    backgroundColor: "#0d3858",
   },
 });
