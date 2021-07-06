@@ -21,12 +21,12 @@ import {
   useRefBottomAlert,
 } from "react-native-modal-bottom-alert";
 import { showBottomAlert } from "react-native-modal-bottom-alert";
-import { Select, Option } from "react-native-chooser";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Speedometer from "react-native-speedometer-chart";
 import RBSheet from "react-native-raw-bottom-sheet";
 import Icon from "react-native-vector-icons/EvilIcons";
+import ModalDropdown from "react-native-modal-dropdown";
 
 const Home = () => {
   const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
@@ -34,11 +34,13 @@ const Home = () => {
   const [budgetAmount, setBudgetAmount] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [checked, setChecked] = React.useState("income");
-  const [selected, setSelected] = React.useState("");
   const [categoryList, setCategoryList] = React.useState([]);
+
+  let categoryArray = [];
 
   const refRBSheet = useRef();
   useEffect(() => {
+    // getSelectData();
     getUserNameAndBudget();
     setLoading(true);
   }, []);
@@ -70,19 +72,23 @@ const Home = () => {
   };
 
   const getSelectData = async () => {
+    categoryArray = [];
     const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
     try {
       axios
         .get(
           `${root_url}api/Category?phonenumber_or_email=${phone_number_or_email}`
         )
-        .then((res) => setCategoryList(res.data))
+        .then((res) => {
+          res.data.forEach((data) => {
+            const categoryItem = `${data.Category_Title}    ${data.Category_Sticker}`;
+            categoryArray.push(categoryItem);
+            setCategoryList(categoryArray);
+          });
+        })
         .catch((err) => console.log(err));
     } catch (error) {}
   };
-
-  console.log(selected);
-
   return (
     <SafeAreaView
       style={{ height: "100%", backgroundColor: "#fff", width: "100%" }}
@@ -310,48 +316,44 @@ const Home = () => {
             <Text>Expense</Text>
           </View>
           <View style={dialog_style.inputFields}>
-            <TextInput
-              mode="outlined"
-              style={dialog_style.input}
-              theme={{ colors: { primary: "#0D3858" }, roundness: 10 }}
-              label="Income Amount"
-              keyboardType="numeric"
-              outlineColor="#0D3858"
-              //   name="budgetData"
-              //   value={budgetData}
-              //   onChangeText={(budgetData) => setBudgetData(budgetData)}
-              //   error={numberCheckErr && budgetData == ""}
-            />
-            <Select
-              defaultText="Choose Category"
-              style={dialog_style.selectionInput}
-              textStyle={{ marginTop: 8 }}
-              backdropStyle={{ backgroundColor: "#0d3858" }}
-              optionListStyle={{
-                backgroundColor: "#F5FCFF",
-                borderRadius: 20,
-                height: 300,
-                padding: 20,
-              }}
-              indicator="down"
-              indicatorColor="#0d3858"
-              indicatorStyle={{ marginTop: 8 }}
-            >
-              {categoryList.map((category) => {
-                return (
-                  <Option key={category.No}>
-                    <Text >{category.Category_Title}</Text>
-                    {"   "}
-                    <Text >{category.Category_Sticker}</Text>
-                  </Option>
-                );
-              })}
-            </Select>
+            {checked == "income" ? (
+              <TextInput
+                mode="outlined"
+                style={dialog_style.input}
+                theme={{ colors: { primary: "#0D3858" }, roundness: 10 }}
+                label="Income Amount"
+                keyboardType="numeric"
+                outlineColor="#0D3858"
+                //   name="budgetData"
+                //   value={budgetData}
+                //   onChangeText={(budgetData) => setBudgetData(budgetData)}
+                //   error={numberCheckErr && budgetData == ""}
+              />
+            ) : (
+              <TextInput
+                mode="outlined"
+                style={dialog_style.input}
+                theme={{ colors: { primary: "#0D3858" }, roundness: 10 }}
+                label="Expense Amount"
+                keyboardType="numeric"
+                outlineColor="#0D3858"
+                //   name="budgetData"
+                //   value={budgetData}
+                //   onChangeText={(budgetData) => setBudgetData(budgetData)}
+                //   error={numberCheckErr && budgetData == ""}
+              />
+            )}
           </View>
+          <ModalDropdown
+            defaultValue="Select Category"
+            options={categoryList}
+            isFullWidth={true}
+            style={dialog_style.dropDown}
+          />
           <Button
             mode="contained"
             style={dialog_style.saveBtn}
-            onPress={() => console.log(selected)}
+            // onPress={() => console.log(selected)}
           >
             Save
           </Button>
@@ -505,5 +507,16 @@ const dialog_style = StyleSheet.create({
     alignSelf: "center",
     borderRadius: 10,
     backgroundColor: "#0d3858",
+  },
+  dropDown: {
+    alignSelf: "center",
+    width: 320,
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderColor: "#0d3858",
+    paddingTop: 20,
+    paddingBottom: 20,
+    paddingLeft: 10,
+    borderRadius: 10,
   },
 });
