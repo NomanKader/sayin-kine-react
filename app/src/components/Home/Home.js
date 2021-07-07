@@ -158,7 +158,7 @@ const Home = () => {
         <IconButton
           icon="plus-circle-outline"
           color="#fff"
-          size={30}
+          size={35}
           onPress={() => {
             refRBSheet.current.open();
             getSelectData();
@@ -278,7 +278,7 @@ const Home = () => {
         ref={refRBSheet}
         closeOnDragDown={true}
         closeOnPressMask={true}
-        height={350}
+        height={450}
         customStyles={{
           container: {
             borderTopRightRadius: 20,
@@ -349,6 +349,8 @@ const Home = () => {
             options={categoryList}
             isFullWidth={true}
             style={dialog_style.dropDown}
+            dropdownTextStyle={{fontSize: 15,color:'#000000'}}
+            textStyle={{fontSize:15}}
           />
           <Button
             mode="contained"
@@ -511,10 +513,11 @@ const dialog_style = StyleSheet.create({
   dropDown: {
     alignSelf: "center",
     width: 320,
+    height:55,
     borderStyle: "solid",
     borderWidth: 1,
     borderColor: "#0d3858",
-    paddingTop: 20,
+    paddingTop: 18,
     paddingBottom: 20,
     paddingLeft: 10,
     borderRadius: 10,
