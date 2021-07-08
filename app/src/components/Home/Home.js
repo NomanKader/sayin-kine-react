@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
+  ToastAndroid,
 } from "react-native";
 import {
   Card,
@@ -15,6 +16,9 @@ import {
   Button,
   RadioButton,
   TextInput,
+  Avatar,
+  Title,
+  Paragraph
 } from "react-native-paper";
 import {
   BottomAlert,
@@ -35,15 +39,19 @@ const Home = () => {
   const [loading, setLoading] = React.useState(false);
   const [checked, setChecked] = React.useState("income");
   const [categoryList, setCategoryList] = React.useState([]);
+  const [amount, setAmount] = React.useState("");
+  const [categoryItem, setCategoryItem] = React.useState("");
+  const [isSaved, setisSaved] = React.useState(false);
 
   let categoryArray = [];
 
   const refRBSheet = useRef();
   useEffect(() => {
-    // getSelectData();
     getUserNameAndBudget();
     setLoading(true);
   }, []);
+
+  const LeftContent = props => <List.Icon {...props} icon="food" color="#0d3858" />
 
   const getUserNameAndBudget = async () => {
     const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
@@ -89,6 +97,42 @@ const Home = () => {
         .catch((err) => console.log(err));
     } catch (error) {}
   };
+
+  const postCategory = async () => {
+    const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
+    const budget = parseInt(budgetAmount);
+    const inputAmount = parseInt(amount);
+    try {
+      if (inputAmount > budget) {
+        showBottomAlert(
+          "error",
+          "Error",
+          "Your typed amount is more than your current budget"
+        );
+      } else {
+        setisSaved(true);
+        const formData = {
+          Phone_Number_Or_Email: phone_number_or_email,
+          Budget: budget,
+          Currency: "MMK",
+          Transaction_Type: checked,
+          Category: categoryItem,
+          Transaction_Amount: inputAmount,
+        };
+        axios
+          .post(`${root_url}api/home_post`, formData)
+          .then((res) => {
+            getUserNameAndBudget();
+            setisSaved(false);
+            ToastAndroid.show("Successfully Saved", ToastAndroid.SHORT);
+          })
+          .catch((err) => console.log(err));
+      }
+    } catch (error) {
+      alert(error);
+    }
+  };
+
   return (
     <SafeAreaView
       style={{ height: "100%", backgroundColor: "#fff", width: "100%" }}
@@ -171,105 +215,32 @@ const Home = () => {
           persistentScrollbar={true}
           indicatorStyle="white"
         >
+          <Card>
+            <Card.Title title="Food" subtitle="Expense"  left={LeftContent}></Card.Title>
+          </Card>
           <Card.Content>
             <List.Section>
               <List.Item
                 style={home_style.listItem}
-                titleStyle={{ color: "#fff" }}
+                // titleStyle={{ color: "#fff" }}
                 title="Food"
-                descriptionStyle={{ color: "#fff" }}
+                // descriptionStyle={{ color: "#fff" }}
                 description="Expense"
+                
                 left={(props) => (
-                  <List.Icon {...props} icon="food" color="#fff" />
+                  <List.Icon {...props} icon="food" color="#0d3858" />
                 )}
                 right={(props) => (
-                  <List.Subheader style={home_style.listExpense}>
-                    {" "}
-                    - 1900 <Text style={{ color: "#fff" }}>mmk</Text>
-                  </List.Subheader>
-                )}
-              />
-              <List.Item
-                style={home_style.listItem}
-                titleStyle={{ color: "#fff" }}
-                title="Work"
-                descriptionStyle={{ color: "#fff" }}
-                description="Income"
-                left={(props) => (
-                  <List.Icon {...props} icon="food" color="#fff" />
-                )}
-                right={(props) => (
-                  <List.Subheader style={home_style.listIncome}>
-                    {" "}
-                    + 15000 <Text style={{ color: "#fff" }}>mmk</Text>
-                  </List.Subheader>
-                )}
-              />
+                  <List.Subheader>
+                   <Text style={home_style.listExpense}>-1900 mmk</Text><List.Icon
+                        {...props} icon="trash-can-outline" color="#0d3858"
+                      />
+                      
 
-              <List.Item
-                style={home_style.listItem}
-                titleStyle={{ color: "#fff" }}
-                title="Food"
-                descriptionStyle={{ color: "#fff" }}
-                description="Expense"
-                left={(props) => (
-                  <List.Icon {...props} icon="food" color="#fff" />
-                )}
-                right={(props) => (
-                  <List.Subheader style={home_style.listExpense}>
-                    {" "}
-                    - 1900 <Text style={{ color: "#fff" }}>mmk</Text>
                   </List.Subheader>
                 )}
               />
-              <List.Item
-                style={home_style.listItem}
-                titleStyle={{ color: "#fff" }}
-                title="Food"
-                descriptionStyle={{ color: "#fff" }}
-                description="Expense"
-                left={(props) => (
-                  <List.Icon {...props} icon="food" color="#fff" />
-                )}
-                right={(props) => (
-                  <List.Subheader style={home_style.listExpense}>
-                    {" "}
-                    - 1900 <Text style={{ color: "#fff" }}>mmk</Text>
-                  </List.Subheader>
-                )}
-              />
-              <List.Item
-                style={home_style.listItem}
-                titleStyle={{ color: "#fff" }}
-                title="Food"
-                descriptionStyle={{ color: "#fff" }}
-                description="Expense"
-                left={(props) => (
-                  <List.Icon {...props} icon="food" color="#fff" />
-                )}
-                right={(props) => (
-                  <List.Subheader style={home_style.listExpense}>
-                    {" "}
-                    - 1900 <Text style={{ color: "#fff" }}>mmk</Text>
-                  </List.Subheader>
-                )}
-              />
-              <List.Item
-                style={home_style.listItem}
-                titleStyle={{ color: "#fff" }}
-                title="Food"
-                descriptionStyle={{ color: "#fff" }}
-                description="Expense"
-                left={(props) => (
-                  <List.Icon {...props} icon="food" color="#fff" />
-                )}
-                right={(props) => (
-                  <List.Subheader style={home_style.listExpense}>
-                    {" "}
-                    - 1900 <Text style={{ color: "#fff" }}>mmk</Text>
-                  </List.Subheader>
-                )}
-              />
+              
             </List.Section>
           </Card.Content>
         </ScrollView>
@@ -278,7 +249,7 @@ const Home = () => {
         ref={refRBSheet}
         closeOnDragDown={true}
         closeOnPressMask={true}
-        height={450}
+        height={400}
         customStyles={{
           container: {
             borderTopRightRadius: 20,
@@ -315,6 +286,16 @@ const Home = () => {
             />
             <Text>Expense</Text>
           </View>
+
+          <ModalDropdown
+            defaultValue="Select Category"
+            options={categoryList}
+            isFullWidth={true}
+            style={dialog_style.dropDown}
+            dropdownTextStyle={{ fontSize: 15 }}
+            textStyle={{ fontSize: 15 }}
+            onSelect={(selectData) => setCategoryItem(categoryList[selectData])}
+          />
           <View style={dialog_style.inputFields}>
             {checked == "income" ? (
               <TextInput
@@ -324,10 +305,9 @@ const Home = () => {
                 label="Income Amount"
                 keyboardType="numeric"
                 outlineColor="#0D3858"
-                //   name="budgetData"
-                //   value={budgetData}
-                //   onChangeText={(budgetData) => setBudgetData(budgetData)}
-                //   error={numberCheckErr && budgetData == ""}
+                name="amount"
+                value={amount}
+                onChangeText={(amount) => setAmount(amount)}
               />
             ) : (
               <TextInput
@@ -337,28 +317,27 @@ const Home = () => {
                 label="Expense Amount"
                 keyboardType="numeric"
                 outlineColor="#0D3858"
-                //   name="budgetData"
-                //   value={budgetData}
-                //   onChangeText={(budgetData) => setBudgetData(budgetData)}
-                //   error={numberCheckErr && budgetData == ""}
+                name="amount"
+                value={amount}
+                onChangeText={(amount) => setAmount(amount)}
               />
             )}
           </View>
-          <ModalDropdown
-            defaultValue="Select Category"
-            options={categoryList}
-            isFullWidth={true}
-            style={dialog_style.dropDown}
-            dropdownTextStyle={{fontSize: 15,color:'#000000'}}
-            textStyle={{fontSize:15}}
-          />
-          <Button
-            mode="contained"
-            style={dialog_style.saveBtn}
-            // onPress={() => console.log(selected)}
-          >
-            Save
-          </Button>
+
+          {!isSaved ? (
+            <Button
+              mode="contained"
+              style={dialog_style.saveBtn}
+              onPress={postCategory}
+            >
+              Save
+            </Button>
+          ) : (
+            <Image
+              source={require("../../assets/images/sayinkine_loading.gif")}
+              style={dialog_style.styleGif}
+            />
+          )}
         </View>
       </RBSheet>
       <BottomAlert ref={(ref) => useRefBottomAlert(ref)} />
@@ -453,7 +432,8 @@ const home_style = StyleSheet.create({
     alignSelf: "flex-end",
   },
   listItem: {
-    backgroundColor: "#124d78",
+    // backgroundColor: "#124d78",
+    backgroundColor: "#fff",
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     borderTopRightRadius: 20,
@@ -465,6 +445,8 @@ const home_style = StyleSheet.create({
   },
   listExpense: {
     color: "#ff7070",
+    padding: 20,
+    margin:100
   },
   listIncome: {
     color: "#36c46f",
@@ -504,7 +486,7 @@ const dialog_style = StyleSheet.create({
     height: 55,
   },
   saveBtn: {
-    marginTop: 50,
+    marginTop: 30,
     width: 200,
     alignSelf: "center",
     borderRadius: 10,
@@ -513,7 +495,7 @@ const dialog_style = StyleSheet.create({
   dropDown: {
     alignSelf: "center",
     width: 320,
-    height:55,
+    height: 55,
     borderStyle: "solid",
     borderWidth: 1,
     borderColor: "#0d3858",
@@ -521,5 +503,10 @@ const dialog_style = StyleSheet.create({
     paddingBottom: 20,
     paddingLeft: 10,
     borderRadius: 10,
+    marginTop: 20,
+  },
+  styleGif: {
+    marginTop: 30,
+    alignSelf: "center",
   },
 });
