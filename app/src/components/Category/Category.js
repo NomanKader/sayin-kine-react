@@ -312,7 +312,7 @@ const Category = () => {
                   <List.Section>
                     <List.Item
                       style={category_style.listItem}
-                      titleStyle={{ color: "#fff" }}
+                      titleStyle={{ color: "#0d3858" }}
                       title={categorylist.Category_Title}
                       left={(props) => (
                         <List.Subheader
@@ -425,7 +425,8 @@ const category_style = StyleSheet.create({
     top: 100
   },
   listItem: {
-    backgroundColor: "#124d78",
+    // backgroundColor: "#124d78",
+    backgroundColor: '#fff',
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     borderTopRightRadius: 20,

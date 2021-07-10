@@ -12,13 +12,9 @@ import {
 import {
   Card,
   IconButton,
-  List,
   Button,
   RadioButton,
   TextInput,
-  Avatar,
-  Title,
-  Paragraph
 } from "react-native-paper";
 import {
   BottomAlert,
@@ -42,23 +38,24 @@ const Home = () => {
   const [amount, setAmount] = React.useState("");
   const [categoryItem, setCategoryItem] = React.useState("");
   const [isSaved, setisSaved] = React.useState(false);
+  const [categoryData, setCategoryData] = React.useState([]);
 
   let categoryArray = [];
 
   const refRBSheet = useRef();
   useEffect(() => {
     getUserNameAndBudget();
+    getCardData();
     setLoading(true);
   }, []);
 
-  const LeftContent = props => <List.Icon {...props} icon="food" color="#0d3858" />
-
+  // get method for user name and budget
   const getUserNameAndBudget = async () => {
     const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
     try {
       axios
         .get(
-          `${root_url}api/home?phonenumber_or_email=${phone_number_or_email}`
+          `${root_url}api/home/ub?phonenumber_or_email=${phone_number_or_email}`
         )
         .then((res) => {
           if (res.data !== 500) {
@@ -79,6 +76,7 @@ const Home = () => {
     } catch (error) {}
   };
 
+  // get method for select data
   const getSelectData = async () => {
     categoryArray = [];
     const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
@@ -89,7 +87,7 @@ const Home = () => {
         )
         .then((res) => {
           res.data.forEach((data) => {
-            const categoryItem = `${data.Category_Title}    ${data.Category_Sticker}`;
+            const categoryItem = `${data.Category_Title}      ${data.Category_Sticker}`;
             categoryArray.push(categoryItem);
             setCategoryList(categoryArray);
           });
@@ -98,6 +96,7 @@ const Home = () => {
     } catch (error) {}
   };
 
+  // post method to save a card
   const postCategory = async () => {
     const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
     const budget = parseInt(budgetAmount);
@@ -124,6 +123,7 @@ const Home = () => {
           .then((res) => {
             getUserNameAndBudget();
             setisSaved(false);
+            getCardData();
             ToastAndroid.show("Successfully Saved", ToastAndroid.SHORT);
           })
           .catch((err) => console.log(err));
@@ -131,6 +131,45 @@ const Home = () => {
     } catch (error) {
       alert(error);
     }
+  };
+
+  // get method to show a card
+  const getCardData = async () => {
+    const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
+    try {
+      axios
+        .get(
+          `${root_url}api/home/ie?phonenumber_or_email=${phone_number_or_email}`
+        )
+        .then((res) => {
+          console.log(res.data);
+          setCategoryData(res.data);
+        })
+        .catch((err) => console.log(err));
+    } catch (error) {}
+  };
+
+  // delete method to remove specific card
+  const deleteCard = async (id, amount, type) => {
+    const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
+    try {
+      const cardId = parseInt(id);
+      const dataAmount = parseInt(amount);
+      const budget = parseInt(budgetAmount);
+      axios
+        .delete(
+          `${root_url}api/home?no=${cardId}&phonenumber_or_email=${phone_number_or_email}&budget=${budget}&transaction_amount=${dataAmount}&transaction_type=${type}`
+        )
+        .then((res) => {
+          if (res.status === 200) {
+            getUserNameAndBudget();
+            getCardData();
+          } else if (res.status === 500) {
+            showBottomAlert("error", "Error", "System Error");
+          }
+        })
+        .catch((err) => console.log(err));
+    } catch (error) {}
   };
 
   return (
@@ -210,40 +249,118 @@ const Home = () => {
           style={home_style.addMore}
         />
         <Text style={home_style.today_text}>Today</Text>
-        <ScrollView
-          style={home_style.scrollContainer}
-          persistentScrollbar={true}
-          indicatorStyle="white"
-        >
-          <Card>
-            <Card.Title title="Food" subtitle="Expense"  left={LeftContent}></Card.Title>
-          </Card>
-          <Card.Content>
-            <List.Section>
-              <List.Item
-                style={home_style.listItem}
-                // titleStyle={{ color: "#fff" }}
-                title="Food"
-                // descriptionStyle={{ color: "#fff" }}
-                description="Expense"
-                
-                left={(props) => (
-                  <List.Icon {...props} icon="food" color="#0d3858" />
-                )}
-                right={(props) => (
-                  <List.Subheader>
-                   <Text style={home_style.listExpense}>-1900 mmk</Text><List.Icon
-                        {...props} icon="trash-can-outline" color="#0d3858"
-                      />
-                      
-
-                  </List.Subheader>
-                )}
-              />
-              
-            </List.Section>
-          </Card.Content>
-        </ScrollView>
+        {loading === true ? (
+          <Image
+            source={require("../../assets/images/sayinkine.gif")}
+            style={home_style.loader}
+          />
+        ) : (
+          <ScrollView
+            style={home_style.scrollContainer}
+            persistentScrollbar={true}
+            indicatorStyle="white"
+          >
+            {categoryData.map((category) => {
+              if (category.Transaction_Type == "expense") {
+                return (
+                  <Card style={home_style.listItem} key={category.No}>
+                    <Card.Title
+                      title={category.Category_Title}
+                      subtitle={category.Transaction_Type}
+                      left={(props) => (
+                        <Text
+                          style={{
+                            color: "rgba(0,0,0,0.87)",
+                            fontSize: 24,
+                            alignSelf: "center",
+                            paddingTop: 5,
+                          }}
+                        >
+                          {category.Category_Sticker}
+                        </Text>
+                      )}
+                      right={(props) => (
+                        <View
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            flexDirection: "row",
+                          }}
+                        >
+                          <Text style={home_style.listExpense}>
+                            {category.Transaction_Amount} mmk
+                          </Text>
+                          <IconButton
+                            style={home_style.delete}
+                            {...props}
+                            icon="trash-can-outline"
+                            color="#CD6155"
+                            onPress={() =>
+                              deleteCard(
+                                category.No,
+                                category.Transaction_Amount,
+                                category.Transaction_Type
+                              )
+                            }
+                          />
+                        </View>
+                      )}
+                    ></Card.Title>
+                  </Card>
+                );
+              } else if (category.Transaction_Type == "income") {
+                return (
+                  <Card style={home_style.listItem} key={category.No}>
+                    <Card.Title
+                      title={category.Category_Title}
+                      subtitle={category.Transaction_Type}
+                      left={(props) => (
+                        <Text
+                          style={{
+                            color: "rgba(0,0,0,0.87)",
+                            fontSize: 24,
+                            alignSelf: "center",
+                            paddingTop: 5,
+                          }}
+                        >
+                          {category.Category_Sticker}
+                        </Text>
+                      )}
+                      right={(props) => (
+                        <View
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            flexDirection: "row",
+                          }}
+                        >
+                          <Text style={home_style.listIncome}>
+                            {category.Transaction_Amount} mmk
+                          </Text>
+                          <IconButton
+                            style={home_style.delete}
+                            {...props}
+                            icon="trash-can-outline"
+                            color="#CD6155"
+                            onPress={() =>
+                              deleteCard(
+                                category.No,
+                                category.Transaction_Amount,
+                                category.Transaction_Type
+                              )
+                            }
+                          />
+                        </View>
+                      )}
+                    ></Card.Title>
+                  </Card>
+                );
+              }
+            })}
+          </ScrollView>
+        )}
       </View>
       <RBSheet
         ref={refRBSheet}
@@ -328,7 +445,10 @@ const Home = () => {
             <Button
               mode="contained"
               style={dialog_style.saveBtn}
-              onPress={postCategory}
+              onPress={() => {
+                postCategory();
+                refRBSheet.current.close();
+              }}
             >
               Save
             </Button>
@@ -419,14 +539,15 @@ const home_style = StyleSheet.create({
   },
   addMore: {
     alignSelf: "center",
-    top: 20,
+    marginTop: 5,
     color: "#fff",
   },
   today_text: {
     fontSize: 20,
     color: "#fff",
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: 5,
+    marginTop: -30,
     right: 20,
     fontStyle: "italic",
     alignSelf: "flex-end",
@@ -442,20 +563,27 @@ const home_style = StyleSheet.create({
     borderStyle: "solid",
     borderWidth: 1,
     borderColor: "#5397c8",
+    width: "95%",
+    alignSelf: "center",
   },
   listExpense: {
     color: "#ff7070",
-    padding: 20,
-    margin:100
   },
   listIncome: {
     color: "#36c46f",
   },
   scrollContainer: {
-    marginBottom: 120,
+    marginBottom: 130,
   },
   close_tbn: {
     left: 20,
+  },
+  delete: {
+    marginLeft: 20,
+  },
+  loader: {
+    alignSelf: "center",
+    marginTop: 20,
   },
 });
 
