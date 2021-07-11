@@ -39,13 +39,31 @@ const Home = () => {
   const [categoryItem, setCategoryItem] = React.useState("");
   const [isSaved, setisSaved] = React.useState(false);
   const [categoryData, setCategoryData] = React.useState([]);
+  const [incomePercentage, setIncomePercentage] = React.useState(0);
+  const [expensePercentage, setExpensePercentage] = React.useState(0);
 
   let categoryArray = [];
+
+  let current = new Date();
+  var month = new Array();
+  month[0] = "January";
+  month[1] = "February";
+  month[2] = "March";
+  month[3] = "April";
+  month[4] = "May";
+  month[5] = "June";
+  month[6] = "July";
+  month[7] = "August";
+  month[8] = "September";
+  month[9] = "October";
+  month[10] = "November";
+  month[11] = "December";
 
   const refRBSheet = useRef();
   useEffect(() => {
     getUserNameAndBudget();
     getCardData();
+    getExpenseIncome();
     setLoading(true);
   }, []);
 
@@ -58,7 +76,7 @@ const Home = () => {
           `${root_url}api/home/ub?phonenumber_or_email=${phone_number_or_email}`
         )
         .then((res) => {
-          if (res.data !== 500) {
+          if (res.status === 200) {
             res.data.forEach((element) => {
               setUserName(element.User_Name);
               setBudgetAmount(element.Budget);
@@ -124,6 +142,7 @@ const Home = () => {
             getUserNameAndBudget();
             setisSaved(false);
             getCardData();
+            getExpenseIncome();
             ToastAndroid.show("Successfully Saved", ToastAndroid.SHORT);
           })
           .catch((err) => console.log(err));
@@ -142,7 +161,6 @@ const Home = () => {
           `${root_url}api/home/ie?phonenumber_or_email=${phone_number_or_email}`
         )
         .then((res) => {
-          console.log(res.data);
           setCategoryData(res.data);
         })
         .catch((err) => console.log(err));
@@ -156,15 +174,45 @@ const Home = () => {
       const cardId = parseInt(id);
       const dataAmount = parseInt(amount);
       const budget = parseInt(budgetAmount);
+      console.log(cardId, dataAmount, budget);
       axios
         .delete(
           `${root_url}api/home?no=${cardId}&phonenumber_or_email=${phone_number_or_email}&budget=${budget}&transaction_amount=${dataAmount}&transaction_type=${type}`
         )
         .then((res) => {
+          getUserNameAndBudget();
+          getCardData();
+          alert(res.status);
+          console.log(res.data);
+          console.log(res.status);
           if (res.status === 200) {
             getUserNameAndBudget();
             getCardData();
           } else if (res.status === 500) {
+            showBottomAlert("error", "Error", "System Error");
+          }
+        })
+        .catch((err) => console.log(err));
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+  // get method to show expense and income data
+  const getExpenseIncome = async () => {
+    const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
+    try {
+      axios
+        .get(
+          `${root_url}api/home/ch?phonenumber_or_email=${phone_number_or_email}`
+        )
+        .then((res) => {
+          if (res.status === 200) {
+            res.data.forEach((data) => {
+              setIncomePercentage(parseInt(data.Income_Percentage));
+              setExpensePercentage(parseInt(data.Expense_Percentage));
+            });
+          } else {
             showBottomAlert("error", "Error", "System Error");
           }
         })
@@ -203,10 +251,14 @@ const Home = () => {
             )}
           </Card.Content>
         </Card>
-        <Text style={home_style.chartHeader}>Jun 2021</Text>
+        <Text style={home_style.chartHeader}>
+          {month[current.getMonth()]}
+          {"   "}
+          {current.getFullYear()}
+        </Text>
         <Card.Content style={home_style.chartContainer}>
           <Speedometer
-            value={35}
+            value={incomePercentage}
             totalValue={100}
             size={150}
             outerColor="#d3d3d3"
@@ -222,7 +274,7 @@ const Home = () => {
             style={home_style.chart}
           />
           <Speedometer
-            value={50}
+            value={expensePercentage}
             totalValue={100}
             size={150}
             outerColor="#d3d3d3"
