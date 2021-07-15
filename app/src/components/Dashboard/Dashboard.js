@@ -9,9 +9,15 @@ import {
   ScrollView,
   Dimensions,
 } from "react-native";
-import { Button, DataTable, FAB, IconButton, Title } from "react-native-paper";
+import {
+  Button,
+  DataTable,
+  FAB,
+  IconButton,
+  Title,
+  RadioButton,
+} from "react-native-paper";
 import RBSheet from "react-native-raw-bottom-sheet";
-import Icon from "react-native-vector-icons/EvilIcons";
 import { BarChart } from "react-native-chart-kit";
 import Calendar from "react-native-calendar-range-picker";
 
@@ -38,6 +44,8 @@ const data = {
 };
 
 const Dashboard = () => {
+  const [checked, setChecked] = React.useState("all");
+
   const findDateDifference = (start, end) => {
     console.log(start, end);
     const startRange = new Date(start);
@@ -54,7 +62,8 @@ const Dashboard = () => {
     }
   };
 
-  const refRBSheet = useRef();
+  const calendarRef = useRef();
+  const filterRef = useRef();
 
   return (
     <SafeAreaView style={dashboard_style.container}>
@@ -72,7 +81,7 @@ const Dashboard = () => {
         style={dashboard_style.dateBtn}
         labelStyle={{ color: "#fff" }}
         icon="calendar"
-        onPress={() => refRBSheet.current.open()}
+        onPress={() => calendarRef.current.open()}
       >
         <Text style={{ fontSize: 14 }}>Jun 1-Jun 24,2021</Text>
       </Button>
@@ -130,7 +139,7 @@ const Dashboard = () => {
           verticalLabelRotation={90}
         />
         <DataTable style={dashboard_style.datatable}>
-          <DataTable.Header >
+          <DataTable.Header>
             <DataTable.Title>Date</DataTable.Title>
             <DataTable.Title numeric>Type</DataTable.Title>
             <DataTable.Title numeric>Title</DataTable.Title>
@@ -171,7 +180,7 @@ const Dashboard = () => {
         </DataTable>
       </ScrollView>
       <RBSheet
-        ref={refRBSheet}
+        ref={calendarRef}
         closeOnDragDown={true}
         closeOnPressMask={true}
         height={600}
@@ -191,7 +200,7 @@ const Dashboard = () => {
             icon="close"
             size={24}
             style={dashboard_style.close_tbn}
-            onPress={() => refRBSheet.current.close()}
+            onPress={() => calendarRef.current.close()}
           />
         </TouchableOpacity>
         <Text style={calendar_style.dialogTitle}>Custome Date Range</Text>
@@ -203,13 +212,68 @@ const Dashboard = () => {
         <FAB
           style={dashboard_style.fab}
           icon="check-underline"
-          onPress={() => console.log("Pressed")}
+          onPress={() => calendarRef.current.close()}
+        />
+      </RBSheet>
+      <RBSheet
+        ref={filterRef}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        height={300}
+        customStyles={{
+          container: {
+            borderTopRightRadius: 20,
+            borderTopLeftRadius: 20,
+          },
+          draggableIcon: {
+            backgroundColor: "#B2BABB",
+            width: 50,
+          },
+        }}
+      >
+        <TouchableOpacity>
+          <IconButton
+            icon="close"
+            size={24}
+            style={dashboard_style.close_tbn}
+            onPress={() => filterRef.current.close()}
+          />
+        </TouchableOpacity>
+        <Text style={calendar_style.dialogTitle}>Custome Filter</Text>
+        <View style={filter_style.radioContainer}>
+          <RadioButton
+            value="all"
+            status={checked === "all" ? "checked" : "unchecked"}
+            onPress={() => setChecked("all")}
+            color="#0d3858"
+          />
+          <Text style={filter_style.text}>All</Text>
+          <RadioButton
+            value="income"
+            status={checked === "income" ? "checked" : "unchecked"}
+            onPress={() => setChecked("income")}
+            color="#0d3858"
+          />
+          <Text style={filter_style.text}>Income</Text>
+          <RadioButton
+            value="expense"
+            status={checked === "expense" ? "checked" : "unchecked"}
+            onPress={() => setChecked("expense")}
+            color="#0d3858"
+          />
+          <Text style={filter_style.text}>Expense</Text>
+        </View>
+        <FAB
+          style={dashboard_style.fab}
+          icon="check-underline"
+          onPress={() => filterRef.current.close()}
         />
       </RBSheet>
       <FAB
         style={dashboard_style.fab}
         icon="filter"
         onPress={() => console.log("Pressed")}
+        onPress={() => filterRef.current.open()}
       />
     </SafeAreaView>
   );
@@ -269,7 +333,7 @@ const dashboard_style = StyleSheet.create({
     textTransform: "uppercase",
     color: "#0d3858",
     fontWeight: "bold",
-    fontSize:18
+    fontSize: 18,
   },
   chart: {
     marginTop: 20,
@@ -298,10 +362,27 @@ const dashboard_style = StyleSheet.create({
 const calendar_style = StyleSheet.create({
   close_tbn: {
     left: 20,
+    color: "#0d3858",
   },
   dialogTitle: {
     alignSelf: "center",
     fontSize: 18,
     fontWeight: "bold",
+    color: "#0d3858",
+  },
+});
+
+const filter_style = StyleSheet.create({
+  radioContainer: {
+    marginTop: 50,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+  },
+  text: {
+    marginRight: 20,
+    color: "#0d3858",
+    fontSize: 18,
   },
 });
