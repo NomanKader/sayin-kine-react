@@ -86,19 +86,19 @@ const Dashboard = () => {
           yAxisSuffix="%"
           showValuesOnTopOfBars={true}
           chartConfig={{
-            backgroundColor: "#e26a00",
-            backgroundGradientFrom: "#0d3858",
-            backgroundGradientTo: "#2f2f2f",
+            backgroundColor: "#ffffff",
+            backgroundGradientFrom: "#ffffff",
+            backgroundGradientTo: "#ffffff",
             barPercentage: 0.4,
             fillShadowGradient: `rgba(1, 122, 205, 1)`,
             fillShadowGradientOpacity: 1,
             decimalPlaces: 2, // optional, defaults to 2dp
-            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
             propsForDots: {
               r: "6",
               strokeWidth: "2",
-              stroke: "#ffa726",
+              stroke: "#000000",
             },
           }}
           verticalLabelRotation={90}
@@ -112,15 +112,15 @@ const Dashboard = () => {
           yAxisSuffix="%"
           showValuesOnTopOfBars={true}
           chartConfig={{
-            backgroundColor: "#e26a00",
-            backgroundGradientFrom: "#0d3858",
-            backgroundGradientTo: "#2f2f2f",
+            backgroundColor: "#ffffff",
+            backgroundGradientFrom: "#ffffff",
+            backgroundGradientTo: "#ffffff",
             barPercentage: 0.4,
             fillShadowGradient: `rgba(1, 122, 205, 1)`,
             fillShadowGradientOpacity: 1,
             decimalPlaces: 2, // optional, defaults to 2dp
-            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
             propsForDots: {
               r: "6",
               strokeWidth: "2",
@@ -130,7 +130,7 @@ const Dashboard = () => {
           verticalLabelRotation={90}
         />
         <DataTable style={dashboard_style.datatable}>
-          <DataTable.Header>
+          <DataTable.Header >
             <DataTable.Title>Date</DataTable.Title>
             <DataTable.Title numeric>Type</DataTable.Title>
             <DataTable.Title numeric>Title</DataTable.Title>
@@ -208,7 +208,7 @@ const Dashboard = () => {
       </RBSheet>
       <FAB
         style={dashboard_style.fab}
-        icon="plus"
+        icon="filter"
         onPress={() => console.log("Pressed")}
       />
     </SafeAreaView>
@@ -264,12 +264,12 @@ const dashboard_style = StyleSheet.create({
     marginTop: "5%",
   },
   chartTitle: {
-    alignSelf: "center",
+    alignSelf: "flex-start",
     // padding: 5,
     textTransform: "uppercase",
     color: "#0d3858",
     fontWeight: "bold",
-    fontStyle: "italic",
+    fontSize:18
   },
   chart: {
     marginTop: 20,
@@ -283,7 +283,7 @@ const dashboard_style = StyleSheet.create({
       height: 10,
     },
     shadowOpacity: 1.12,
-    elevation: 1,
+    elevation: 10,
   },
   fab: {
     position: "absolute",

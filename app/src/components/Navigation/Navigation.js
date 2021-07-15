@@ -16,7 +16,7 @@ const Navigation = () => {
   const [routes] = React.useState([
     { key: "home", title: "Home", icon: "home" },
     { key: "category", title: "Category", icon: "grid" },
-    { key: "dashboard", title: "Dashboard", icon: "chart-pie" },
+    { key: "dashboard", title: "Dashboard", icon: "chart-line" },
   ]);
 
   const renderScene = BottomNavigation.SceneMap({
