@@ -209,8 +209,9 @@ const Home = () => {
         .then((res) => {
           if (res.status === 200) {
             res.data.forEach((data) => {
-              setIncomePercentage(parseInt(data.Income_Percentage));
-              setExpensePercentage(parseInt(data.Expense_Percentage));
+              // console.log(data.Income_Percentage);
+              setIncomePercentage(parseFloat(data.Income_Percentage));
+              setExpensePercentage(parseFloat(data.Expense_Percentage));
             });
           } else {
             showBottomAlert("error", "Error", "System Error");
