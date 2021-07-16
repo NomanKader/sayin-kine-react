@@ -20,7 +20,7 @@ import {
 import RBSheet from "react-native-raw-bottom-sheet";
 import { BarChart } from "react-native-chart-kit";
 import Calendar from "react-native-calendar-range-picker";
-
+import {Badge} from 'react-native-elements';
 const data = {
   labels: [
     "Jan",
@@ -42,7 +42,6 @@ const data = {
     },
   ],
 };
-
 const Dashboard = () => {
   const [checked, setChecked] = React.useState("all");
 
@@ -140,6 +139,7 @@ const Dashboard = () => {
         />
         <DataTable style={dashboard_style.datatable}>
           <DataTable.Header>
+            <DataTable.Title>No</DataTable.Title>
             <DataTable.Title>Date</DataTable.Title>
             <DataTable.Title numeric>Type</DataTable.Title>
             <DataTable.Title numeric>Title</DataTable.Title>
@@ -147,32 +147,37 @@ const Dashboard = () => {
           </DataTable.Header>
 
           <DataTable.Row>
-            <DataTable.Cell>2021/07/12</DataTable.Cell>
+            <DataTable.Cell>1</DataTable.Cell>
+            <DataTable.Cell>2021-07-12</DataTable.Cell>
             <DataTable.Cell numeric>Income</DataTable.Cell>
             <DataTable.Cell numeric>Job</DataTable.Cell>
             <DataTable.Cell numeric>200000</DataTable.Cell>
           </DataTable.Row>
 
           <DataTable.Row>
-            <DataTable.Cell>2021/07/12</DataTable.Cell>
+          <DataTable.Cell>2</DataTable.Cell>
+            <DataTable.Cell>2021-07-12</DataTable.Cell>
             <DataTable.Cell numeric>Income</DataTable.Cell>
             <DataTable.Cell numeric>Job</DataTable.Cell>
             <DataTable.Cell numeric>200000</DataTable.Cell>
           </DataTable.Row>
           <DataTable.Row>
-            <DataTable.Cell>2021/07/12</DataTable.Cell>
+          <DataTable.Cell>3</DataTable.Cell>
+            <DataTable.Cell>2021-07-12</DataTable.Cell>
             <DataTable.Cell numeric>Income</DataTable.Cell>
             <DataTable.Cell numeric>Job</DataTable.Cell>
             <DataTable.Cell numeric>200000</DataTable.Cell>
           </DataTable.Row>
           <DataTable.Row>
-            <DataTable.Cell>2021/07/12</DataTable.Cell>
+          <DataTable.Cell>4</DataTable.Cell>
+            <DataTable.Cell>2021-07-12</DataTable.Cell>
             <DataTable.Cell numeric>Income</DataTable.Cell>
             <DataTable.Cell numeric>Job</DataTable.Cell>
             <DataTable.Cell numeric>200000</DataTable.Cell>
           </DataTable.Row>
           <DataTable.Row>
-            <DataTable.Cell>2021/07/12</DataTable.Cell>
+          <DataTable.Cell>5</DataTable.Cell>
+            <DataTable.Cell>2021-07-12</DataTable.Cell>
             <DataTable.Cell numeric>Income</DataTable.Cell>
             <DataTable.Cell numeric>Job</DataTable.Cell>
             <DataTable.Cell numeric>200000</DataTable.Cell>
@@ -266,13 +271,14 @@ const Dashboard = () => {
         <FAB
           style={dashboard_style.fab}
           icon="check-underline"
-          onPress={() => filterRef.current.close()}
+         onPress={() => filterRef.current.close()}
+          
         />
       </RBSheet>
+      <Badge value="0" status="primary" containerStyle={dashboard_style.badge} textStyle={{fontSize:15,fontWeight:'bold'}}/>
       <FAB
         style={dashboard_style.fab}
         icon="filter"
-        onPress={() => console.log("Pressed")}
         onPress={() => filterRef.current.open()}
       />
     </SafeAreaView>
@@ -357,6 +363,14 @@ const dashboard_style = StyleSheet.create({
     color: "#fff",
     backgroundColor: "#0d3858",
   },
+  badge:{
+    position: "absolute",
+    right: 45,
+    bottom: 35,
+    margin: 16,
+    elevation:40,
+    zIndex:1,
+  }
 });
 
 const calendar_style = StyleSheet.create({
@@ -365,6 +379,7 @@ const calendar_style = StyleSheet.create({
     color: "#0d3858",
   },
   dialogTitle: {
+    top:0,
     alignSelf: "center",
     fontSize: 18,
     fontWeight: "bold",
