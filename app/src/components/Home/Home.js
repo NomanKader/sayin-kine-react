@@ -533,10 +533,10 @@ const home_style = StyleSheet.create({
     height: 123,
   },
   headerText: {
-    fontSize: 24,
+    fontSize: 20,
     marginTop: 30,
     color: "#0d3858",
-    fontStyle: "italic",
+    fontWeight:"bold",
   },
   body: {
     backgroundColor: "#0d3858",

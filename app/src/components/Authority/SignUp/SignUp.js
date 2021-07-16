@@ -9,7 +9,6 @@ import {
   Platform,
 } from "react-native";
 import { TextInput, Button, Snackbar } from "react-native-paper";
-
 const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
 
 const SignUp = ({ history }) => {
