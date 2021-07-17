@@ -1,30 +1,32 @@
 import React from "react";
-import { View, Text, StyleSheet, SafeAreaView, Image } from "react-native";
+import { SafeAreaView, StyleSheet, View, Text, Image } from "react-native";
 import { TextInput, Button } from "react-native-paper";
-const Name = () => {
+
+const Phone = () => {
   return (
-    <SafeAreaView style={name_style.container}>
+    <SafeAreaView>
       {/* Logo & Text */}
-      <View style={name_style.header}>
+      <View style={phone_style.header}>
         <Image
-          style={name_style.logo}
+          style={phone_style.logo}
           source={require("../../assets/images/logo.png")}
         />
-        <Text style={name_style.headerText}>
-          "Hey! , your previous username is Pyae Phyo Swe.You can change here😊"
+        <Text style={phone_style.headerText}>
+          "Hey! , your previous phone number or email is "09966035221".You can
+          change here😊"
         </Text>
       </View>
       {/* Finished Logo & Text */}
       <TextInput
-        label="Enter new username"
+        label="Enter new Phone Number or Email"
         mode="outlined"
-        style={name_style.txt_input}
+        style={phone_style.txt_input}
         theme={{ colors: { primary: "#0d3858" } }}
         //   onChangeText={text => setText(text)}
       />
       <Button
         icon=""
-        style={name_style.save_btn}
+        style={phone_style.save_btn}
         mode="contained"
         onPress={() => console.log("Pressed")}
       >
@@ -33,8 +35,10 @@ const Name = () => {
     </SafeAreaView>
   );
 };
-export default Name;
-const name_style = StyleSheet.create({
+
+export default Phone;
+
+const phone_style = StyleSheet.create({
   container: {
     width: "100%",
     height: "100%",

@@ -123,7 +123,7 @@ const Dashboard = () => {
             backgroundGradientFrom: "#ffffff",
             backgroundGradientTo: "#ffffff",
             barPercentage: 0.4,
-            fillShadowGradient: `rgba(1, 122, 205, 1)`,
+            fillShadowGradient: "#c2b280",
             fillShadowGradientOpacity: 1,
             decimalPlaces: 2, // optional, defaults to 2dp
             color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
@@ -347,7 +347,6 @@ const dashboard_style = StyleSheet.create({
   },
   chartTitle: {
     alignSelf: "flex-start",
-    // padding: 5,
     textTransform: "uppercase",
     color: "#0d3858",
     fontWeight: "bold",

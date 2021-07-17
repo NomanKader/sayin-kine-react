@@ -17,6 +17,7 @@ import {
   Title,
   List,
   Avatar,
+  IconButton,
 } from "react-native-paper";
 import {
   BottomAlert,
@@ -202,7 +203,7 @@ const Category = () => {
         .get(`${root_url}api/Category?phonenumber_or_email=${checkNumber}`)
         .then((res) => {
           setCategoryData(res.data);
-          setLoading(false)
+          setLoading(false);
         })
         .catch((err) => console.log(err));
     } catch (error) {
@@ -308,8 +309,32 @@ const Category = () => {
           >
             {categoryList.map((categorylist) => {
               return (
-                <Card.Content key={categorylist.No}>
-                  <List.Section>
+                <Card key={categorylist.No} style={category_style.listItem}>
+                  <Card.Title
+                    title={categorylist.Category_Title}
+                    left={(props) => (
+                      <Text
+                        style={{
+                          color: "rgba(0,0,0,0.87)",
+                          fontSize: 24,
+                          alignSelf: "center",
+                          paddingTop: 5,
+                        }}
+                      >
+                        {categorylist.Category_Sticker}
+                      </Text>
+                    )}
+                    right={(props) => (
+                      <IconButton
+                        style={{ alignSelf: "center" }}
+                        {...props}
+                        icon="trash-can-outline"
+                        color="#CD6155"
+                        onPress={() => deleteCategoryData(categorylist.No)}
+                      />
+                    )}
+                  ></Card.Title>
+                  {/* <List.Section>
                     <List.Item
                       style={category_style.listItem}
                       titleStyle={{ color: "#0d3858" }}
@@ -334,8 +359,8 @@ const Category = () => {
                         </TouchableOpacity>
                       )}
                     />
-                  </List.Section>
-                </Card.Content>
+                  </List.Section> */}
+                </Card>
               );
             })}
           </ScrollView>
@@ -420,22 +445,22 @@ const category_style = StyleSheet.create({
     top: 65,
     alignSelf: "center",
   },
-  loader:{
-    alignSelf: 'center',
-    top: 100
+  loader: {
+    alignSelf: "center",
+    top: 100,
   },
   listItem: {
-    // backgroundColor: "#124d78",
-    backgroundColor: '#fff',
+    alignSelf: "center",
+    backgroundColor: "#fff",
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
-    marginBottom: 5,
+    marginBottom: 20,
     borderStyle: "solid",
     borderWidth: 1,
     borderColor: "#5397c8",
-    // backgroundColor: '#fff'
+    width: "95%",
   },
   listExpense: {
     color: "#ff7070",

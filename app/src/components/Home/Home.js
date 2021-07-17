@@ -296,8 +296,8 @@ const Home = () => {
           color="#fff"
           size={35}
           onPress={() => {
-            refRBSheet.current.open();
             getSelectData();
+            refRBSheet.current.open();
           }}
           style={home_style.addMore}
         />
@@ -536,7 +536,7 @@ const home_style = StyleSheet.create({
     fontSize: 20,
     marginTop: 30,
     color: "#0d3858",
-    fontWeight:"bold",
+    fontWeight: "bold",
   },
   body: {
     backgroundColor: "#0d3858",
@@ -621,6 +621,7 @@ const home_style = StyleSheet.create({
   },
   listExpense: {
     color: "#ff7070",
+    fontWeight: "bold",
   },
   listIncome: {
     color: "#36c46f",

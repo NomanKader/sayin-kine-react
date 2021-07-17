@@ -12,6 +12,8 @@ import { Card, IconButton, TextInput } from "react-native-paper";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import NameComponent from "./Name";
+import Phone from "./Phone";
+import Password from "./Password";
 
 //import { screensEnabled } from 'react-native-screens';
 const NameContent = (props) => (
@@ -21,7 +23,11 @@ const RightContent = (props) => (
   <IconButton icon="arrow-right" size={20} style={{ top: 3 }} />
 );
 const PhoneContent = (props) => (
-  <IconButton icon="phone" size={20} style={profile_style.icon_button} />
+  <IconButton
+    icon="badge-account-horizontal"
+    size={20}
+    style={profile_style.icon_button}
+  />
 );
 const PasswordContent = (props) => (
   <IconButton icon="lock" size={20} style={profile_style.icon_button} />
@@ -84,6 +90,7 @@ function ProfileScreen({ navigation }) {
             onPress={() => {
               setRippleColor("#0D3858");
               setRippleRadius(1);
+              navigation.navigate("Phone Number or Email");
             }}
             background={TouchableNativeFeedback.Ripple(
               rippleColor,
@@ -93,7 +100,7 @@ function ProfileScreen({ navigation }) {
             <Card style={profile_style.card} mode="outlined" elevation={50}>
               <Card.Title
                 style={profile_style.card_title}
-                title="Phone Number"
+                title="Phone Number or Email"
                 left={PhoneContent}
                 right={RightContent}
               />
@@ -105,6 +112,7 @@ function ProfileScreen({ navigation }) {
             onPress={() => {
               setRippleColor("#0D3858");
               setRippleRadius(1);
+              navigation.navigate("Password");
             }}
             background={TouchableNativeFeedback.Ripple(
               rippleColor,
@@ -188,11 +196,19 @@ function ProfileScreen({ navigation }) {
       </ScrollView>
     </SafeAreaView>
   );
-}//finished ProfileScreen function
+} //finished ProfileScreen function
 
 //start NameScreen function
 function NameScreen({ navigation }) {
   return <NameComponent />;
+}
+
+function PhoneScreen({ navigation }) {
+  return <Phone />;
+}
+
+function PasswordScreen({ navigation }) {
+  return <Password />;
 }
 //main function
 const Profile = () => {
@@ -203,6 +219,8 @@ const Profile = () => {
         <Stack.Navigator>
           <Stack.Screen name="Your Info" component={ProfileScreen} />
           <Stack.Screen name="Your Username" component={NameScreen} />
+          <Stack.Screen name="Phone Number or Email" component={PhoneScreen} />
+          <Stack.Screen name="Password" component={PasswordScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaView>
