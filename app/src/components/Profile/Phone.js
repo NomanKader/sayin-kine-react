@@ -4,7 +4,7 @@ import { TextInput, Button } from "react-native-paper";
 
 const Phone = () => {
   return (
-    <SafeAreaView>
+    <SafeAreaView style={phone_style.container}>
       {/* Logo & Text */}
       <View style={phone_style.header}>
         <Image
@@ -21,11 +21,12 @@ const Phone = () => {
         label="Enter new Phone Number or Email"
         mode="outlined"
         style={phone_style.txt_input}
-        theme={{ colors: { primary: "#0d3858" } }}
+        theme={{ colors: { primary: "#0d3858" },roundness:8 }}
+        outlineColor="#0d3858"
         //   onChangeText={text => setText(text)}
       />
       <Button
-        icon=""
+        icon="content-save"
         style={phone_style.save_btn}
         mode="contained"
         onPress={() => console.log("Pressed")}

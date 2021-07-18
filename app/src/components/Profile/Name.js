@@ -19,11 +19,12 @@ const Name = () => {
         label="Enter new username"
         mode="outlined"
         style={name_style.txt_input}
-        theme={{ colors: { primary: "#0d3858" } }}
+        theme={{ colors: { primary: "#0d3858",background:'#fff' } }}
+        outlineColor="#0d3858"
         //   onChangeText={text => setText(text)}
       />
       <Button
-        icon=""
+        icon="content-save"
         style={name_style.save_btn}
         mode="contained"
         onPress={() => console.log("Pressed")}

@@ -71,7 +71,7 @@ const Dashboard = () => {
           source={require("../../assets/images/logo.png")}
         />
         <Text style={dashboard_style.headerText}>
-          "Hey, this is your overall income and expense report"
+          "Hey! , here is your overall income and expense report"
         </Text>
       </View>
       <Button

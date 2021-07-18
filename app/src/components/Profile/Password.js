@@ -8,7 +8,7 @@ const Password = () => {
   const [PasswordErr, setPasswordErr] = React.useState(false);
   const [ConfirmPasswordErr, setConfirmPasswordErr] = React.useState(false);
   return (
-    <SafeAreaView>
+    <SafeAreaView style={password_style.container}>
       {/* Logo & Text */}
       <View style={password_style.header}>
         <Image
@@ -16,7 +16,7 @@ const Password = () => {
           source={require("../../assets/images/logo.png")}
         />
         <Text style={password_style.headerText}>
-          "Hey! , change your password here😊"
+          "Hey! , here you can change your password😊"
         </Text>
       </View>
       {/* Finished Logo & Text */}
@@ -24,7 +24,8 @@ const Password = () => {
         label="Enter old password"
         mode="outlined"
         style={password_style.txt_input}
-        theme={{ colors: { primary: "#0d3858" } }}
+        theme={{ colors: { primary: "#0d3858" },roundness:8 }}
+        outlineColor="#0d3858"
         showSoftInputOnFocus={true}
         secureTextEntry={true}
       />
@@ -32,7 +33,8 @@ const Password = () => {
         label="Enter new password"
         mode="outlined"
         style={password_style.txt_input}
-        theme={{ colors: { primary: "#0d3858" } }}
+        theme={{ colors: { primary: "#0d3858" },roundness:8 }}
+        outlineColor="#0d3858"
         showSoftInputOnFocus={true}
         secureTextEntry={true}
         name="password"
@@ -51,7 +53,8 @@ const Password = () => {
         label="Confirm new password"
         mode="outlined"
         style={password_style.txt_input}
-        theme={{ colors: { primary: "#0d3858" } }}
+        theme={{ colors: { primary: "#0d3858" },roundness:8 }}
+        outlineColor="#0d3858"
         showSoftInputOnFocus={true}
         secureTextEntry={true}
         name="confirmpassword"
@@ -64,7 +67,7 @@ const Password = () => {
         }
       />
       <Button
-        icon=""
+        icon="content-save"
         style={password_style.save_btn}
         mode="contained"
         onPress={() => console.log("Pressed")}
@@ -112,6 +115,7 @@ const password_style = StyleSheet.create({
     color: "#467ca4",
   },
   save_btn: {
+    marginTop:45,
     backgroundColor: "#0d3858",
     width: "30%",
     margin: 20,

@@ -236,8 +236,7 @@ const Category = () => {
           source={require("../../assets/images/logo.png")}
         />
         <Text style={category_style.headerText}>
-          "Hey, let's create {"\n"} category & choose sticker to use in your
-          income and expense."
+          "Hey! , here you can create your income , expense category
         </Text>
       </View>
       <View style={category_style.categoryContainer}>
@@ -247,7 +246,7 @@ const Category = () => {
             colors: { primary: "#fff", placeholder: "#fff", text: "#fff" },
             roundness: 15,
           }}
-          outlineColor="#fff"
+          outlineColor="#5397c8"
           label="Enter category title"
           style={category_style.input}
           name="category"
@@ -289,12 +288,14 @@ const Category = () => {
         </Text>
         <Button
           mode="contained"
+          icon="pencil-outline"
           labelStyle={{ fontSize: 15 }}
           style={category_style.createBtn}
+          elevation={50}
           uppercase={false}
           onPress={sendCategory}
         >
-          Let's Create
+          Create Category
         </Button>
         {loading === true ? (
           <Image
@@ -441,9 +442,11 @@ const category_style = StyleSheet.create({
   createBtn: {
     backgroundColor: "#467ca4",
     borderRadius: 10,
-    width: 150,
+    borderColor:'#ffffff',
+    width: "50%",
     top: 65,
     alignSelf: "center",
+    marginBottom:20
   },
   loader: {
     alignSelf: "center",
@@ -461,6 +464,7 @@ const category_style = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#5397c8",
     width: "95%",
+    height:"40%"
   },
   listExpense: {
     color: "#ff7070",
