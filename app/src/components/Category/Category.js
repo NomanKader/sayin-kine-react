@@ -25,7 +25,6 @@ import {
 } from "react-native-modal-bottom-alert";
 import { showBottomAlert } from "react-native-modal-bottom-alert";
 import { useEffect } from "react";
-// import { Icon } from "react-native-paper/lib/typescript/components/Avatar/Avatar";
 
 const topics = [
   {
@@ -132,8 +131,6 @@ const topics = [
 
 const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
 
-// const categoryArray = [];
-
 const Category = () => {
   const [category, setCategory] = React.useState("");
   const [sticker, setSticker] = React.useState("");
@@ -148,9 +145,9 @@ const Category = () => {
 
   const sendCategory = async (e) => {
     e.preventDefault();
-    const checkNumber = await AsyncStorage.getItem("@ph_number");
+    const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
     const categoryData = {
-      Phone_Number_Or_Email: checkNumber,
+      Phone_Number_Or_Email: phone_number_or_email,
       Category_Title: category,
       Category_Sticker: sticker,
     };
@@ -197,10 +194,12 @@ const Category = () => {
   };
 
   const getCategory = async () => {
-    const checkNumber = await AsyncStorage.getItem("@ph_number");
+    const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
     try {
       axios
-        .get(`${root_url}api/Category?phonenumber_or_email=${checkNumber}`)
+        .get(
+          `${root_url}api/Category?phonenumber_or_email=${phone_number_or_email}`
+        )
         .then((res) => {
           setCategoryData(res.data);
           setLoading(false);
@@ -442,11 +441,11 @@ const category_style = StyleSheet.create({
   createBtn: {
     backgroundColor: "#467ca4",
     borderRadius: 10,
-    borderColor:'#ffffff',
+    borderColor: "#ffffff",
     width: "50%",
     top: 65,
     alignSelf: "center",
-    marginBottom:20
+    marginBottom: 20,
   },
   loader: {
     alignSelf: "center",
@@ -464,7 +463,7 @@ const category_style = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#5397c8",
     width: "95%",
-    height:"40%"
+    // height: "40%",
   },
   listExpense: {
     color: "#ff7070",

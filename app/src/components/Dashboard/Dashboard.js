@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import {
   SafeAreaView,
   Image,
@@ -21,6 +21,11 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import { BarChart } from "react-native-chart-kit";
 import Calendar from "react-native-calendar-range-picker";
 import { Badge } from "react-native-elements";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
+
 const data = {
   labels: [
     "Jan",
@@ -42,13 +47,85 @@ const data = {
     },
   ],
 };
+
 const Dashboard = () => {
+  let current = new Date();
+  let month = new Array();
+  month[0] = "January";
+  month[1] = "February";
+  month[2] = "March";
+  month[3] = "April";
+  month[4] = "May";
+  month[5] = "June";
+  month[6] = "July";
+  month[7] = "August";
+  month[8] = "September";
+  month[9] = "October";
+  month[10] = "November";
+  month[11] = "December";
+  const year = current.getFullYear();
+  let currentMonth = current.getMonth() + 1;
+  let startDate = current.getDate() - 7;
+  let endDate = current.getDate();
+  if (currentMonth < 10) {
+    currentMonth = "0" + currentMonth;
+  }
+  if (startDate < 10) {
+    startDate = "0" + startDate;
+  }
+  if (endDate < 10) {
+    endDate = "0" + endDate;
+  }
+  const start = `${year}-${currentMonth}-${startDate}`;
+  const end = `${year}-${currentMonth}-${endDate}`;
   const [checked, setChecked] = React.useState("all");
+  const [tableData, setTableData] = React.useState([]);
+  const [currentDate, setCurrentDate] = React.useState("");
+  const [startDateRange, setStartDateRange] = React.useState(start);
+  const [endDateRange, setEndDateRange] = React.useState(end);
+
+  useEffect(() => {
+    showDateInButton();
+    getTableData();
+  }, []);
+
+  const calendarRef = useRef();
+  const filterRef = useRef();
+
+  const getTableData = async () => {
+    const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
+    try {
+      axios
+        .get(
+          `${root_url}/api/dashboard?phonenumber_or_email=${phone_number_or_email}&from_date=${startDateRange}&to_date=${endDateRange}&report_type=${checked}`
+        )
+        .then((res) => {
+          setTableData(res.data);
+        })
+        .catch((err) => console.log(err.message));
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+  const showDateInButton = () => {
+    let date = `${month[current.getMonth()]} ${current.getDate() - 7}-${
+      month[current.getMonth()]
+    } ${current.getDate()}, ${current.getFullYear()}`;
+    setCurrentDate(date);
+  };
 
   const findDateDifference = (start, end) => {
-    console.log(start, end);
+    setStartDateRange(start);
+    setEndDateRange(end);
     const startRange = new Date(start);
     const endRange = new Date(end);
+    let date = `${
+      month[startRange.getMonth()]
+    } ${startRange.getDate()} ${startRange.getFullYear()} - ${
+      month[endRange.getMonth()]
+    } ${endRange.getDate()} ${endRange.getFullYear()}`;
+    setCurrentDate(date);
     const differenceTime = endRange.getTime() - startRange.getTime();
     const differenceDay = differenceTime / (1000 * 3600 * 24);
     if (differenceDay <= 7) {
@@ -59,9 +136,6 @@ const Dashboard = () => {
       console.log("Monthly");
     }
   };
-
-  const calendarRef = useRef();
-  const filterRef = useRef();
 
   return (
     <SafeAreaView style={dashboard_style.container}>
@@ -81,7 +155,7 @@ const Dashboard = () => {
         icon="calendar"
         onPress={() => calendarRef.current.open()}
       >
-        <Text style={{ fontSize: 14 }}>Jun 1-Jun 24,2021</Text>
+        <Text style={{ fontSize: 14 }}>{currentDate}</Text>
       </Button>
       <ScrollView style={dashboard_style.dataContainer}>
         <Title style={dashboard_style.chartTitle}> Income Chart</Title>
@@ -145,42 +219,21 @@ const Dashboard = () => {
             <DataTable.Title numeric>Amount</DataTable.Title>
           </DataTable.Header>
 
-          <DataTable.Row>
-            <DataTable.Cell>1</DataTable.Cell>
-            <DataTable.Cell>2021-07-12</DataTable.Cell>
-            <DataTable.Cell numeric>Income</DataTable.Cell>
-            <DataTable.Cell numeric>Job</DataTable.Cell>
-            <DataTable.Cell numeric>200000</DataTable.Cell>
-          </DataTable.Row>
-
-          <DataTable.Row>
-            <DataTable.Cell>2</DataTable.Cell>
-            <DataTable.Cell>2021-07-12</DataTable.Cell>
-            <DataTable.Cell numeric>Income</DataTable.Cell>
-            <DataTable.Cell numeric>Job</DataTable.Cell>
-            <DataTable.Cell numeric>200000</DataTable.Cell>
-          </DataTable.Row>
-          <DataTable.Row>
-            <DataTable.Cell>3</DataTable.Cell>
-            <DataTable.Cell>2021-07-12</DataTable.Cell>
-            <DataTable.Cell numeric>Income</DataTable.Cell>
-            <DataTable.Cell numeric>Job</DataTable.Cell>
-            <DataTable.Cell numeric>200000</DataTable.Cell>
-          </DataTable.Row>
-          <DataTable.Row>
-            <DataTable.Cell>4</DataTable.Cell>
-            <DataTable.Cell>2021-07-12</DataTable.Cell>
-            <DataTable.Cell numeric>Income</DataTable.Cell>
-            <DataTable.Cell numeric>Job</DataTable.Cell>
-            <DataTable.Cell numeric>200000</DataTable.Cell>
-          </DataTable.Row>
-          <DataTable.Row>
-            <DataTable.Cell>5</DataTable.Cell>
-            <DataTable.Cell>2021-07-12</DataTable.Cell>
-            <DataTable.Cell numeric>Income</DataTable.Cell>
-            <DataTable.Cell numeric>Job</DataTable.Cell>
-            <DataTable.Cell numeric>200000</DataTable.Cell>
-          </DataTable.Row>
+          {tableData.map((data) => {
+            return (
+              <DataTable.Row key={data.No}>
+                <DataTable.Cell>{tableData.indexOf(data) + 1}</DataTable.Cell>
+                <DataTable.Cell style={{ width: "100%" }}>
+                  {data.Transaction_DateTime}
+                </DataTable.Cell>
+                <DataTable.Cell numeric>{data.Transaction_Type}</DataTable.Cell>
+                <DataTable.Cell numeric>{data.Category}</DataTable.Cell>
+                <DataTable.Cell numeric>
+                  {data.Transaction_Amount}
+                </DataTable.Cell>
+              </DataTable.Row>
+            );
+          })}
         </DataTable>
       </ScrollView>
       <RBSheet
@@ -216,7 +269,10 @@ const Dashboard = () => {
         <FAB
           style={dashboard_style.fab}
           icon="check-underline"
-          onPress={() => calendarRef.current.close()}
+          onPress={() => {
+            getTableData();
+            calendarRef.current.close();
+          }}
         />
       </RBSheet>
       <RBSheet
@@ -270,7 +326,10 @@ const Dashboard = () => {
         <FAB
           style={dashboard_style.fab}
           icon="check-underline"
-          onPress={() => filterRef.current.close()}
+          onPress={() => {
+            getTableData();
+            filterRef.current.close();
+          }}
         />
       </RBSheet>
       {checked === "all" ? (
@@ -328,7 +387,7 @@ const dashboard_style = StyleSheet.create({
   dateBtn: {
     // top: 50,
     marginTop: 30,
-    width: "50%",
+    width: "60%",
     alignSelf: "flex-end",
     right: 20,
     backgroundColor: "#0d3858",

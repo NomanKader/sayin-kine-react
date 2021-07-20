@@ -15,6 +15,7 @@ import NameComponent from "./Name";
 import PhoneComponent from "./Phone";
 import PasswordComponent from "./Password";
 import AdsComponent from "./Ads";
+import Feedback from "./Feedback";
 
 //import { screensEnabled } from 'react-native-screens';
 const NameContent = (props) => (
@@ -135,7 +136,7 @@ function ProfileScreen({ navigation }) {
             onPress={() => {
               setRippleColor("#0D3858");
               setRippleRadius(1);
-              navigation.navigate("Remove Ads")
+              navigation.navigate("Remove Ads");
             }}
             background={TouchableNativeFeedback.Ripple(
               rippleColor,
@@ -157,7 +158,7 @@ function ProfileScreen({ navigation }) {
             onPress={() => {
               setRippleColor("#0D3858");
               setRippleRadius(1);
-              navigator.navigate("Remove Ads")
+              navigation.navigate("Feedback");
             }}
             background={TouchableNativeFeedback.Ripple(
               rippleColor,
@@ -216,6 +217,10 @@ function PasswordScreen({ navigation }) {
 function AdsScreen({ navigation }) {
   return <AdsComponent />;
 }
+
+function FeedBackScreen({ navigation }) {
+  return <Feedback />;
+}
 //main function
 const Profile = () => {
   //screensEnabled(true)
@@ -228,6 +233,7 @@ const Profile = () => {
           <Stack.Screen name="Phone Number or Email" component={PhoneScreen} />
           <Stack.Screen name="Password" component={PasswordScreen} />
           <Stack.Screen name="Remove Ads" component={AdsScreen} />
+          <Stack.Screen name="Feedback" component={FeedBackScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaView>
