@@ -20,14 +20,14 @@ const Feedback = () => {
         multiline
         label="Enter your feedback"
         mode="outlined"
-        numberOfLines={10}
+        numberOfLines={5}
         style={phone_style.txt_input}
         theme={{ colors: { primary: "#0d3858" }, roundness: 8 }}
         outlineColor="#0d3858"
         //   onChangeText={text => setText(text)}
       />
       <Button
-        icon="content-save"
+        icon="send-outline"
         style={phone_style.save_btn}
         mode="contained"
         onPress={() => console.log("Pressed")}
