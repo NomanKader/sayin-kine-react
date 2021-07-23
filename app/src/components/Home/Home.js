@@ -209,7 +209,6 @@ const Home = () => {
         .then((res) => {
           if (res.status === 200) {
             res.data.forEach((data) => {
-              // console.log(data.Income_Percentage);
               setIncomePercentage(parseFloat(data.Income_Percentage));
               setExpensePercentage(parseFloat(data.Expense_Percentage));
             });

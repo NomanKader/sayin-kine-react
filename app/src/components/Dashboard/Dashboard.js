@@ -26,29 +26,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
 
-const data = {
-  labels: [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ],
-  datasets: [
-    {
-      data: [10, 20, 40, 60, 80, 100, 40, 20, 40, 60, 80, 100, 40],
-    },
-  ],
-};
-
 const Dashboard = () => {
+  let expTitle = [];
+  let expValue = [];
+  let incTitle = [];
+  let incValue = [];
+
   let current = new Date();
   let month = new Array();
   month[0] = "January";
@@ -65,8 +48,8 @@ const Dashboard = () => {
   month[11] = "December";
   const year = current.getFullYear();
   let currentMonth = current.getMonth() + 1;
-  let startDate = current.getDate() - 7;
-  let endDate = current.getDate();
+  let startDate = current.getDate() - 6;
+  let endDate = current.getDate() + 1;
   if (currentMonth < 10) {
     currentMonth = "0" + currentMonth;
   }
@@ -76,6 +59,7 @@ const Dashboard = () => {
   if (endDate < 10) {
     endDate = "0" + endDate;
   }
+
   const start = `${year}-${currentMonth}-${startDate}`;
   const end = `${year}-${currentMonth}-${endDate}`;
   const [checked, setChecked] = React.useState("all");
@@ -83,24 +67,58 @@ const Dashboard = () => {
   const [currentDate, setCurrentDate] = React.useState("");
   const [startDateRange, setStartDateRange] = React.useState(start);
   const [endDateRange, setEndDateRange] = React.useState(end);
+  const [dateRange, setDateRange] = React.useState("daily");
+  const [expenseValue, setExpenseValue] = React.useState([]);
+  const [expenseTitle, setExpenseTitle] = React.useState([]);
+  const [incomeTitle, setIncomeTitle] = React.useState([]);
+  const [incomeValue, setIncomeValue] = React.useState([]);
+  const [loader, setLoader] = React.useState(false);
+
+  const incomeData = {
+    labels: incomeTitle,
+    datasets: [
+      {
+        data: incomeValue,
+      },
+    ],
+  };
+
+  const expenseData = {
+    labels: expenseTitle,
+    datasets: [
+      {
+        data: expenseValue,
+      },
+    ],
+  };
 
   useEffect(() => {
     showDateInButton();
+    setLoader(true);
     getTableData();
+    getIncomeChartData();
+    getExpenseChartData();
   }, []);
 
   const calendarRef = useRef();
   const filterRef = useRef();
 
-  const getTableData = async () => {
+  // get method for Expense Chart Data
+  const getExpenseChartData = async () => {
     const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
     try {
       axios
         .get(
-          `${root_url}/api/dashboard?phonenumber_or_email=${phone_number_or_email}&from_date=${startDateRange}&to_date=${endDateRange}&report_type=${checked}`
+          `${root_url}api/dashboard?phonenumber_or_email=${phone_number_or_email}&from_date=${startDateRange}&to_date=${endDateRange}&date_type=${dateRange}&report_type=expense&detail=no`
         )
         .then((res) => {
-          setTableData(res.data);
+          res.data.forEach((expenseData) => {
+            expTitle.push(expenseData.Transaction_DateTime);
+            expValue.push(expenseData.Transaction_Amount);
+          });
+          setExpenseTitle(expTitle);
+          setExpenseValue(expValue);
+          setLoader(false);
         })
         .catch((err) => console.log(err.message));
     } catch (error) {
@@ -108,6 +126,48 @@ const Dashboard = () => {
     }
   };
 
+  // get method for income chart data
+  const getIncomeChartData = async () => {
+    const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
+    try {
+      axios
+        .get(
+          `${root_url}api/dashboard?phonenumber_or_email=${phone_number_or_email}&from_date=${startDateRange}&to_date=${endDateRange}&date_type=${dateRange}&report_type=income&detail=no`
+        )
+        .then((res) => {
+          res.data.forEach((incomeData) => {
+            incTitle.push(incomeData.Transaction_DateTime);
+            incValue.push(incomeData.Transaction_Amount);
+          });
+          setIncomeTitle(incTitle);
+          setIncomeValue(incValue);
+          setLoader(false);
+        })
+        .catch((err) => console.log(err.message));
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+  // get method for table data
+  const getTableData = async () => {
+    const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
+    try {
+      axios
+        .get(
+          `${root_url}api/dashboard?phonenumber_or_email=${phone_number_or_email}&from_date=${startDateRange}&to_date=${endDateRange}&date_type=${dateRange}&report_type=${checked}&detail=yes`
+        )
+        .then((res) => {
+          setTableData(res.data);
+          setLoader(false);
+        })
+        .catch((err) => console.log(err.message));
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+  // show date in button
   const showDateInButton = () => {
     let date = `${month[current.getMonth()]} ${current.getDate() - 7}-${
       month[current.getMonth()]
@@ -115,9 +175,8 @@ const Dashboard = () => {
     setCurrentDate(date);
   };
 
+  // date difference method
   const findDateDifference = (start, end) => {
-    setStartDateRange(start);
-    setEndDateRange(end);
     const startRange = new Date(start);
     const endRange = new Date(end);
     let date = `${
@@ -129,25 +188,32 @@ const Dashboard = () => {
     const differenceTime = endRange.getTime() - startRange.getTime();
     const differenceDay = differenceTime / (1000 * 3600 * 24);
     if (differenceDay <= 7) {
-      console.log("Daily");
+      setDateRange("daily");
     } else if (differenceDay <= 30 || differenceDay <= 31) {
-      console.log("Weekly");
+      setDateRange("weekly");
     } else if (differenceDay <= 365) {
-      console.log("Monthly");
+      setDateRange("monthly");
+    } else if (differenceDay > 365) {
+      setDateRange("yearly");
     }
+    setStartDateRange(start);
+    setEndDateRange(end);
   };
 
   return (
     <SafeAreaView style={dashboard_style.container}>
       <View style={dashboard_style.header}>
+        {/* logo */}
         <Image
           style={dashboard_style.logo}
           source={require("../../assets/images/logo.png")}
         />
+        {/* intro text */}
         <Text style={dashboard_style.headerText}>
           "Hey! , here is your overall income and expense report"
         </Text>
       </View>
+      {/* calendar dialog button */}
       <Button
         mode="contained"
         style={dashboard_style.dateBtn}
@@ -158,58 +224,79 @@ const Dashboard = () => {
         <Text style={{ fontSize: 14 }}>{currentDate}</Text>
       </Button>
       <ScrollView style={dashboard_style.dataContainer}>
+        {/* income title */}
         <Title style={dashboard_style.chartTitle}> Income Chart</Title>
-        <BarChart
-          style={dashboard_style.chart}
-          data={data}
-          width={Dimensions.get("window").width}
-          height={300}
-          yAxisSuffix="%"
-          showValuesOnTopOfBars={true}
-          chartConfig={{
-            backgroundColor: "#ffffff",
-            backgroundGradientFrom: "#ffffff",
-            backgroundGradientTo: "#ffffff",
-            barPercentage: 0.4,
-            fillShadowGradient: `rgba(1, 122, 205, 1)`,
-            fillShadowGradientOpacity: 1,
-            decimalPlaces: 2, // optional, defaults to 2dp
-            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-            propsForDots: {
-              r: "6",
-              strokeWidth: "2",
-              stroke: "#000000",
-            },
-          }}
-          verticalLabelRotation={90}
-        />
+        {loader === true ? (
+          // loading image
+          <Image
+            source={require("../../assets/images/sayinkine.gif")}
+            style={dashboard_style.loader}
+          />
+        ) : (
+          // Income chart
+          <BarChart
+            style={dashboard_style.chart}
+            data={incomeData}
+            width={Dimensions.get("window").width}
+            height={300}
+            showValuesOnTopOfBars={true}
+            chartConfig={{
+              backgroundColor: "#ffffff",
+              backgroundGradientFrom: "#ffffff",
+              backgroundGradientTo: "#ffffff",
+              barPercentage: 0.4,
+              fillShadowGradient: `rgba(1, 122, 205, 1)`,
+              fillShadowGradientOpacity: 1,
+              decimalPlaces: 0,
+              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+              propsForDots: {
+                r: "6",
+                strokeWidth: "2",
+                stroke: "#000000",
+              },
+            }}
+            verticalLabelRotation={90}
+          />
+        )}
+
+        {/* expense title */}
         <Title style={dashboard_style.chartTitle}> Expense Chart</Title>
-        <BarChart
-          style={dashboard_style.chart}
-          data={data}
-          width={Dimensions.get("window").width}
-          height={300}
-          yAxisSuffix="%"
-          showValuesOnTopOfBars={true}
-          chartConfig={{
-            backgroundColor: "#ffffff",
-            backgroundGradientFrom: "#ffffff",
-            backgroundGradientTo: "#ffffff",
-            barPercentage: 0.4,
-            fillShadowGradient: "#c2b280",
-            fillShadowGradientOpacity: 1,
-            decimalPlaces: 2, // optional, defaults to 2dp
-            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-            propsForDots: {
-              r: "6",
-              strokeWidth: "2",
-              stroke: "#ffa726",
-            },
-          }}
-          verticalLabelRotation={90}
-        />
+        {loader === true ? (
+          // loading image
+          <Image
+            source={require("../../assets/images/sayinkine.gif")}
+            style={dashboard_style.loader}
+          />
+        ) : (
+          // expense chart
+          <BarChart
+            style={dashboard_style.chart}
+            data={expenseData}
+            width={Dimensions.get("window").width}
+            height={300}
+            showValuesOnTopOfBars={true}
+            chartConfig={{
+              backgroundColor: "#ffffff",
+              backgroundGradientFrom: "#ffffff",
+              backgroundGradientTo: "#ffffff",
+              barPercentage: 0.4,
+              fillShadowGradient: "#c2b280",
+              fillShadowGradientOpacity: 1,
+              decimalPlaces: 0,
+              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+              propsForDots: {
+                r: "6",
+                strokeWidth: "2",
+                stroke: "#ffa726",
+              },
+            }}
+            verticalLabelRotation={90}
+          />
+        )}
+
+        {/* table to show data */}
         <DataTable style={dashboard_style.datatable}>
           <DataTable.Header>
             <DataTable.Title>No</DataTable.Title>
@@ -219,23 +306,39 @@ const Dashboard = () => {
             <DataTable.Title numeric>Amount</DataTable.Title>
           </DataTable.Header>
 
-          {tableData.map((data) => {
-            return (
-              <DataTable.Row key={data.No}>
-                <DataTable.Cell>{tableData.indexOf(data) + 1}</DataTable.Cell>
-                <DataTable.Cell style={{ width: "100%" }}>
-                  {data.Transaction_DateTime}
-                </DataTable.Cell>
-                <DataTable.Cell numeric>{data.Transaction_Type}</DataTable.Cell>
-                <DataTable.Cell numeric>{data.Category}</DataTable.Cell>
-                <DataTable.Cell numeric>
-                  {data.Transaction_Amount}
-                </DataTable.Cell>
-              </DataTable.Row>
-            );
-          })}
+          {loader === true ? (
+            // loading image
+            <Image
+              source={require("../../assets/images/sayinkine.gif")}
+              style={dashboard_style.loader}
+            />
+          ) : (
+            // table data
+            <View>
+              {tableData.map((data) => {
+                return (
+                  <DataTable.Row key={data.No}>
+                    <DataTable.Cell>
+                      {tableData.indexOf(data) + 1}
+                    </DataTable.Cell>
+                    <DataTable.Cell style={{ width: "100%" }}>
+                      {data.Transaction_DateTime}
+                    </DataTable.Cell>
+                    <DataTable.Cell numeric>
+                      {data.Transaction_Type}
+                    </DataTable.Cell>
+                    <DataTable.Cell numeric>{data.Category}</DataTable.Cell>
+                    <DataTable.Cell numeric>
+                      {data.Transaction_Amount}
+                    </DataTable.Cell>
+                  </DataTable.Row>
+                );
+              })}
+            </View>
+          )}
         </DataTable>
       </ScrollView>
+      {/* calendar dialog */}
       <RBSheet
         ref={calendarRef}
         closeOnDragDown={true}
@@ -271,10 +374,14 @@ const Dashboard = () => {
           icon="check-underline"
           onPress={() => {
             getTableData();
+            getIncomeChartData();
+            getExpenseChartData();
             calendarRef.current.close();
           }}
         />
       </RBSheet>
+
+      {/* filter dialog */}
       <RBSheet
         ref={filterRef}
         closeOnDragDown={true}
@@ -347,6 +454,8 @@ const Dashboard = () => {
           textStyle={{ fontSize: 15, fontWeight: "bold" }}
         />
       )}
+
+      {/* filter button */}
       <FAB
         style={dashboard_style.fab}
         icon="filter"
@@ -358,6 +467,7 @@ const Dashboard = () => {
 
 export default Dashboard;
 
+// dashboard style
 const dashboard_style = StyleSheet.create({
   container: {
     width: "100%",
@@ -441,8 +551,14 @@ const dashboard_style = StyleSheet.create({
     elevation: 40,
     zIndex: 1,
   },
+  loader: {
+    alignSelf: "center",
+    marginTop: 50,
+    marginBottom: 50,
+  },
 });
 
+// calendar dialog style
 const calendar_style = StyleSheet.create({
   close_tbn: {
     left: 20,
@@ -457,6 +573,7 @@ const calendar_style = StyleSheet.create({
   },
 });
 
+// filter dialog style
 const filter_style = StyleSheet.create({
   radioContainer: {
     marginTop: 50,
