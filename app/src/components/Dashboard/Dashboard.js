@@ -225,76 +225,90 @@ const Dashboard = () => {
       </Button>
       <ScrollView style={dashboard_style.dataContainer}>
         {/* income title */}
-        <Title style={dashboard_style.chartTitle}> Income Chart</Title>
-        {loader === true ? (
-          // loading image
-          <Image
-            source={require("../../assets/images/sayinkine.gif")}
-            style={dashboard_style.loader}
-          />
-        ) : (
-          // Income chart
-          <BarChart
-            style={dashboard_style.chart}
-            data={incomeData}
-            width={Dimensions.get("window").width}
-            height={300}
-            showValuesOnTopOfBars={true}
-            chartConfig={{
-              backgroundColor: "#ffffff",
-              backgroundGradientFrom: "#ffffff",
-              backgroundGradientTo: "#ffffff",
-              barPercentage: 0.4,
-              fillShadowGradient: `rgba(1, 122, 205, 1)`,
-              fillShadowGradientOpacity: 1,
-              decimalPlaces: 0,
-              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-              propsForDots: {
-                r: "6",
-                strokeWidth: "2",
-                stroke: "#000000",
-              },
-            }}
-            verticalLabelRotation={90}
-          />
-        )}
+        <View
+          style={{
+            display:
+              checked === "all" || checked === "income" ? "flex" : "none",
+          }}
+        >
+          <Title style={dashboard_style.chartTitle}> Income Chart</Title>
+          {loader === true ? (
+            // loading image
+            <Image
+              source={require("../../assets/images/sayinkine.gif")}
+              style={dashboard_style.loader}
+            />
+          ) : (
+            // Income chart
+            <BarChart
+              style={dashboard_style.chart}
+              data={incomeData}
+              width={Dimensions.get("window").width}
+              height={300}
+              showValuesOnTopOfBars={true}
+              chartConfig={{
+                backgroundColor: "#ffffff",
+                backgroundGradientFrom: "#ffffff",
+                backgroundGradientTo: "#ffffff",
+                barPercentage: 0.4,
+                fillShadowGradient: `rgba(1, 122, 205, 1)`,
+                fillShadowGradientOpacity: 1,
+                decimalPlaces: 0,
+                color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                propsForDots: {
+                  r: "6",
+                  strokeWidth: "2",
+                  stroke: "#000000",
+                },
+              }}
+              verticalLabelRotation={90}
+            />
+          )}
+        </View>
 
-        {/* expense title */}
-        <Title style={dashboard_style.chartTitle}> Expense Chart</Title>
-        {loader === true ? (
-          // loading image
-          <Image
-            source={require("../../assets/images/sayinkine.gif")}
-            style={dashboard_style.loader}
-          />
-        ) : (
-          // expense chart
-          <BarChart
-            style={dashboard_style.chart}
-            data={expenseData}
-            width={Dimensions.get("window").width}
-            height={300}
-            showValuesOnTopOfBars={true}
-            chartConfig={{
-              backgroundColor: "#ffffff",
-              backgroundGradientFrom: "#ffffff",
-              backgroundGradientTo: "#ffffff",
-              barPercentage: 0.4,
-              fillShadowGradient: "#c2b280",
-              fillShadowGradientOpacity: 1,
-              decimalPlaces: 0,
-              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-              propsForDots: {
-                r: "6",
-                strokeWidth: "2",
-                stroke: "#ffa726",
-              },
-            }}
-            verticalLabelRotation={90}
-          />
-        )}
+        <View
+          style={{
+            display:
+              checked === "all" || checked === "expense" ? "flex" : "none",
+          }}
+        >
+          {/* expense title */}
+          <Title style={dashboard_style.chartTitle}> Expense Chart</Title>
+          {loader === true ? (
+            // loading image
+            <Image
+              source={require("../../assets/images/sayinkine.gif")}
+              style={dashboard_style.loader}
+            />
+          ) : (
+            // expense chart
+            <BarChart
+              style={dashboard_style.chart}
+              data={expenseData}
+              width={Dimensions.get("window").width}
+              height={300}
+              showValuesOnTopOfBars={true}
+              chartConfig={{
+                backgroundColor: "#ffffff",
+                backgroundGradientFrom: "#ffffff",
+                backgroundGradientTo: "#ffffff",
+                barPercentage: 0.4,
+                fillShadowGradient: "#c2b280",
+                fillShadowGradientOpacity: 1,
+                decimalPlaces: 0,
+                color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                propsForDots: {
+                  r: "6",
+                  strokeWidth: "2",
+                  stroke: "#ffa726",
+                },
+              }}
+              verticalLabelRotation={90}
+            />
+          )}
+        </View>
 
         {/* table to show data */}
         <DataTable style={dashboard_style.datatable}>
@@ -434,6 +448,7 @@ const Dashboard = () => {
           style={dashboard_style.fab}
           icon="check-underline"
           onPress={() => {
+            setLoader(true);
             getTableData();
             filterRef.current.close();
           }}
@@ -495,9 +510,8 @@ const dashboard_style = StyleSheet.create({
     fontWeight: "bold",
   },
   dateBtn: {
-    // top: 50,
     marginTop: 30,
-    width: "60%",
+    width: "auto",
     alignSelf: "flex-end",
     right: 20,
     backgroundColor: "#0d3858",
