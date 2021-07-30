@@ -8,7 +8,7 @@ import {
   ScrollView,
   TouchableNativeFeedback,
 } from "react-native";
-import { Card, IconButton, TextInput } from "react-native-paper";
+import { Card, IconButton } from "react-native-paper";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import NameComponent from "./Name";

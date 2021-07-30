@@ -334,32 +334,6 @@ const Category = () => {
                       />
                     )}
                   ></Card.Title>
-                  {/* <List.Section>
-                    <List.Item
-                      style={category_style.listItem}
-                      titleStyle={{ color: "#0d3858" }}
-                      title={categorylist.Category_Title}
-                      left={(props) => (
-                        <List.Subheader
-                          style={{ color: "rgba(0,0,0,0.87)", fontSize: 20 }}
-                        >
-                          {categorylist.Category_Sticker}
-                        </List.Subheader>
-                      )}
-                      right={(props) => (
-                        <TouchableOpacity
-                          onPress={() => deleteCategoryData(categorylist.No)}
-                          style={{ alignSelf: "center" }}
-                        >
-                          <List.Icon
-                            {...props}
-                            icon="trash-can-outline"
-                            color="#CD6155"
-                          />
-                        </TouchableOpacity>
-                      )}
-                    />
-                  </List.Section> */}
                 </Card>
               );
             })}

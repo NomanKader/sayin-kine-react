@@ -246,6 +246,7 @@ const Dashboard = () => {
               width={Dimensions.get("window").width}
               height={300}
               showValuesOnTopOfBars={true}
+              // pastYearRange = {1}
               chartConfig={{
                 backgroundColor: "#ffffff",
                 backgroundGradientFrom: "#ffffff",
@@ -262,7 +263,7 @@ const Dashboard = () => {
                   stroke: "#000000",
                 },
               }}
-              verticalLabelRotation={90}
+              verticalLabelRotation={45}
             />
           )}
         </View>
@@ -305,7 +306,7 @@ const Dashboard = () => {
                   stroke: "#ffa726",
                 },
               }}
-              verticalLabelRotation={90}
+              verticalLabelRotation={45}
             />
           )}
         </View>
@@ -362,6 +363,7 @@ const Dashboard = () => {
           container: {
             borderTopRightRadius: 20,
             borderTopLeftRadius: 20,
+            paddingBottom: 20,
           },
           draggableIcon: {
             backgroundColor: "#B2BABB",
@@ -379,6 +381,7 @@ const Dashboard = () => {
         </TouchableOpacity>
         <Text style={calendar_style.dialogTitle}>Custome Date Range</Text>
         <Calendar
+          style={{ marginBottom: 200 }}
           onChange={({ startDate, endDate }) => {
             findDateDifference(startDate, endDate);
           }}
@@ -584,6 +587,10 @@ const calendar_style = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: "#0d3858",
+  },
+  calendar: {
+    marginBottom: 200,
+    paddingBottom: 200,
   },
 });
 
