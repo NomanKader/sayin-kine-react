@@ -15,7 +15,7 @@ const Name = () => {
   const [userName, setUserName] = React.useState("");
   const [updateName, setUpdateName] = React.useState("");
   const [loader, setLoader] = React.useState(false);
-  const [btnIcon, setBtnIcon] = React.useState("content-save");
+  const [btnLoader, setBtnLoader] = React.useState(false);
 
   useEffect(() => {
     getUserName();
@@ -44,7 +44,9 @@ const Name = () => {
           }
         })
         .catch((err) => console.log(err.message));
-    } catch (error) {}
+    } catch (error) {
+      alert(error);
+    }
   };
 
   const updateUserName = async () => {
@@ -52,6 +54,7 @@ const Name = () => {
     const token = await AsyncStorage.getItem("@token");
     try {
       if (updateName !== "") {
+        setBtnLoader(true);
         axios
           .put(
             `${root_url}api/setting?phonenumber_or_email=${phone_number_or_email}&new_name=${updateName}&token=${token}`
@@ -63,6 +66,7 @@ const Name = () => {
                 "Congratulation!",
                 "User name has been updated"
               );
+              setBtnLoader(false);
             } else if (res.status === 500) {
               showBottomAlert(
                 "error",
@@ -72,6 +76,10 @@ const Name = () => {
             } else if (res.status === 400) {
               showBottomAlert("info", "Bad Request!", "Check your input field");
             }
+          })
+          .catch((err) => {
+            console.log(err.message);
+            setBtnLoader(false);
           });
       } else {
         showBottomAlert(
@@ -117,14 +125,22 @@ const Name = () => {
         onChangeText={(updateName) => setUpdateName(updateName)}
         clearButtonMode="always"
       />
-      <Button
-        icon={btnIcon}
-        style={name_style.save_btn}
-        mode="contained"
-        onPress={() => updateUserName()}
-      >
-        Save
-      </Button>
+      {btnLoader === true ? (
+        <Image
+          source={require("../../assets/images/sayinkine_loading.gif")}
+          style={name_style.loader}
+        />
+      ) : (
+        <Button
+          icon="content-save"
+          style={name_style.save_btn}
+          mode="contained"
+          onPress={() => updateUserName()}
+        >
+          Save
+        </Button>
+      )}
+
       <BottomAlert ref={(ref) => useRefBottomAlert(ref)} />
     </SafeAreaView>
   );
@@ -168,5 +184,13 @@ const name_style = StyleSheet.create({
     width: "30%",
     margin: 20,
     alignSelf: "center",
+  },
+  loader: {
+    alignSelf: "center",
+    marginTop: 20,
+  },
+  loader: {
+    alignSelf: "center",
+    marginTop: 20,
   },
 });

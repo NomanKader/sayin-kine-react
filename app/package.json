@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.15.5",
+    "@react-native-community/datetimepicker": "^3.5.2",
     "@react-navigation/native": "^5.9.4",
     "@react-navigation/stack": "^5.14.5",
     "axios": "^0.21.1",
@@ -29,6 +30,7 @@
     "react-native-keyboard-aware-scrollview": "^2.1.0",
     "react-native-material-cards": "^1.0.15",
     "react-native-modal-bottom-alert": "^1.1.3",
+    "react-native-modal-datetime-picker": "^10.2.0",
     "react-native-modal-dropdown": "^1.0.1",
     "react-native-paper": "^4.9.1",
     "react-native-raw-bottom-sheet": "^2.2.0",

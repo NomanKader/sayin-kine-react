@@ -23,6 +23,7 @@ import Calendar from "react-native-calendar-range-picker";
 import { Badge } from "react-native-elements";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+// import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
 
@@ -73,6 +74,7 @@ const Dashboard = () => {
   const [incomeTitle, setIncomeTitle] = React.useState([]);
   const [incomeValue, setIncomeValue] = React.useState([]);
   const [loader, setLoader] = React.useState(false);
+  // const [isDatePickerVisible, setDatePickerVisisble] = React.useState(false);
 
   const incomeData = {
     labels: incomeTitle,
@@ -199,6 +201,21 @@ const Dashboard = () => {
     setStartDateRange(start);
     setEndDateRange(end);
   };
+
+  // const [isDatePickerVisible, setDatePickerVisibility] = React.useState(false);
+
+  // const showDatePicker = () => {
+  //   setDatePickerVisibility(true);
+  // };
+
+  // const hideDatePicker = () => {
+  //   setDatePickerVisibility(false);
+  // };
+
+  // const handleConfirm = (date) => {
+  //   console.warn("A date has been picked: ", date);
+  //   hideDatePicker();
+  // };
 
   return (
     <SafeAreaView style={dashboard_style.container}>
@@ -354,6 +371,12 @@ const Dashboard = () => {
         </DataTable>
       </ScrollView>
       {/* calendar dialog */}
+      {/* <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="date"
+        onConfirm={handleConfirm}
+        onCancel={hideDatePicker}
+      /> */}
       <RBSheet
         ref={calendarRef}
         closeOnDragDown={true}

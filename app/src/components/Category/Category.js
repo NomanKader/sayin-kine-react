@@ -10,15 +10,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import {
-  Button,
-  Card,
-  TextInput,
-  Title,
-  List,
-  Avatar,
-  IconButton,
-} from "react-native-paper";
+import { Button, Card, TextInput, Title, IconButton } from "react-native-paper";
 import {
   BottomAlert,
   useRefBottomAlert,

@@ -1,12 +1,71 @@
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
 import { SafeAreaView, StyleSheet, View, Text, Image } from "react-native";
 import { TextInput, Button } from "react-native-paper";
+import { showBottomAlert } from "react-native-modal-bottom-alert";
+import {
+  BottomAlert,
+  useRefBottomAlert,
+} from "react-native-modal-bottom-alert";
 
 const Password = () => {
+  const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
+
   const [password, setPassword] = React.useState("");
   const [confirmpassword, setConfirmPassword] = React.useState("");
   const [PasswordErr, setPasswordErr] = React.useState(false);
   const [ConfirmPasswordErr, setConfirmPasswordErr] = React.useState(false);
+  const [currentPassword, setCurrentPassword] = React.useState("");
+  const [loader, setLoader] = React.useState(false);
+
+  const updatePassword = async () => {
+    const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
+    const token = await AsyncStorage.getItem("@token");
+    try {
+      if (
+        currentPassword !== "" &&
+        password !== "" &&
+        confirmpassword !== "" &&
+        password === confirmpassword
+      ) {
+        setLoader(true);
+        axios
+          .put(
+            `${root_url}api/setting?phonenumber_or_email=${phone_number_or_email}&old_password=${currentPassword}&new_password=${password}&token=${token}`
+          )
+          .then((res) => {
+            if (res.status === 200) {
+              showBottomAlert(
+                "success",
+                "Congratulation!",
+                "Password has been updated"
+              );
+              setLoader(false);
+            } else if (res.status === 500) {
+              showBottomAlert(
+                "error",
+                "System Error!",
+                "Check your internet connection or input field"
+              );
+            } else if (res.status === 400) {
+              showBottomAlert("info", "Bad Request!", "Check your input field");
+            }
+          })
+          .catch((err) => {
+            console.log(err.message);
+            setLoader(false);
+          });
+      } else {
+        showBottomAlert(
+          "error",
+          "Error",
+          "Please check your text fields correctly!"
+        );
+      }
+    } catch (error) {}
+  };
+
   return (
     <SafeAreaView style={password_style.container}>
       {/* Logo & Text */}
@@ -24,19 +83,24 @@ const Password = () => {
         label="Enter old password"
         mode="outlined"
         style={password_style.txt_input}
-        theme={{ colors: { primary: "#0d3858" },roundness:8 }}
+        theme={{ colors: { primary: "#0d3858" }, roundness: 8 }}
         outlineColor="#0d3858"
         showSoftInputOnFocus={true}
         secureTextEntry={true}
+        clearButtonMode="always"
+        name="currentPassword"
+        value={currentPassword}
+        onChangeText={(currentPassword) => setCurrentPassword(currentPassword)}
       />
       <TextInput
         label="Enter new password"
         mode="outlined"
         style={password_style.txt_input}
-        theme={{ colors: { primary: "#0d3858" },roundness:8 }}
+        theme={{ colors: { primary: "#0d3858" }, roundness: 8 }}
         outlineColor="#0d3858"
         showSoftInputOnFocus={true}
         secureTextEntry={true}
+        clearButtonMode="always"
         name="password"
         value={password}
         onChangeText={(password) => {
@@ -53,10 +117,11 @@ const Password = () => {
         label="Confirm new password"
         mode="outlined"
         style={password_style.txt_input}
-        theme={{ colors: { primary: "#0d3858" },roundness:8 }}
+        theme={{ colors: { primary: "#0d3858" }, roundness: 8 }}
         outlineColor="#0d3858"
         showSoftInputOnFocus={true}
         secureTextEntry={true}
+        clearButtonMode="always"
         name="confirmpassword"
         value={confirmpassword}
         onChangeText={(confirmpassword) => setConfirmPassword(confirmpassword)}
@@ -66,14 +131,23 @@ const Password = () => {
           confirmpassword != password
         }
       />
-      <Button
-        icon="content-save"
-        style={password_style.save_btn}
-        mode="contained"
-        onPress={() => console.log("Pressed")}
-      >
-        Save
-      </Button>
+      {loader === true ? (
+        <Image
+          source={require("../../assets/images/sayinkine_loading.gif")}
+          style={password_style.loader}
+        />
+      ) : (
+        <Button
+          icon="content-save"
+          style={password_style.save_btn}
+          mode="contained"
+          onPress={() => updatePassword()}
+        >
+          Save
+        </Button>
+      )}
+
+      <BottomAlert ref={(ref) => useRefBottomAlert(ref)} />
     </SafeAreaView>
   );
 };
@@ -115,10 +189,14 @@ const password_style = StyleSheet.create({
     color: "#467ca4",
   },
   save_btn: {
-    marginTop:45,
+    marginTop: 45,
     backgroundColor: "#0d3858",
     width: "30%",
     margin: 20,
     alignSelf: "center",
+  },
+  loader: {
+    alignSelf: "center",
+    marginTop: 20,
   },
 });
