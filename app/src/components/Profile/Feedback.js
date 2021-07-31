@@ -12,7 +12,7 @@ const Feedback = () => {
           source={require("../../assets/images/logo.png")}
         />
         <Text style={phone_style.headerText}>
-          "Hey! , your can give your feedback here😊"
+          "Hey! , your can give your feedback here so we can improve the app to give the better service for you 😊"
         </Text>
       </View>
       {/* Finished Logo & Text */}

@@ -1,10 +1,15 @@
 import React from "react";
-import { View, Text, StyleSheet, SafeAreaView, Image } from "react-native";
+import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity } from "react-native";
 import { TextInput, Button, Avatar } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 const phonenumber_or_email = AsyncStorage.getItem("@ph_number");
 let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const Ads = () => {
+  const [thanks_msg,setThanksMsg]=React.useState(false);
+  show_thanks_msg=()=>{
+    setThanksMsg(true);
+    alert(thanks_msg)
+  }
   return (
     <SafeAreaView style={ads_style.container}>
       {/* Logo & Text */}
@@ -63,10 +68,13 @@ const Ads = () => {
         icon="credit-card-outline"
         style={ads_style.subscribe_btn}
         mode="contained"
-        onPress={() => console.log("Pressed")}
+        onPress={show_thanks_msg}
       >
         Subscribe
       </Button>
+      {thanks_msg===true?(
+        <Text>Thanks</Text>
+      ):(console.log(thanks_msg))}
     </SafeAreaView>
   );
 };
