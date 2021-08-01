@@ -1,15 +1,113 @@
 import React from "react";
-import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { View, Text, StyleSheet, SafeAreaView, Image } from "react-native";
 import { TextInput, Button, Avatar } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { showBottomAlert } from "react-native-modal-bottom-alert";
+import {
+  BottomAlert,
+  useRefBottomAlert,
+} from "react-native-modal-bottom-alert";
+
 const phonenumber_or_email = AsyncStorage.getItem("@ph_number");
 let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const Ads = () => {
-  const [thanks_msg,setThanksMsg]=React.useState(false);
-  show_thanks_msg=()=>{
+  const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
+
+  const [thanks_msg, setThanksMsg] = React.useState(false);
+  const [userName, setUserName] = React.useState("");
+  const [isemail, setEmail] = React.useState("");
+  const [loader, setLoader] = React.useState(false);
+
+  useEffect(() => {
+    getUserName();
+  }, []);
+
+  show_thanks_msg = () => {
     setThanksMsg(true);
-    alert(thanks_msg)
-  }
+    alert(thanks_msg);
+  };
+
+  const getUserName = () => {
+    // const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
+    try {
+      axios
+        .get(
+          `${root_url}api/home/ub?phonenumber_or_email=${phone_number_or_email}`
+        )
+        .then((res) => {
+          if (res.status === 200) {
+            res.data.forEach((element) => {
+              setUserName(element.User_Name);
+            });
+          } else {
+            showBottomAlert(
+              "error",
+              "Error",
+              "Please check your internet connection!"
+            );
+          }
+        })
+        .catch((err) => console.log(err.message));
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+  const subscribe = async () => {
+    // const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
+    const token = await AsyncStorage.getItem("@token");
+    try {
+      if (isemail !== "") {
+        axios
+          .post(
+            `${root_url}api/setting/sub?phonenumber_or_email=${phonenumber_or_email}&user_name=${userName}&token=${token}`
+          )
+          .then((res) => {
+            if (res.status === 200) {
+              showBottomAlert(
+                "success",
+                "Congratulation!",
+                "Thank your for your Subscribtion"
+              );
+              show_thanks_msg();
+              setLoader(false);
+            } else if (res.status === 500) {
+              showBottomAlert(
+                "error",
+                "System Error!",
+                "Check your internet connection or input field!"
+              );
+              setLoader(false);
+            } else if (res.status === 400) {
+              showBottomAlert(
+                "info",
+                "Bad Request!",
+                "Check your input field!"
+              );
+              setLoader(false);
+            } else if (res.status === 502) {
+              showBottomAlert(
+                "error",
+                "Connection Problem!",
+                "Check your Internet Connection!"
+              );
+              setLoader(false);
+            }
+          });
+      } else {
+        showBottomAlert(
+          "error",
+          "Error",
+          "Please check your text fields correctly!"
+        );
+      }
+    } catch (error) {
+      alert(error);
+    }
+  };
+
   return (
     <SafeAreaView style={ads_style.container}>
       {/* Logo & Text */}
@@ -31,7 +129,9 @@ const Ads = () => {
           style={ads_style.txt_input}
           theme={{ colors: { primary: "#0d3858" }, roundness: 8 }}
           outlineColor="#0d3858"
-          //   onChangeText={text => setText(text)}
+          name="email"
+          value={isemail}
+          onChangeText={(isemail) => setEmail(isemail)}
         />
       ) : (
         console.log("user account is in email")
@@ -64,17 +164,26 @@ const Ads = () => {
           source={require("../../assets/images/ayabank.png")}
         />
       </View>
-      <Button
-        icon="credit-card-outline"
-        style={ads_style.subscribe_btn}
-        mode="contained"
-        onPress={show_thanks_msg}
-      >
-        Subscribe
-      </Button>
-      {thanks_msg===true?(
-        <Text>Thanks</Text>
-      ):(console.log(thanks_msg))}
+      {loader === true ? (
+        <Image
+          source={require("../../assets/images/sayinkine_loading.gif")}
+          style={ads_style.loader}
+        />
+      ) : (
+        <Button
+          icon="credit-card-outline"
+          style={ads_style.subscribe_btn}
+          mode="contained"
+          onPress={() => {
+            subscribe();
+          }}
+        >
+          Subscribe
+        </Button>
+      )}
+
+      {thanks_msg === true ? <Text>Thanks</Text> : console.log(thanks_msg)}
+      <BottomAlert ref={(ref) => useRefBottomAlert(ref)} />
     </SafeAreaView>
   );
 };
@@ -138,5 +247,9 @@ const ads_style = StyleSheet.create({
     backgroundColor: "transparent",
     marginLeft: 10,
     marginRight: 10,
+  },
+  loader: {
+    alignSelf: "center",
+    marginTop: 20,
   },
 });
