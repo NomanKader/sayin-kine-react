@@ -73,8 +73,10 @@ const Name = () => {
                 "System Error!",
                 "Check your internet connection or input field"
               );
+              setBtnLoader(false);
             } else if (res.status === 400) {
               showBottomAlert("info", "Bad Request!", "Check your input field");
+              setBtnLoader(false);
             }
           })
           .catch((err) => {

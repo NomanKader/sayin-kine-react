@@ -1,18 +1,88 @@
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
 import { SafeAreaView, StyleSheet, View, Text, Image } from "react-native";
 import { TextInput, Button } from "react-native-paper";
+import { showBottomAlert } from "react-native-modal-bottom-alert";
+import {
+  BottomAlert,
+  useRefBottomAlert,
+} from "react-native-modal-bottom-alert";
 
 const Feedback = () => {
+  const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
+
+  const [isfeedback, setFeedback] = React.useState("");
+  const [loader, setLoader] = React.useState(false);
+
+  const postFeedback = async () => {
+    const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
+    const token = await AsyncStorage.getItem("@token");
+    try {
+      if (isfeedback !== "") {
+        setLoader(true);
+        axios
+          .post(
+            `${root_url}api/setting/fb?phonenumber_or_email=${phone_number_or_email}&feedback=${isfeedback}&token=${token}`
+          )
+          .then((res) => {
+            if (res.status === 200) {
+              showBottomAlert(
+                "success",
+                "Congratulation!",
+                "Thank your for your feedback"
+              );
+              setLoader(false);
+            } else if (res.status === 500) {
+              showBottomAlert(
+                "error",
+                "System Error!",
+                "Check your internet connection or input field!"
+              );
+              setLoader(false);
+            } else if (res.status === 400) {
+              showBottomAlert(
+                "info",
+                "Bad Request!",
+                "Check your input field!"
+              );
+              setLoader(false);
+            } else if (res.status === 502) {
+              showBottomAlert(
+                "error",
+                "Connection Problem!",
+                "Check your Internet Connection!"
+              );
+              setLoader(false);
+            }
+          })
+          .catch((err) => {
+            console.log(err.message);
+            setLoader(false);
+          });
+      } else {
+        showBottomAlert(
+          "error",
+          "Error",
+          "Please check your text fields correctly!"
+        );
+      }
+    } catch (error) {
+      alert(error);
+    }
+  };
+
   return (
-    <SafeAreaView style={phone_style.container}>
+    <SafeAreaView style={feedback_style.container}>
       {/* Logo & Text */}
-      <View style={phone_style.header}>
+      <View style={feedback_style.header}>
         <Image
-          style={phone_style.logo}
+          style={feedback_style.logo}
           source={require("../../assets/images/logo.png")}
         />
-        <Text style={phone_style.headerText}>
-          "Hey! , your can give your feedback here so we can improve the app to give the better service for you 😊"
+        <Text style={feedback_style.headerText}>
+          "Hey! , your can give your feedback here so we can improve the app to
+          give the better service for you 😊"
         </Text>
       </View>
       {/* Finished Logo & Text */}
@@ -21,26 +91,37 @@ const Feedback = () => {
         label="Enter your feedback"
         mode="outlined"
         numberOfLines={5}
-        style={phone_style.txt_input}
+        style={feedback_style.txt_input}
         theme={{ colors: { primary: "#0d3858" }, roundness: 8 }}
         outlineColor="#0d3858"
-        //   onChangeText={text => setText(text)}
+        name="feedback"
+        value={isfeedback}
+        onChangeText={(isfeedback) => setFeedback(isfeedback)}
       />
-      <Button
-        icon="send-outline"
-        style={phone_style.save_btn}
-        mode="contained"
-        onPress={() => console.log("Pressed")}
-      >
-        Submit
-      </Button>
+      {loader === true ? (
+        <Image
+          source={require("../../assets/images/sayinkine_loading.gif")}
+          style={feedback_style.loader}
+        />
+      ) : (
+        <Button
+          icon="send-outline"
+          style={feedback_style.save_btn}
+          mode="contained"
+          onPress={() => postFeedback()}
+        >
+          Submit
+        </Button>
+      )}
+
+      <BottomAlert ref={(ref) => useRefBottomAlert(ref)} />
     </SafeAreaView>
   );
 };
 
 export default Feedback;
 
-const phone_style = StyleSheet.create({
+const feedback_style = StyleSheet.create({
   container: {
     width: "100%",
     height: "100%",
@@ -78,5 +159,9 @@ const phone_style = StyleSheet.create({
     width: "30%",
     margin: 20,
     alignSelf: "center",
+  },
+  loader: {
+    alignSelf: "center",
+    marginTop: 20,
   },
 });

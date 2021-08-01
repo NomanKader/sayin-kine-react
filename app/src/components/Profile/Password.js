@@ -39,17 +39,30 @@ const Password = () => {
               showBottomAlert(
                 "success",
                 "Congratulation!",
-                "Password has been updated"
+                "Password has been updated!"
               );
               setLoader(false);
             } else if (res.status === 500) {
               showBottomAlert(
                 "error",
                 "System Error!",
-                "Check your internet connection or input field"
+                "Check your internet connection or input field!"
               );
+              setLoader(false);
             } else if (res.status === 400) {
-              showBottomAlert("info", "Bad Request!", "Check your input field");
+              showBottomAlert(
+                "info",
+                "Bad Request!",
+                "Check your input field!"
+              );
+              setLoader(false);
+            } else if (res.status === 406) {
+              showBottomAlert(
+                "info",
+                "Check your Old Password!",
+                "Your Old Password is incorrect!"
+              );
+              setLoader(false);
             }
           })
           .catch((err) => {
@@ -63,7 +76,9 @@ const Password = () => {
           "Please check your text fields correctly!"
         );
       }
-    } catch (error) {}
+    } catch (error) {
+      alert(error);
+    }
   };
 
   return (

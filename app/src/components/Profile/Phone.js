@@ -65,8 +65,10 @@ const Phone = () => {
                 "System Error!",
                 "Check your internet connection or input field"
               );
+              setLoader(false);
             } else if (res.status === 400) {
               showBottomAlert("info", "Bad Request!", "Check your input field");
+              setLoader(false);
             }
           })
           .catch((err) => {
