@@ -171,7 +171,8 @@ const Dashboard = () => {
 
   // show date in button
   const showDateInButton = () => {
-    let date = `${month[current.getMonth()]} ${current.getDate() - 7}-${
+    const last = new Date(current.getTime() - 7 * 24 * 60 * 60 * 1000);
+    let date = `${month[last.getMonth()]} ${last.getDate()}-${
       month[current.getMonth()]
     } ${current.getDate()}, ${current.getFullYear()}`;
     setCurrentDate(date);

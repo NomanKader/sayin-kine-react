@@ -1,5 +1,4 @@
-import React from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useEffect } from "react";
 import { View, Text, StyleSheet, SafeAreaView, Image } from "react-native";
 import { TextInput, Button, Avatar } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -15,7 +14,7 @@ let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const Ads = () => {
   const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
 
-  const [thanks_msg, setThanksMsg] = React.useState(false);
+  // const [thanks_msg, setThanksMsg] = React.useState(false);
   const [userName, setUserName] = React.useState("");
   const [isemail, setEmail] = React.useState("");
   const [loader, setLoader] = React.useState(false);
@@ -24,17 +23,17 @@ const Ads = () => {
     getUserName();
   }, []);
 
-  show_thanks_msg = () => {
-    setThanksMsg(true);
-    alert(thanks_msg);
-  };
+  // show_thanks_msg = () => {
+  //   setThanksMsg(true);
+  //   alert(thanks_msg);
+  // };
 
   const getUserName = () => {
     // const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
     try {
       axios
         .get(
-          `${root_url}api/home/ub?phonenumber_or_email=${phone_number_or_email}`
+          `${root_url}api/home/ub?phonenumber_or_email=${phonenumber_or_email}`
         )
         .then((res) => {
           if (res.status === 200) {
@@ -71,7 +70,7 @@ const Ads = () => {
                 "Congratulation!",
                 "Thank your for your Subscribtion"
               );
-              show_thanks_msg();
+              // show_thanks_msg();
               setLoader(false);
             } else if (res.status === 500) {
               showBottomAlert(
@@ -182,7 +181,7 @@ const Ads = () => {
         </Button>
       )}
 
-      {thanks_msg === true ? <Text>Thanks</Text> : console.log(thanks_msg)}
+      {/* {thanks_msg === true ? <Text>Thanks</Text> : console.log(thanks_msg)} */}
       <BottomAlert ref={(ref) => useRefBottomAlert(ref)} />
     </SafeAreaView>
   );
