@@ -34,6 +34,8 @@ const Dashboard = () => {
   let incValue = [];
 
   let current = new Date();
+  let dateback = new Date(current.getTime() - 7 * 24 * 60 * 60 * 1000);
+  // console.log(dateback.getDate(), dateback.getMonth(), dateback.getFullYear());
   let month = new Array();
   month[0] = "Jan";
   month[1] = "Feb";
@@ -49,8 +51,10 @@ const Dashboard = () => {
   month[11] = "Dec";
   const year = current.getFullYear();
   let currentMonth = current.getMonth() + 1;
-  let startDate = current.getDate() - 6;
-  let endDate = current.getDate() + 1;
+  let startDate = dateback.getDate();
+  let startMonth = dateback.getMonth() + 1;
+  let startYear = dateback.getFullYear();
+  let endDate = current.getDate();
   if (currentMonth < 10) {
     currentMonth = "0" + currentMonth;
   }
@@ -61,7 +65,7 @@ const Dashboard = () => {
     endDate = "0" + endDate;
   }
 
-  const start = `${year}-${currentMonth}-${startDate}`;
+  const start = `${startYear}-${startMonth}-${startDate}`;
   const end = `${year}-${currentMonth}-${endDate}`;
   const [checked, setChecked] = React.useState("all");
   const [tableData, setTableData] = React.useState([]);
