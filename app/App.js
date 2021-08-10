@@ -76,7 +76,8 @@ const App = () => {
       </View>
       <Switch>
         {token != null && session != "invalid token" ? (
-          <Route exact path="/" component={Navigation} />
+          // <Route exact path="/" component={Navigation} />
+          <Route exact path="/" component={StartingBudget} />
         ) : (
           <Route exact path="/" component={LoginComponent} />
         )}

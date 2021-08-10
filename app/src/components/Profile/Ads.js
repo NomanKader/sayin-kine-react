@@ -28,12 +28,12 @@ const Ads = () => {
   //   alert(thanks_msg);
   // };
 
-  const getUserName = () => {
-    // const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
+  const getUserName = async () => {
+    const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
     try {
       axios
         .get(
-          `${root_url}api/home/ub?phonenumber_or_email=${phonenumber_or_email}`
+          `${root_url}api/home/ub?phonenumber_or_email=${phone_number_or_email}`
         )
         .then((res) => {
           if (res.status === 200) {
@@ -54,14 +54,16 @@ const Ads = () => {
     }
   };
 
+  // console.log(userName);
+
   const subscribe = async () => {
-    // const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
+    const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
     const token = await AsyncStorage.getItem("@token");
     try {
       if (isemail !== "") {
         axios
           .post(
-            `${root_url}api/setting/sub?phonenumber_or_email=${phonenumber_or_email}&user_name=${userName}&token=${token}`
+            `${root_url}api/setting/sub?phonenumber_or_email=${phone_number_or_email}&user_name=${userName}&token=${token}`
           )
           .then((res) => {
             if (res.status === 200) {

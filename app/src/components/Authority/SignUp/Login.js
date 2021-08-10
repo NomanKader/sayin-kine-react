@@ -18,8 +18,6 @@ const Login = ({ history }) => {
   const [password, setPassword] = React.useState("");
   const [isSibmitted, setIsSubmitted] = React.useState(false);
 
-
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -36,14 +34,13 @@ const Login = ({ history }) => {
           if (res.data != "401") {
             AsyncStorage.setItem("@ph_number", formData.Phone_Number_Or_Email);
             AsyncStorage.setItem("@token", res.data);
-            history.push("/navigation");
-          }
-          else if (res.data == "401") {
+            history.push("/starting_budget");
+          } else if (res.data == "401") {
             setIsSubmitted(false);
             alert("Phone Number Or Password Incorrect");
-          } else if(res.data == '500'){
-            alert("System Error! Please, try again later.")
-            setIsSubmitted(false)
+          } else if (res.data == "500") {
+            alert("System Error! Please, try again later.");
+            setIsSubmitted(false);
           }
         })
         .catch((err) => {
@@ -77,7 +74,9 @@ const Login = ({ history }) => {
           label="Enter Account Phone Number or Email"
           name="phonenumberoremail"
           value={phonenumberoremail}
-          onChangeText={(phonenumberoremail) => setPhoneNumber(phonenumberoremail)}
+          onChangeText={(phonenumberoremail) =>
+            setPhoneNumber(phonenumberoremail)
+          }
         />
 
         <TextInput

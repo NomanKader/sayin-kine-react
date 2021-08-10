@@ -23,7 +23,6 @@ import Calendar from "react-native-calendar-range-picker";
 import { Badge } from "react-native-elements";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-// import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
 
@@ -33,9 +32,10 @@ const Dashboard = () => {
   let incTitle = [];
   let incValue = [];
 
+  // console.log(expValue, incValue);
+
   let current = new Date();
-  let dateback = new Date(current.getTime() - 7 * 24 * 60 * 60 * 1000);
-  // console.log(dateback.getDate(), dateback.getMonth(), dateback.getFullYear());
+  let dateback = new Date(current.getTime() - 8 * 24 * 60 * 60 * 1000);
   let month = new Array();
   month[0] = "Jan";
   month[1] = "Feb";
@@ -58,6 +58,9 @@ const Dashboard = () => {
   if (currentMonth < 10) {
     currentMonth = "0" + currentMonth;
   }
+  if (startMonth < 10) {
+    startMonth = "0" + startMonth;
+  }
   if (startDate < 10) {
     startDate = "0" + startDate;
   }
@@ -78,7 +81,7 @@ const Dashboard = () => {
   const [incomeTitle, setIncomeTitle] = React.useState([]);
   const [incomeValue, setIncomeValue] = React.useState([]);
   const [loader, setLoader] = React.useState(false);
-  // const [isDatePickerVisible, setDatePickerVisisble] = React.useState(false);
+  const [isVisibleData, setVisibleData] = React.useState(false);
 
   const incomeData = {
     labels: incomeTitle,
@@ -104,6 +107,7 @@ const Dashboard = () => {
     getTableData();
     getIncomeChartData();
     getExpenseChartData();
+    // checkData();
   }, []);
 
   const calendarRef = useRef();
@@ -112,19 +116,27 @@ const Dashboard = () => {
   // get method for Expense Chart Data
   const getExpenseChartData = async () => {
     const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
+    // console.log(typeof startDateRange, endDateRange);
     try {
       axios
         .get(
           `${root_url}api/dashboard?phonenumber_or_email=${phone_number_or_email}&from_date=${startDateRange}&to_date=${endDateRange}&date_type=${dateRange}&report_type=expense&detail=no`
         )
         .then((res) => {
-          res.data.forEach((expenseData) => {
-            expTitle.push(expenseData.Transaction_DateTime);
-            expValue.push(expenseData.Transaction_Amount);
-          });
-          setExpenseTitle(expTitle);
-          setExpenseValue(expValue);
-          setLoader(false);
+          if (res.data.length === 0) {
+            setVisibleData(true);
+          } else {
+            console.log(typeof res.data);
+            res.data.forEach((expenseData) => {
+              expTitle.push(expenseData.Transaction_DateTime);
+              expValue.push(expenseData.Transaction_Amount);
+            });
+            console.log(res.data);
+            setExpenseTitle(expTitle);
+            setExpenseValue(expValue);
+            setLoader(false);
+            setVisibleData(false);
+          }
         })
         .catch((err) => console.log(err.message));
     } catch (error) {
@@ -148,6 +160,7 @@ const Dashboard = () => {
           setIncomeTitle(incTitle);
           setIncomeValue(incValue);
           setLoader(false);
+          // console.log(res.data);
         })
         .catch((err) => console.log(err.message));
     } catch (error) {
@@ -198,7 +211,7 @@ const Dashboard = () => {
       setDateRange("daily");
     } else if (differenceDay <= 30 || differenceDay <= 31) {
       setDateRange("weekly");
-    } else if (differenceDay <= 365) {
+    } else if (differenceDay > 30 && differenceDay <= 365) {
       setDateRange("monthly");
     } else if (differenceDay > 365) {
       setDateRange("yearly");
@@ -206,21 +219,6 @@ const Dashboard = () => {
     setStartDateRange(start);
     setEndDateRange(end);
   };
-
-  // const [isDatePickerVisible, setDatePickerVisibility] = React.useState(false);
-
-  // const showDatePicker = () => {
-  //   setDatePickerVisibility(true);
-  // };
-
-  // const hideDatePicker = () => {
-  //   setDatePickerVisibility(false);
-  // };
-
-  // const handleConfirm = (date) => {
-  //   console.warn("A date has been picked: ", date);
-  //   hideDatePicker();
-  // };
 
   return (
     <SafeAreaView style={dashboard_style.container}>
@@ -245,136 +243,144 @@ const Dashboard = () => {
       >
         <Text style={{ fontSize: 14 }}>{currentDate}</Text>
       </Button>
-      <ScrollView style={dashboard_style.dataContainer}>
-        {/* income title */}
-        <View
-          style={{
-            display:
-              checked === "all" || checked === "income" ? "flex" : "none",
-          }}
-        >
-          <Title style={dashboard_style.chartTitle}> Income Chart</Title>
-          {loader === true ? (
-            // loading image
-            <Image
-              source={require("../../assets/images/sayinkine.gif")}
-              style={dashboard_style.loader}
-            />
-          ) : (
-            // Income chart
-            <BarChart
-              style={dashboard_style.chart}
-              data={incomeData}
-              width={Dimensions.get("window").width}
-              height={300}
-              showValuesOnTopOfBars={true}
-              // pastYearRange = {1}
-              chartConfig={{
-                backgroundColor: "#ffffff",
-                backgroundGradientFrom: "#ffffff",
-                backgroundGradientTo: "#ffffff",
-                barPercentage: 0.4,
-                fillShadowGradient: `rgba(1, 122, 205, 1)`,
-                fillShadowGradientOpacity: 1,
-                decimalPlaces: 0,
-                color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                propsForDots: {
-                  r: "6",
-                  strokeWidth: "2",
-                  stroke: "#000000",
-                },
-              }}
-              verticalLabelRotation={45}
-            />
-          )}
-        </View>
 
-        <View
-          style={{
-            display:
-              checked === "all" || checked === "expense" ? "flex" : "none",
-          }}
-        >
-          {/* expense title */}
-          <Title style={dashboard_style.chartTitle}> Expense Chart</Title>
-          {loader === true ? (
-            // loading image
-            <Image
-              source={require("../../assets/images/sayinkine.gif")}
-              style={dashboard_style.loader}
-            />
-          ) : (
-            // expense chart
-            <BarChart
-              style={dashboard_style.chart}
-              data={expenseData}
-              width={Dimensions.get("window").width}
-              height={300}
-              showValuesOnTopOfBars={true}
-              chartConfig={{
-                backgroundColor: "#ffffff",
-                backgroundGradientFrom: "#ffffff",
-                backgroundGradientTo: "#ffffff",
-                barPercentage: 0.4,
-                fillShadowGradient: "#c2b280",
-                fillShadowGradientOpacity: 1,
-                decimalPlaces: 0,
-                color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                propsForDots: {
-                  r: "6",
-                  strokeWidth: "2",
-                  stroke: "#ffa726",
-                },
-              }}
-              verticalLabelRotation={45}
-            />
-          )}
-        </View>
+      {isVisibleData === true ? (
+        <Text style={dashboard_style.noDataText}>
+          No Data is Available from {currentDate}
+        </Text>
+      ) : (
+        <ScrollView style={dashboard_style.dataContainer}>
+          {/* income title */}
+          <View
+            style={{
+              display:
+                checked === "all" || checked === "income" ? "flex" : "none",
+            }}
+          >
+            <Title style={dashboard_style.chartTitle}> Income Chart</Title>
+            {loader === true ? (
+              // loading image
+              <Image
+                source={require("../../assets/images/sayinkine.gif")}
+                style={dashboard_style.loader}
+              />
+            ) : (
+              // Income chart
+              <BarChart
+                style={dashboard_style.chart}
+                data={incomeData}
+                width={Dimensions.get("window").width}
+                height={300}
+                showValuesOnTopOfBars={true}
+                // pastYearRange = {1}
+                chartConfig={{
+                  backgroundColor: "#ffffff",
+                  backgroundGradientFrom: "#ffffff",
+                  backgroundGradientTo: "#ffffff",
+                  barPercentage: 0.4,
+                  fillShadowGradient: `rgba(1, 122, 205, 1)`,
+                  fillShadowGradientOpacity: 1,
+                  decimalPlaces: 0,
+                  color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                  labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                  propsForDots: {
+                    r: "6",
+                    strokeWidth: "2",
+                    stroke: "#000000",
+                  },
+                }}
+                verticalLabelRotation={45}
+              />
+            )}
+          </View>
 
-        {/* table to show data */}
-        <DataTable style={dashboard_style.datatable}>
-          <DataTable.Header>
-            <DataTable.Title>No</DataTable.Title>
-            <DataTable.Title>Date</DataTable.Title>
-            <DataTable.Title numeric>Type</DataTable.Title>
-            <DataTable.Title numeric>Title</DataTable.Title>
-            <DataTable.Title numeric>Amount</DataTable.Title>
-          </DataTable.Header>
+          <View
+            style={{
+              display:
+                checked === "all" || checked === "expense" ? "flex" : "none",
+            }}
+          >
+            {/* expense title */}
+            <Title style={dashboard_style.chartTitle}> Expense Chart</Title>
+            {loader === true ? (
+              // loading image
+              <Image
+                source={require("../../assets/images/sayinkine.gif")}
+                style={dashboard_style.loader}
+              />
+            ) : (
+              // expense chart
+              <BarChart
+                style={dashboard_style.chart}
+                data={expenseData}
+                width={Dimensions.get("window").width}
+                height={300}
+                showValuesOnTopOfBars={true}
+                chartConfig={{
+                  backgroundColor: "#ffffff",
+                  backgroundGradientFrom: "#ffffff",
+                  backgroundGradientTo: "#ffffff",
+                  barPercentage: 0.4,
+                  fillShadowGradient: "#c2b280",
+                  fillShadowGradientOpacity: 1,
+                  decimalPlaces: 0,
+                  color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                  labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                  propsForDots: {
+                    r: "6",
+                    strokeWidth: "2",
+                    stroke: "#ffa726",
+                  },
+                }}
+                verticalLabelRotation={45}
+              />
+            )}
+          </View>
 
-          {loader === true ? (
-            // loading image
-            <Image
-              source={require("../../assets/images/sayinkine.gif")}
-              style={dashboard_style.loader}
-            />
-          ) : (
-            // table data
-            <View>
-              {tableData.map((data) => {
-                return (
-                  <DataTable.Row key={data.No}>
-                    <DataTable.Cell>
-                      {tableData.indexOf(data) + 1}
-                    </DataTable.Cell>
-                    <DataTable.Cell style={{ width: "100%" }}>
-                      {data.Transaction_DateTime}
-                    </DataTable.Cell>
-                    <DataTable.Cell numeric>
-                      {data.Transaction_Type}
-                    </DataTable.Cell>
-                    <DataTable.Cell numeric>{data.Category}</DataTable.Cell>
-                    <DataTable.Cell numeric>
-                      {data.Transaction_Amount}
-                    </DataTable.Cell>
-                  </DataTable.Row>
-                );
-              })}
-            </View>
-          )}
-        </DataTable>
-      </ScrollView>
+          {/* table to show data */}
+          <DataTable style={dashboard_style.datatable}>
+            <DataTable.Header>
+              <DataTable.Title>No</DataTable.Title>
+              <DataTable.Title>Date</DataTable.Title>
+              <DataTable.Title numeric>Type</DataTable.Title>
+              <DataTable.Title numeric>Title</DataTable.Title>
+              <DataTable.Title numeric>Amount</DataTable.Title>
+            </DataTable.Header>
+
+            {loader === true ? (
+              // loading image
+              <Image
+                source={require("../../assets/images/sayinkine.gif")}
+                style={dashboard_style.loader}
+              />
+            ) : (
+              // table data
+              <View>
+                {tableData.map((data) => {
+                  return (
+                    <DataTable.Row key={data.No}>
+                      <DataTable.Cell>
+                        {tableData.indexOf(data) + 1}
+                      </DataTable.Cell>
+                      <DataTable.Cell style={{ width: "100%" }}>
+                        {data.Transaction_DateTime}
+                      </DataTable.Cell>
+                      <DataTable.Cell numeric>
+                        {data.Transaction_Type}
+                      </DataTable.Cell>
+                      <DataTable.Cell numeric>{data.Category}</DataTable.Cell>
+                      <DataTable.Cell numeric>
+                        {data.Transaction_Amount}
+                      </DataTable.Cell>
+                    </DataTable.Row>
+                  );
+                })}
+              </View>
+            )}
+          </DataTable>
+        </ScrollView>
+      )}
+
       {/* calendar dialog */}
       {/* <DateTimePickerModal
         isVisible={isDatePickerVisible}
@@ -600,6 +606,12 @@ const dashboard_style = StyleSheet.create({
     alignSelf: "center",
     marginTop: 50,
     marginBottom: 50,
+  },
+  noDataText: {
+    textAlign: "center",
+    marginTop: 40,
+    fontSize: 16,
+    color: "#0d3858",
   },
 });
 
