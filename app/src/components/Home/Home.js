@@ -27,6 +27,7 @@ import Speedometer from "react-native-speedometer-chart";
 import RBSheet from "react-native-raw-bottom-sheet";
 import Icon from "react-native-vector-icons/EvilIcons";
 import ModalDropdown from "react-native-modal-dropdown";
+import Toast from "react-native-toast-message";
 
 const Home = () => {
   const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
@@ -144,6 +145,12 @@ const Home = () => {
             getCardData();
             getExpenseIncome();
             ToastAndroid.show("Successfully Saved", ToastAndroid.SHORT);
+            // Toast.show({
+            //   type: "success",
+            //   position: "bottom",
+            //   text1: "Congratulations",
+            //   text2: "Item is successfully saved",
+            // });
           })
           .catch((err) => console.log(err));
       }

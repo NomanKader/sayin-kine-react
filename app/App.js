@@ -4,7 +4,6 @@ import { View, Platform } from "react-native";
 import { NativeRouter, Route, Router, Switch } from "react-router-native";
 import SignUpComponent from "./src/components/Authority/SignUp/SignUp";
 import LoginComponent from "./src/components/Authority/SignUp/Login";
-import HomeComponent from "./src/components/Home/Home";
 import StartingBudget from "./src/components/StartingBudget";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -76,12 +75,10 @@ const App = () => {
       </View>
       <Switch>
         {token != null && session != "invalid token" ? (
-          // <Route exact path="/" component={Navigation} />
-          <Route exact path="/" component={StartingBudget} />
+          <Route exact path="/" component={Navigation} />
         ) : (
           <Route exact path="/" component={LoginComponent} />
         )}
-        {/* <Route exact path="/" component={Navigation} /> */}
         <Route exact path="/signup" component={SignUpComponent} />
         <Route exact path="/login" component={LoginComponent} />
         <Route exact path="/starting_budget" component={StartingBudget} />

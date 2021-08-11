@@ -119,11 +119,10 @@ const SignUp = ({ history }) => {
             alert("System error");
             setIsSubmitted(false);
           } else if (res.data == "202") {
-            // setVisible(true);
             alert(
               "Congratulations you account is successfully created. Please Login"
             );
-            history.push("/login");
+            history.push("/starting_budget");
           }
         })
         .catch((err) => {
