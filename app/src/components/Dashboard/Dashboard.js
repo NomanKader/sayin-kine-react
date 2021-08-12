@@ -608,8 +608,8 @@ const dashboard_style = StyleSheet.create({
     marginBottom: 50,
   },
   noDataText: {
-    textAlign: "center",
-    marginTop: 40,
+    marginTop:'50%',
+    alignSelf:'center',
     fontSize: 16,
     color: "#0d3858",
   },

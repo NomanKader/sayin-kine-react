@@ -7,8 +7,9 @@ import {
   Image,
   ScrollView,
   TouchableNativeFeedback,
+  NativeModules
 } from "react-native";
-import { Card, IconButton } from "react-native-paper";
+import { Card, IconButton,ActivityIndicator } from "react-native-paper";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import NameComponent from "./Name";
@@ -17,7 +18,7 @@ import PasswordComponent from "./Password";
 import AdsComponent from "./Ads";
 import Feedback from "./Feedback";
 import About from "./About";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 //import { screensEnabled } from 'react-native-screens';
 const NameContent = (props) => (
   <IconButton icon="account" size={20} style={{ top: 3 }} />
@@ -41,16 +42,27 @@ const AdsContent = (props) => (
 const FeedbackContent = (props) => (
   <IconButton icon="pen" size={20} style={profile_style.icon_button} />
 );
+const LogoutContent = (props) => (
+  <IconButton icon="account" size={20} style={profile_style.icon_button} />
+);
 const AboutContent = (props) => (
   <IconButton icon="information" size={20} sstyle={profile_style.icon_button} />
 );
 const Stack = createStackNavigator();
-//start ProfileScreen function
-function ProfileScreen({ navigation }) {
-  const [rippleColor, setRippleColor] = React.useState();
-  const rippleOverflow = false;
-  const [rippleRadius, setRippleRadius] = React.useState(0);
 
+//start ProfileScreen function
+function ProfileScreen({ navigation}) {
+  //declaring hooks
+  const [rippleColor, setRippleColor] = React.useState();
+  const[show_loading,setShowLoading]=React.useState(false);
+  const[rippleRadius,setRippleRadius]=React.useState(0)
+  const rippleOverflow = false;
+  //user interaction function
+  const removeToken=()=>{
+    AsyncStorage.removeItem("@token");
+    setShowLoading(true);
+    NativeModules.DevSettings.reload();
+  }
   return (
     <SafeAreaView style={profile_style.container}>
       {/* Logo & Text */}
@@ -176,6 +188,31 @@ function ProfileScreen({ navigation }) {
             </Card>
           </TouchableNativeFeedback>
           {/* Finished Feedback Card */}
+          {/* Logout Card */}
+          {show_loading==false?(
+                      <TouchableNativeFeedback
+                      onPress={() => {
+                        removeToken();
+                        setRippleColor("#0D3858");
+                        setRippleRadius(1);
+                      }}
+                      background={TouchableNativeFeedback.Ripple(
+                        rippleColor,
+                        rippleOverflow
+                      )}
+                    >
+                      <Card style={profile_style.card} mode="outlined" elevation={50}>
+                        <Card.Title
+                          style={profile_style.card_title}
+                          title="Log Out"
+                          left={LogoutContent}
+                          right={RightContent}
+                        />
+                      </Card>
+                    </TouchableNativeFeedback>
+          ):(<ActivityIndicator size={40} animating={true} color='#fff' />)}
+
+          {/* Finished Logout Card */}
           {/* About App Card */}
           <TouchableNativeFeedback
             onPress={() => {
@@ -229,7 +266,7 @@ function AboutScreen({navigation}){
 }
 //main function
 const Profile = () => {
-  //screensEnabled(true)
+//declaring hooks
   return (
     <SafeAreaView style={profile_style.container}>
       <NavigationContainer>
@@ -279,9 +316,10 @@ const profile_style = StyleSheet.create({
   back_card: {
     backgroundColor: "#0D3858",
     width: "100%",
-    height: 650,
+    height: 750,
     alignSelf: "center",
     marginTop: 30,
+    marginBottom:0,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     borderWidth: 1,
