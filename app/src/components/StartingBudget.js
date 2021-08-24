@@ -209,7 +209,7 @@ const StartingBudget = ({ history }) => {
                 "Congratulation!",
                 "Welcome to Sayinkine Application"
               );
-              history.push("/login");
+              history.push("/navigation");
             } else if (res.data == "500") {
               showBottomAlert("error", "Error!", "System Error");
             }

@@ -29,12 +29,13 @@ const Login = ({ history }) => {
     if (phonenumberoremail != "" && password != "") {
       setIsSubmitted(true);
       axios
-        .post(`${root_url}api/Login?token=`, formData)
+        .post(`${root_url}api/Login?token`, formData)
         .then((res) => {
           if (res.data != "401") {
             AsyncStorage.setItem("@ph_number", formData.Phone_Number_Or_Email);
             AsyncStorage.setItem("@token", res.data);
             history.push("/navigation");
+            alert(AsyncStorage.getItem("@token") + "");
           } else if (res.data == "401") {
             setIsSubmitted(false);
             alert("Phone Number Or Password Incorrect");

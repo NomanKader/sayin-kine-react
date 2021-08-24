@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Text,
   View,
@@ -8,45 +8,45 @@ import {
   ScrollView,
   TouchableNativeFeedback,
   NativeModules,
-} from 'react-native';
-import { Card, IconButton, ActivityIndicator } from 'react-native-paper';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import NameComponent from './Name';
-import PhoneComponent from './Phone';
-import PasswordComponent from './Password';
-import AdsComponent from './Ads';
-import Feedback from './Feedback';
-import About from './About';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+} from "react-native";
+import { Card, IconButton, ActivityIndicator } from "react-native-paper";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import NameComponent from "./Name";
+import PhoneComponent from "./Phone";
+import PasswordComponent from "./Password";
+import AdsComponent from "./Ads";
+import Feedback from "./Feedback";
+import About from "./About";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 //import { screensEnabled } from 'react-native-screens';
 const NameContent = (props) => (
-  <IconButton icon='account' size={20} style={{ top: 3 }} />
+  <IconButton icon="account" size={20} style={{ top: 3 }} />
 );
 const RightContent = (props) => (
-  <IconButton icon='arrow-right' size={20} style={{ top: 3 }} />
+  <IconButton icon="arrow-right" size={20} style={{ top: 3 }} />
 );
 const PhoneContent = (props) => (
   <IconButton
-    icon='badge-account-horizontal'
+    icon="badge-account-horizontal"
     size={20}
     style={profile_style.icon_button}
   />
 );
 const PasswordContent = (props) => (
-  <IconButton icon='lock' size={20} style={profile_style.icon_button} />
+  <IconButton icon="lock" size={20} style={profile_style.icon_button} />
 );
 const AdsContent = (props) => (
-  <IconButton icon='cancel' size={20} style={profile_style.icon_button} />
+  <IconButton icon="cancel" size={20} style={profile_style.icon_button} />
 );
 const FeedbackContent = (props) => (
-  <IconButton icon='pen' size={20} style={profile_style.icon_button} />
+  <IconButton icon="pen" size={20} style={profile_style.icon_button} />
 );
 const LogoutContent = (props) => (
-  <IconButton icon='account' size={20} style={profile_style.icon_button} />
+  <IconButton icon="account" size={20} style={profile_style.icon_button} />
 );
 const AboutContent = (props) => (
-  <IconButton icon='information' size={20} sstyle={profile_style.icon_button} />
+  <IconButton icon="information" size={20} sstyle={profile_style.icon_button} />
 );
 const Stack = createStackNavigator();
 
@@ -59,7 +59,7 @@ function ProfileScreen({ navigation }) {
   const rippleOverflow = false;
   //user interaction function
   const removeToken = () => {
-    AsyncStorage.removeItem('@token');
+    AsyncStorage.removeItem("@token");
     setShowLoading(true);
     NativeModules.DevSettings.reload();
   };
@@ -69,7 +69,7 @@ function ProfileScreen({ navigation }) {
       <View style={profile_style.header}>
         <Image
           style={profile_style.logo}
-          source={require('../../assets/images/logo.png')}
+          source={require("../../assets/images/logo.png")}
         />
         <Text style={profile_style.headerText}>
           "Hey, here you can edit your personal information"
@@ -81,19 +81,19 @@ function ProfileScreen({ navigation }) {
           {/* Profile Name Card */}
           <TouchableNativeFeedback
             onPress={() => {
-              setRippleColor('#0D3858');
+              setRippleColor("#0D3858");
               setRippleRadius(1);
-              navigation.navigate('Your Username');
+              navigation.navigate("Your Username");
             }}
             background={TouchableNativeFeedback.Ripple(
               rippleColor,
               rippleOverflow
             )}
           >
-            <Card style={profile_style.card} mode='outlined' elevation={50}>
+            <Card style={profile_style.card} mode="outlined" elevation={50}>
               <Card.Title
                 style={profile_style.card_title}
-                title='Name'
+                title="Name"
                 left={NameContent}
                 right={RightContent}
               />
@@ -103,19 +103,19 @@ function ProfileScreen({ navigation }) {
           {/* Phone Number Card */}
           <TouchableNativeFeedback
             onPress={() => {
-              setRippleColor('#0D3858');
+              setRippleColor("#0D3858");
               setRippleRadius(1);
-              navigation.navigate('Phone Number or Email');
+              navigation.navigate("Phone Number or Email");
             }}
             background={TouchableNativeFeedback.Ripple(
               rippleColor,
               rippleOverflow
             )}
           >
-            <Card style={profile_style.card} mode='outlined' elevation={50}>
+            <Card style={profile_style.card} mode="outlined" elevation={50}>
               <Card.Title
                 style={profile_style.card_title}
-                title='Phone Number or Email'
+                title="Phone Number or Email"
                 left={PhoneContent}
                 right={RightContent}
               />
@@ -125,19 +125,19 @@ function ProfileScreen({ navigation }) {
           {/* Password Card */}
           <TouchableNativeFeedback
             onPress={() => {
-              setRippleColor('#0D3858');
+              setRippleColor("#0D3858");
               setRippleRadius(1);
-              navigation.navigate('Password');
+              navigation.navigate("Password");
             }}
             background={TouchableNativeFeedback.Ripple(
               rippleColor,
               rippleOverflow
             )}
           >
-            <Card style={profile_style.card} mode='outlined' elevation={50}>
+            <Card style={profile_style.card} mode="outlined" elevation={50}>
               <Card.Title
                 style={profile_style.card_title}
-                title='Password'
+                title="Password"
                 left={PasswordContent}
                 right={RightContent}
               />
@@ -147,19 +147,19 @@ function ProfileScreen({ navigation }) {
           {/* Remove Ads Card */}
           <TouchableNativeFeedback
             onPress={() => {
-              setRippleColor('#0D3858');
+              setRippleColor("#0D3858");
               setRippleRadius(1);
-              navigation.navigate('Remove Ads');
+              navigation.navigate("Remove Ads");
             }}
             background={TouchableNativeFeedback.Ripple(
               rippleColor,
               rippleOverflow
             )}
           >
-            <Card style={profile_style.card} mode='outlined' elevation={50}>
+            <Card style={profile_style.card} mode="outlined" elevation={50}>
               <Card.Title
                 style={profile_style.card_title}
-                title='Remove Ads'
+                title="Remove Ads"
                 left={AdsContent}
                 right={RightContent}
               />
@@ -169,19 +169,19 @@ function ProfileScreen({ navigation }) {
           {/* Feedback Card */}
           <TouchableNativeFeedback
             onPress={() => {
-              setRippleColor('#0D3858');
+              setRippleColor("#0D3858");
               setRippleRadius(1);
-              navigation.navigate('Feedback');
+              navigation.navigate("Feedback");
             }}
             background={TouchableNativeFeedback.Ripple(
               rippleColor,
               rippleOverflow
             )}
           >
-            <Card style={profile_style.card} mode='outlined' elevation={50}>
+            <Card style={profile_style.card} mode="outlined" elevation={50}>
               <Card.Title
                 style={profile_style.card_title}
-                title='Feedback'
+                title="Feedback"
                 left={FeedbackContent}
                 right={RightContent}
               />
@@ -192,19 +192,19 @@ function ProfileScreen({ navigation }) {
           {/* About App Card */}
           <TouchableNativeFeedback
             onPress={() => {
-              setRippleColor('#0D3858');
+              setRippleColor("#0D3858");
               setRippleRadius(1);
-              navigation.navigate('About App');
+              navigation.navigate("About App");
             }}
             background={TouchableNativeFeedback.Ripple(
               rippleColor,
               rippleOverflow
             )}
           >
-            <Card style={profile_style.card} mode='outlined' elevation={50}>
+            <Card style={profile_style.card} mode="outlined" elevation={50}>
               <Card.Title
                 style={profile_style.card_title}
-                title='About App'
+                title="About App"
                 left={AboutContent}
                 right={RightContent}
               />
@@ -216,7 +216,7 @@ function ProfileScreen({ navigation }) {
             <TouchableNativeFeedback
               onPress={() => {
                 removeToken();
-                setRippleColor('#0D3858');
+                setRippleColor("#0D3858");
                 setRippleRadius(1);
               }}
               background={TouchableNativeFeedback.Ripple(
@@ -224,10 +224,10 @@ function ProfileScreen({ navigation }) {
                 rippleOverflow
               )}
             >
-              <Card style={profile_style.card} mode='outlined' elevation={50}>
+              <Card style={profile_style.card} mode="outlined" elevation={50}>
                 <Card.Title
                   style={profile_style.card_title}
-                  title='Log Out'
+                  title="Log Out"
                   left={LogoutContent}
                   right={RightContent}
                 />
@@ -237,11 +237,10 @@ function ProfileScreen({ navigation }) {
             <ActivityIndicator
               size={40}
               animating={true}
-              color='#fff'
+              color="#fff"
               style={profile_style.activityindicator}
             />
           )}
-
           {/* Finished Logout Card */}
         </Card>
       </ScrollView>
@@ -279,13 +278,13 @@ const Profile = () => {
     <SafeAreaView style={profile_style.container}>
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen name='Your Info' component={ProfileScreen} />
-          <Stack.Screen name='Your Username' component={NameScreen} />
-          <Stack.Screen name='Phone Number or Email' component={PhoneScreen} />
-          <Stack.Screen name='Password' component={PasswordScreen} />
-          <Stack.Screen name='Remove Ads' component={AdsScreen} />
-          <Stack.Screen name='Feedback' component={FeedBackScreen} />
-          <Stack.Screen name='About App' component={AboutScreen} />
+          <Stack.Screen name="Your Info" component={ProfileScreen} />
+          <Stack.Screen name="Your Username" component={NameScreen} />
+          <Stack.Screen name="Phone Number or Email" component={PhoneScreen} />
+          <Stack.Screen name="Password" component={PasswordScreen} />
+          <Stack.Screen name="Remove Ads" component={AdsScreen} />
+          <Stack.Screen name="Feedback" component={FeedBackScreen} />
+          <Stack.Screen name="About App" component={AboutScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaView>
@@ -295,16 +294,16 @@ const Profile = () => {
 export default Profile;
 const profile_style = StyleSheet.create({
   container: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: '#ffffff',
+    width: "100%",
+    height: "100%",
+    backgroundColor: "#ffffff",
   },
   icon_button: {},
   header: {
-    display: 'flex',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    flexDirection: 'row',
+    display: "flex",
+    justifyContent: "space-around",
+    alignItems: "center",
+    flexDirection: "row",
     marginBottom: 10,
   },
   logo: {
@@ -317,32 +316,32 @@ const profile_style = StyleSheet.create({
     top: 20,
     width: 250,
     fontSize: 16,
-    textAlign: 'center',
-    color: '#0d3858',
-    fontWeight: 'bold',
+    textAlign: "center",
+    color: "#0d3858",
+    fontWeight: "bold",
   },
   back_card: {
-    backgroundColor: '#0D3858',
-    width: '100%',
+    backgroundColor: "#0D3858",
+    width: "100%",
     height: 750,
-    alignSelf: 'center',
+    alignSelf: "center",
     marginTop: 30,
     marginBottom: 0,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     borderWidth: 1,
-    borderColor: '#5397c8',
+    borderColor: "#5397c8",
   },
   card: {
-    display: 'flex',
-    flexDirection: 'row',
+    display: "flex",
+    flexDirection: "row",
     margin: 18,
     marginBottom: 10,
     borderRadius: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   card_title: {
-    color: '#fff',
+    color: "#fff",
   },
   activityindicator: {
     marginTop: 20,
