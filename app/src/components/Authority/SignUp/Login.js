@@ -31,11 +31,12 @@ const Login = ({ history }) => {
       axios
         .post(`${root_url}api/Login?token`, formData)
         .then((res) => {
+          // console.log(res.data);
           if (res.data != "401") {
             AsyncStorage.setItem("@ph_number", formData.Phone_Number_Or_Email);
             AsyncStorage.setItem("@token", res.data);
             history.push("/navigation");
-            alert(AsyncStorage.getItem("@token") + "");
+            // alert(AsyncStorage.getItem("@token") + "");
           } else if (res.data == "401") {
             setIsSubmitted(false);
             alert("Phone Number Or Password Incorrect");
