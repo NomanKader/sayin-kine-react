@@ -116,22 +116,20 @@ const Dashboard = () => {
   // get method for Expense Chart Data
   const getExpenseChartData = async () => {
     const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
-    // console.log(typeof startDateRange, endDateRange);
+    const token = await AsyncStorage.getItem("@token");
     try {
       axios
         .get(
-          `${root_url}api/dashboard?phonenumber_or_email=${phone_number_or_email}&from_date=${startDateRange}&to_date=${endDateRange}&date_type=${dateRange}&report_type=expense&detail=no`
+          `${root_url}api/dashboard?phonenumber_or_email=${phone_number_or_email}&from_date=${startDateRange}&to_date=${endDateRange}&date_type=${dateRange}&report_type=expense&detail=no&token=${token}`
         )
         .then((res) => {
           if (res.data.length === 0) {
             setVisibleData(true);
           } else {
-            console.log(typeof res.data);
             res.data.forEach((expenseData) => {
               expTitle.push(expenseData.Transaction_DateTime);
               expValue.push(expenseData.Transaction_Amount);
             });
-            console.log(res.data);
             setExpenseTitle(expTitle);
             setExpenseValue(expValue);
             setLoader(false);
@@ -147,10 +145,11 @@ const Dashboard = () => {
   // get method for income chart data
   const getIncomeChartData = async () => {
     const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
+    const token = await AsyncStorage.getItem("@token");
     try {
       axios
         .get(
-          `${root_url}api/dashboard?phonenumber_or_email=${phone_number_or_email}&from_date=${startDateRange}&to_date=${endDateRange}&date_type=${dateRange}&report_type=income&detail=no`
+          `${root_url}api/dashboard?phonenumber_or_email=${phone_number_or_email}&from_date=${startDateRange}&to_date=${endDateRange}&date_type=${dateRange}&report_type=income&detail=no&token=${token}`
         )
         .then((res) => {
           res.data.forEach((incomeData) => {
@@ -160,7 +159,6 @@ const Dashboard = () => {
           setIncomeTitle(incTitle);
           setIncomeValue(incValue);
           setLoader(false);
-          // console.log(res.data);
         })
         .catch((err) => console.log(err.message));
     } catch (error) {
@@ -171,10 +169,11 @@ const Dashboard = () => {
   // get method for table data
   const getTableData = async () => {
     const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
+    const token = await AsyncStorage.getItem("@token");
     try {
       axios
         .get(
-          `${root_url}api/dashboard?phonenumber_or_email=${phone_number_or_email}&from_date=${startDateRange}&to_date=${endDateRange}&date_type=${dateRange}&report_type=${checked}&detail=yes`
+          `${root_url}api/dashboard?phonenumber_or_email=${phone_number_or_email}&from_date=${startDateRange}&to_date=${endDateRange}&date_type=${dateRange}&report_type=${checked}&detail=yes&token=${token}`
         )
         .then((res) => {
           setTableData(res.data);
@@ -380,14 +379,6 @@ const Dashboard = () => {
           </DataTable>
         </ScrollView>
       )}
-
-      {/* calendar dialog */}
-      {/* <DateTimePickerModal
-        isVisible={isDatePickerVisible}
-        mode="date"
-        onConfirm={handleConfirm}
-        onCancel={hideDatePicker}
-      /> */}
       <RBSheet
         ref={calendarRef}
         closeOnDragDown={true}
@@ -608,8 +599,8 @@ const dashboard_style = StyleSheet.create({
     marginBottom: 50,
   },
   noDataText: {
-    marginTop:'50%',
-    alignSelf:'center',
+    marginTop: "50%",
+    alignSelf: "center",
     fontSize: 16,
     color: "#0d3858",
   },

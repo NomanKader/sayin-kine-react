@@ -127,7 +127,6 @@ const Category = () => {
   const [category, setCategory] = React.useState("");
   const [sticker, setSticker] = React.useState("");
   const [categoryData, setCategoryData] = React.useState([]);
-  const categoryList = categoryData.reverse();
   const [loading, setLoading] = React.useState(false);
 
   useEffect(() => {
@@ -138,24 +137,26 @@ const Category = () => {
   const sendCategory = async (e) => {
     e.preventDefault();
     const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
+    const token = await AsyncStorage.getItem("@token");
     const categoryData = {
       Phone_Number_Or_Email: phone_number_or_email,
       Category_Title: category,
       Category_Sticker: sticker,
+      Token: token,
     };
     try {
       if (category != "" && sticker != "") {
         axios
           .post(`${root_url}api/category`, categoryData)
           .then((res) => {
-            if (res.data == "202") {
-              showBottomAlert("success", "Congratulation!", "Category Created");
+            if (res.status == 202) {
               getCategory();
+              showBottomAlert("success", "Congratulation!", "Category Created");
               setCategory("");
               setSticker("");
-            } else if (res.data == "409") {
+            } else if (res.status == 409) {
               showBottomAlert("info", "Warning!", "Category already exists");
-            } else if (res.data == "500") {
+            } else if (res.status == 500) {
               showBottomAlert(
                 "error",
                 "Error",
@@ -187,10 +188,11 @@ const Category = () => {
 
   const getCategory = async () => {
     const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
+    const token = await AsyncStorage.getItem("@token");
     try {
       axios
         .get(
-          `${root_url}api/Category?phonenumber_or_email=${phone_number_or_email}`
+          `${root_url}api/Category?phonenumber_or_email=${phone_number_or_email}&token=${token}`
         )
         .then((res) => {
           setCategoryData(res.data);
@@ -202,15 +204,19 @@ const Category = () => {
     }
   };
 
-  const deleteCategoryData = (id) => {
+  const deleteCategoryData = async (id) => {
+    const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
+    const token = await AsyncStorage.getItem("@token");
     axios
-      .delete(`${root_url}api/Category?id=${id}`)
+      .delete(
+        `${root_url}api/Category?phonenumber_or_email=${phone_number_or_email}&id=${id}&token=${token}`
+      )
       .then((res) => {
         console.log(res.data);
-        if (res.data == "200") {
+        if (res.status == 202) {
           getCategory();
         }
-        if (res.data == "500") {
+        if (res.status == 500) {
           showBottomAlert("error", "Error", "System Error");
         }
       })
@@ -299,7 +305,7 @@ const Category = () => {
             persistentScrollbar={true}
             indicatorStyle="white"
           >
-            {categoryList.map((categorylist) => {
+            {categoryData.map((categorylist) => {
               return (
                 <Card key={categorylist.No} style={category_style.listItem}>
                   <Card.Title

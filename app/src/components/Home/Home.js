@@ -15,6 +15,7 @@ import {
   Button,
   RadioButton,
   TextInput,
+  FAB,
 } from "react-native-paper";
 import {
   BottomAlert,
@@ -27,7 +28,6 @@ import Speedometer from "react-native-speedometer-chart";
 import RBSheet from "react-native-raw-bottom-sheet";
 import Icon from "react-native-vector-icons/EvilIcons";
 import ModalDropdown from "react-native-modal-dropdown";
-import Toast from "react-native-toast-message";
 
 const Home = () => {
   const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
@@ -42,6 +42,7 @@ const Home = () => {
   const [categoryData, setCategoryData] = React.useState([]);
   const [incomePercentage, setIncomePercentage] = React.useState(0);
   const [expensePercentage, setExpensePercentage] = React.useState(0);
+  const [moment, setMoment] = React.useState("");
 
   let categoryArray = [];
 
@@ -60,8 +61,17 @@ const Home = () => {
   month[10] = "November";
   month[11] = "December";
 
+  let curHr = current.getHours();
+
   const refRBSheet = useRef();
   useEffect(() => {
+    if (curHr < 12) {
+      setMoment("Morning");
+    } else if (curHr < 18) {
+      setMoment("Afternoon");
+    } else {
+      setMoment("Evening");
+    }
     getUserNameAndBudget();
     getCardData();
     getExpenseIncome();
@@ -71,13 +81,14 @@ const Home = () => {
   // get method for user name and budget
   const getUserNameAndBudget = async () => {
     const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
+    const token = await AsyncStorage.getItem("@token");
     try {
       axios
         .get(
-          `${root_url}api/home/ub?phonenumber_or_email=${phone_number_or_email}`
+          `${root_url}api/home/ub?phonenumber_or_email=${phone_number_or_email}&token=${token}`
         )
         .then((res) => {
-          if (res.status === 200) {
+          if (res.status === 202) {
             res.data.forEach((element) => {
               setUserName(element.User_Name);
               setBudgetAmount(element.Budget);
@@ -99,10 +110,12 @@ const Home = () => {
   const getSelectData = async () => {
     categoryArray = [];
     const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
+    const token = await AsyncStorage.getItem("@token");
+
     try {
       axios
         .get(
-          `${root_url}api/Category?phonenumber_or_email=${phone_number_or_email}`
+          `${root_url}api/Category?phonenumber_or_email=${phone_number_or_email}&token=${token}`
         )
         .then((res) => {
           res.data.forEach((data) => {
@@ -118,6 +131,8 @@ const Home = () => {
   // post method to save a card
   const postCategory = async () => {
     const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
+    const token = await AsyncStorage.getItem("@token");
+    const currency = await AsyncStorage.getItem("@currency");
     const budget = parseInt(budgetAmount);
     const inputAmount = parseInt(amount);
     try {
@@ -132,10 +147,11 @@ const Home = () => {
         const formData = {
           Phone_Number_Or_Email: phone_number_or_email,
           Budget: budget,
-          Currency: "MMK",
+          Currency: currency,
           Transaction_Type: checked,
           Category: categoryItem,
           Transaction_Amount: inputAmount,
+          Token: token,
         };
         axios
           .post(`${root_url}api/home_post`, formData)
@@ -145,12 +161,6 @@ const Home = () => {
             getCardData();
             getExpenseIncome();
             ToastAndroid.show("Successfully Saved", ToastAndroid.SHORT);
-            // Toast.show({
-            //   type: "success",
-            //   position: "bottom",
-            //   text1: "Congratulations",
-            //   text2: "Item is successfully saved",
-            // });
           })
           .catch((err) => console.log(err));
       }
@@ -162,10 +172,11 @@ const Home = () => {
   // get method to show a card
   const getCardData = async () => {
     const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
+    const token = await AsyncStorage.getItem("@token");
     try {
       axios
         .get(
-          `${root_url}api/home/ie?phonenumber_or_email=${phone_number_or_email}`
+          `${root_url}api/home/ie?phonenumber_or_email=${phone_number_or_email}&token=${token}`
         )
         .then((res) => {
           setCategoryData(res.data);
@@ -177,6 +188,7 @@ const Home = () => {
   // delete method to remove specific card
   const deleteCard = async (id, amount, type) => {
     const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
+    const token = await AsyncStorage.getItem("@token");
     try {
       const cardId = parseInt(id);
       const dataAmount = parseInt(amount);
@@ -184,22 +196,19 @@ const Home = () => {
       console.log(cardId, dataAmount, budget);
       axios
         .delete(
-          `${root_url}api/home?no=${cardId}&phonenumber_or_email=${phone_number_or_email}&budget=${budget}&transaction_amount=${dataAmount}&transaction_type=${type}`
+          `${root_url}api/home?no=${cardId}&phonenumber_or_email=${phone_number_or_email}&budget=${budget}&transaction_amount=${dataAmount}&transaction_type=${type}&token=${token}`
         )
         .then((res) => {
           getUserNameAndBudget();
           getCardData();
-          alert(res.status);
-          console.log(res.data);
-          console.log(res.status);
-          if (res.status === 200) {
+          if (res.status === 202) {
             getUserNameAndBudget();
             getCardData();
           } else if (res.status === 500) {
             showBottomAlert("error", "Error", "System Error");
           }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => console.log(err.message));
     } catch (error) {
       alert(error);
     }
@@ -208,13 +217,14 @@ const Home = () => {
   // get method to show expense and income data
   const getExpenseIncome = async () => {
     const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
+    const token = await AsyncStorage.getItem("@token");
     try {
       axios
         .get(
-          `${root_url}api/home/ch?phonenumber_or_email=${phone_number_or_email}`
+          `${root_url}api/home/ch?phonenumber_or_email=${phone_number_or_email}&token=${token}`
         )
         .then((res) => {
-          if (res.status === 200) {
+          if (res.status === 202) {
             res.data.forEach((data) => {
               setIncomePercentage(parseFloat(data.Income_Percentage));
               setExpensePercentage(parseFloat(data.Expense_Percentage));
@@ -243,7 +253,7 @@ const Home = () => {
           />
         ) : (
           <Text style={home_style.headerText}>
-            Good Morning, {"\n     "} <Text>{user_name}</Text>
+            Good {moment}, {"\n     "} <Text>{user_name}</Text>
           </Text>
         )}
       </View>
@@ -297,17 +307,7 @@ const Home = () => {
             style={home_style.chart}
           />
         </Card.Content>
-        <IconButton
-          icon="plus-circle-outline"
-          color="#fff"
-          size={35}
-          onPress={() => {
-            getSelectData();
-            refRBSheet.current.open();
-          }}
-          style={home_style.addMore}
-        />
-        <Text style={home_style.today_text}>Today</Text>
+        <Text style={home_style.today_text}>Today Transaction</Text>
         {loading === true ? (
           <Image
             source={require("../../assets/images/sayinkine.gif")}
@@ -520,6 +520,15 @@ const Home = () => {
         </View>
       </RBSheet>
       <BottomAlert ref={(ref) => useRefBottomAlert(ref)} />
+      <FAB
+        style={home_style.fab}
+        icon="plus"
+        color="#2471A3"
+        onPress={() => {
+          getSelectData();
+          refRBSheet.current.open();
+        }}
+      />
     </SafeAreaView>
   );
 };
@@ -606,13 +615,11 @@ const home_style = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
     marginBottom: 5,
-    marginTop: -30,
-    right: 20,
+    marginTop: 30,
     fontStyle: "italic",
-    alignSelf: "flex-end",
+    alignSelf: "center",
   },
   listItem: {
-    // backgroundColor: "#124d78",
     backgroundColor: "#fff",
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
@@ -644,6 +651,13 @@ const home_style = StyleSheet.create({
   loader: {
     alignSelf: "center",
     marginTop: 20,
+  },
+  fab: {
+    position: "absolute",
+    right: 0,
+    bottom: 0,
+    margin: 16,
+    backgroundColor: "#fff",
   },
 });
 

@@ -31,7 +31,7 @@ const Login = ({ history }) => {
       axios
         .post(`${root_url}api/Login?token`, formData)
         .then((res) => {
-          // console.log(res.data);
+          // console.log(res.status);
           if (res.data != "401") {
             AsyncStorage.setItem("@ph_number", formData.Phone_Number_Or_Email);
             AsyncStorage.setItem("@token", res.data);

@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import React from "react";
 import {
@@ -26,9 +27,6 @@ const SignUp = ({ history }) => {
   const [NameErr, setNameErr] = React.useState(false);
   const [PasswordErr, setPasswordErr] = React.useState(false);
   const [ConfirmPasswordErr, setConfirmPasswordErr] = React.useState(false);
-
-  // snackbar control
-  // const [visible, setVisible] = React.useState(false);
 
   // validate email
   const validatePhoneOrEmail = (inputData) => {
@@ -111,22 +109,27 @@ const SignUp = ({ history }) => {
       axios
         .post(`${root_url}api/SignUp`, formData)
         .then((res) => {
-          console.log(formData);
-          if (res.data == "409") {
+          console.log(res.status);
+          console.log(res.data);
+          if (res.status == 409) {
             alert("Account already exists, Please try with another");
             setIsSubmitted(false);
-          } else if (res.data == "500") {
+          } else if (res.status == 500) {
             alert("System error");
             setIsSubmitted(false);
-          } else if (res.data == "202") {
+          } else if (res.status == 202) {
+            AsyncStorage.setItem("@ph_number", formData.Phone_Number_Or_Email);
+            AsyncStorage.setItem("@token", res.data);
             alert(
               "Congratulations you account is successfully created. Please Login"
             );
             history.push("/starting_budget");
+          } else {
+            alert("Check your internet connection!");
           }
         })
         .catch((err) => {
-          alert(err);
+          console.log(err);
           setIsSubmitted(false);
         });
     }

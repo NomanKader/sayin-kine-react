@@ -1,7 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect } from "react";
 import { View, Platform, Image, Text } from "react-native";
-import { NativeRouter, Route, Router, Switch } from "react-router-native";
+import { NativeRouter, Route, Switch } from "react-router-native";
 import SignUpComponent from "./src/components/Authority/SignUp/SignUp";
 import LoginComponent from "./src/components/Authority/SignUp/Login";
 import StartingBudget from "./src/components/StartingBudget";
@@ -48,8 +48,6 @@ const App = () => {
     }
   };
 
-  // console.log(token);
-
   return (
     <NativeRouter>
       <View
@@ -65,7 +63,9 @@ const App = () => {
           <Image
             source={require("./src/assets/images/sayinkine_loading.gif")}
           />
-          <Text style={appStyle.loadingText}>Your app will start soon...</Text>
+          <Text style={appStyle.loadingText}>
+            Please wait a moment, {"\n"} we are getting data...
+          </Text>
         </View>
       ) : (
         <Switch>
@@ -95,6 +95,7 @@ const appStyle = StyleSheet.create({
   loadingText: {
     color: "#0d3858",
     fontSize: 18,
+    textAlign: "center",
   },
 });
 export default App;

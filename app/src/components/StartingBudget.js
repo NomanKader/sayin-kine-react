@@ -193,28 +193,32 @@ const StartingBudget = ({ history }) => {
   const sendData = async (e) => {
     e.preventDefault();
     const checkNumber = await AsyncStorage.getItem("@ph_number");
+    const token = await AsyncStorage.getItem("@token");
     try {
       if (budgetAmount > 0 && iscurrency !== "") {
         const budget_data = {
           Phone_Number_Or_Email: checkNumber,
           Budget: budgetAmount,
           Currency: iscurrency,
+          Token: token,
         };
         axios
-          .post(`${root_url}api/Budget`, budget_data)
+          .post(`${root_url}api/sb`, budget_data)
           .then((res) => {
-            if (res.data == "202") {
+            console.log(res.data);
+            if (res.status == 202) {
               showBottomAlert(
                 "success",
                 "Congratulation!",
                 "Welcome to Sayinkine Application"
               );
+              AsyncStorage.setItem("@currency", budget_data.Currency);
               history.push("/navigation");
             } else if (res.data == "500") {
               showBottomAlert("error", "Error!", "System Error");
             }
           })
-          .catch((err) => console.log(err.message));
+          .catch((err) => console.log(err));
       } else {
         setnumberCheckErr(true);
         showBottomAlert("info", "Check your input fields!", "Category Created");
