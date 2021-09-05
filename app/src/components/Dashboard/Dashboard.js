@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
+  FlatList,
 } from "react-native";
 import {
   Button,
@@ -68,7 +69,7 @@ const Dashboard = () => {
     endDate = "0" + endDate;
   }
 
-  const start = `${startYear}-${startMonth}-${startDate}`;
+  const start = `${startYear}-${startMonth}-${startDate + 1}`;
   const end = `${year}-${currentMonth}-${endDate}`;
   const [checked, setChecked] = React.useState("all");
   const [tableData, setTableData] = React.useState([]);
@@ -130,8 +131,14 @@ const Dashboard = () => {
               expTitle.push(expenseData.Transaction_DateTime);
               expValue.push(expenseData.Transaction_Amount);
             });
-            setExpenseTitle(expTitle);
-            setExpenseValue(expValue);
+            if (startMonth != currentMonth) {
+              setExpenseTitle(expTitle.reverse());
+              setExpenseValue(expValue.reverse());
+            } else {
+              setExpenseTitle(expTitle);
+              setExpenseValue(expValue);
+            }
+
             setLoader(false);
             setVisibleData(false);
           }
@@ -156,8 +163,14 @@ const Dashboard = () => {
             incTitle.push(incomeData.Transaction_DateTime);
             incValue.push(incomeData.Transaction_Amount);
           });
-          setIncomeTitle(incTitle);
-          setIncomeValue(incValue);
+          if (startMonth != currentMonth) {
+            setIncomeTitle(incTitle.reverse());
+            setIncomeValue(incValue.reverse());
+          } else {
+            setIncomeTitle(incTitle);
+            setIncomeValue(incValue);
+          }
+
           setLoader(false);
         })
         .catch((err) => console.log(err.message));
@@ -271,7 +284,6 @@ const Dashboard = () => {
                 width={Dimensions.get("window").width}
                 height={300}
                 showValuesOnTopOfBars={true}
-                // pastYearRange = {1}
                 chartConfig={{
                   backgroundColor: "#ffffff",
                   backgroundGradientFrom: "#ffffff",
@@ -280,7 +292,7 @@ const Dashboard = () => {
                   fillShadowGradient: `rgba(1, 122, 205, 1)`,
                   fillShadowGradientOpacity: 1,
                   decimalPlaces: 0,
-                  color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                  color: (opacity = 1) => `rgba(1, 122, 205, 1)`,
                   labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
                   propsForDots: {
                     r: "6",
@@ -323,7 +335,7 @@ const Dashboard = () => {
                   fillShadowGradient: "#c2b280",
                   fillShadowGradientOpacity: 1,
                   decimalPlaces: 0,
-                  color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                  color: (opacity = 1) => `#c2b280`,
                   labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
                   propsForDots: {
                     r: "6",
@@ -337,46 +349,53 @@ const Dashboard = () => {
           </View>
 
           {/* table to show data */}
-          <DataTable style={dashboard_style.datatable}>
-            <DataTable.Header>
-              <DataTable.Title>No</DataTable.Title>
-              <DataTable.Title>Date</DataTable.Title>
-              <DataTable.Title numeric>Type</DataTable.Title>
-              <DataTable.Title numeric>Title</DataTable.Title>
-              <DataTable.Title numeric>Amount</DataTable.Title>
-            </DataTable.Header>
-
-            {loader === true ? (
-              // loading image
-              <Image
-                source={require("../../assets/images/sayinkine.gif")}
-                style={dashboard_style.loader}
-              />
-            ) : (
-              // table data
-              <View>
-                {tableData.map((data) => {
-                  return (
-                    <DataTable.Row key={data.No}>
-                      <DataTable.Cell>
-                        {tableData.indexOf(data) + 1}
-                      </DataTable.Cell>
-                      <DataTable.Cell style={{ width: "100%" }}>
-                        {data.Transaction_DateTime}
-                      </DataTable.Cell>
-                      <DataTable.Cell numeric>
-                        {data.Transaction_Type}
-                      </DataTable.Cell>
-                      <DataTable.Cell numeric>{data.Category}</DataTable.Cell>
-                      <DataTable.Cell numeric>
-                        {data.Transaction_Amount}
-                      </DataTable.Cell>
-                    </DataTable.Row>
-                  );
-                })}
-              </View>
-            )}
-          </DataTable>
+          <View style={dashboard_style.datatable}>
+            <View style={dashboard_style.listWrapper}>
+              <Text style={{ flex: 2, paddingLeft: 5, paddingVertical: 10 }}>
+                No
+              </Text>
+              <Text style={{ flex: 3.5, paddingLeft: 15, paddingVertical: 10 }}>
+                Date
+              </Text>
+              <Text style={dashboard_style.row}>Type</Text>
+              <Text style={dashboard_style.row}>Title</Text>
+              <Text style={dashboard_style.row}>Details</Text>
+              <Text style={dashboard_style.row}>Amount</Text>
+            </View>
+            <FlatList
+              data={tableData}
+              renderItem={({ item }) => (
+                <View
+                  style={dashboard_style.listWrapper}
+                  key={tableData.indexOf(item)}
+                >
+                  <Text
+                    style={{
+                      flex: 2,
+                      paddingVertical: 10,
+                      paddingHorizontal: 5,
+                    }}
+                  >
+                    {tableData.indexOf(item) + 1}
+                  </Text>
+                  <Text style={{ flex: 4, paddingVertical: 10 }}>
+                    {item.Transaction_DateTime}
+                  </Text>
+                  <Text style={dashboard_style.row}>
+                    {item.Transaction_Type}
+                  </Text>
+                  <Text style={dashboard_style.row}>{item.Category}</Text>
+                  <Text style={dashboard_style.row}>
+                    {item.Transaction_Details}
+                  </Text>
+                  <Text style={dashboard_style.row}>
+                    {item.Transaction_Amount}
+                  </Text>
+                </View>
+              )}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          </View>
         </ScrollView>
       )}
       <RBSheet
@@ -568,14 +587,7 @@ const dashboard_style = StyleSheet.create({
     marginBottom: 20,
   },
   datatable: {
-    marginBottom: 20,
-    shadowColor: "#C8D3DF",
-    shadowOffset: {
-      width: 0,
-      height: 10,
-    },
-    shadowOpacity: 1.12,
-    elevation: 10,
+    marginBottom: "20%",
   },
   fab: {
     position: "absolute",
@@ -603,6 +615,19 @@ const dashboard_style = StyleSheet.create({
     alignSelf: "center",
     fontSize: 16,
     color: "#0d3858",
+  },
+  listWrapper: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    borderColor: "#CCD1D1",
+    borderBottomWidth: 1,
+    borderStyle: "solid",
+  },
+  row: {
+    flex: 2.5,
+    fontSize: 13,
+    paddingHorizontal: 5,
+    paddingVertical: 10,
   },
 });
 

@@ -128,6 +128,7 @@ const Category = () => {
   const [sticker, setSticker] = React.useState("");
   const [categoryData, setCategoryData] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
+  const [isSaved, setSaved] = React.useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -146,11 +147,13 @@ const Category = () => {
     };
     try {
       if (category != "" && sticker != "") {
+        setSaved(true);
         axios
           .post(`${root_url}api/category`, categoryData)
           .then((res) => {
             if (res.status == 202) {
               getCategory();
+              setSaved(false);
               showBottomAlert("success", "Congratulation!", "Category Created");
               setCategory("");
               setSticker("");
@@ -164,7 +167,10 @@ const Category = () => {
               );
             }
           })
-          .catch((err) => console.log(err));
+          .catch((err) => {
+            console.log(err);
+            setSaved(false);
+          });
       } else if (
         (category != "" && sticker == "") ||
         (category == "" && sticker != "")
@@ -178,7 +184,7 @@ const Category = () => {
         showBottomAlert(
           "info",
           "Warning!",
-          "Please fill all fields correctly!"
+          "Please fill category title and choose sticker!"
         );
       }
     } catch (error) {
@@ -279,21 +285,27 @@ const Category = () => {
         </View>
         <Text style={category_style.displayTxt}>
           Your Categoy: {"  "}
-          <Text style={category_style.displayInnterTxt}>
-            {category} {sticker}
-          </Text>
+          {category} {sticker}
         </Text>
-        <Button
-          mode="contained"
-          icon="pencil-outline"
-          labelStyle={{ fontSize: 15 }}
-          style={category_style.createBtn}
-          elevation={50}
-          uppercase={false}
-          onPress={sendCategory}
-        >
-          Create Category
-        </Button>
+
+        {!isSaved ? (
+          <Button
+            mode="contained"
+            icon="pencil-outline"
+            labelStyle={{ fontSize: 15 }}
+            style={category_style.createBtn}
+            elevation={50}
+            uppercase={false}
+            onPress={sendCategory}
+          >
+            Create Category
+          </Button>
+        ) : (
+          <Image
+            source={require("../../assets/images/sayinkine.gif")}
+            style={category_style.styleGif}
+          />
+        )}
         {loading === true ? (
           <Image
             source={require("../../assets/images/sayinkine.gif")}
@@ -402,12 +414,10 @@ const category_style = StyleSheet.create({
   },
   displayTxt: {
     top: 50,
-    left: 60,
+    marginLeft: 60,
+    marginRight: 20,
     fontSize: 16,
     fontWeight: "bold",
-    color: "#fff",
-  },
-  displayInnterTxt: {
     color: "#fff",
   },
   createBtn: {
@@ -446,6 +456,11 @@ const category_style = StyleSheet.create({
   scrollContainer: {
     marginTop: 80,
     marginBottom: 150,
+  },
+  styleGif: {
+    // marginTop: 50,
+    top: 65,
+    alignSelf: "center",
   },
 });
 

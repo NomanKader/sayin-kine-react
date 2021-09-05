@@ -37,6 +37,7 @@ const Home = () => {
   const [checked, setChecked] = React.useState("income");
   const [categoryList, setCategoryList] = React.useState([]);
   const [amount, setAmount] = React.useState("");
+  const [description, setDescription] = React.useState("");
   const [categoryItem, setCategoryItem] = React.useState("");
   const [isSaved, setisSaved] = React.useState(false);
   const [categoryData, setCategoryData] = React.useState([]);
@@ -73,8 +74,8 @@ const Home = () => {
       setMoment("Evening");
     }
     getUserNameAndBudget();
-    getCardData();
     getExpenseIncome();
+    getCardData();
     setLoading(true);
   }, []);
 
@@ -132,11 +133,11 @@ const Home = () => {
   const postCategory = async () => {
     const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
     const token = await AsyncStorage.getItem("@token");
-    const currency = await AsyncStorage.getItem("@currency");
+    const currency = budgetAmount.split(" ")[1];
     const budget = parseInt(budgetAmount);
     const inputAmount = parseInt(amount);
     try {
-      if (inputAmount > budget) {
+      if (inputAmount > budget && checked === "expense") {
         showBottomAlert(
           "error",
           "Error",
@@ -151,8 +152,10 @@ const Home = () => {
           Transaction_Type: checked,
           Category: categoryItem,
           Transaction_Amount: inputAmount,
+          Transaction_Details: description,
           Token: token,
         };
+        console.log(formData);
         axios
           .post(`${root_url}api/home_post`, formData)
           .then((res) => {
@@ -160,9 +163,13 @@ const Home = () => {
             setisSaved(false);
             getCardData();
             getExpenseIncome();
+            setisSaved(false);
             ToastAndroid.show("Successfully Saved", ToastAndroid.SHORT);
           })
-          .catch((err) => console.log(err));
+          .catch((err) => {
+            console.log(err);
+            setisSaved(false);
+          });
       }
     } catch (error) {
       alert(error);
@@ -180,6 +187,29 @@ const Home = () => {
         )
         .then((res) => {
           setCategoryData(res.data);
+        })
+        .catch((err) => console.log(err));
+    } catch (error) {}
+  };
+
+  // get method to show expense and income data
+  const getExpenseIncome = async () => {
+    const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
+    const token = await AsyncStorage.getItem("@token");
+    try {
+      axios
+        .get(
+          `${root_url}api/home/ch?phonenumber_or_email=${phone_number_or_email}&token=${token}`
+        )
+        .then((res) => {
+          if (res.status === 202) {
+            res.data.forEach((data) => {
+              setIncomePercentage(parseFloat(data.Income_Percentage));
+              setExpensePercentage(parseFloat(data.Expense_Percentage));
+            });
+          } else {
+            showBottomAlert("error", "Error", "System Error");
+          }
         })
         .catch((err) => console.log(err));
     } catch (error) {}
@@ -204,6 +234,7 @@ const Home = () => {
           if (res.status === 202) {
             getUserNameAndBudget();
             getCardData();
+            getExpenseIncome();
           } else if (res.status === 500) {
             showBottomAlert("error", "Error", "System Error");
           }
@@ -212,29 +243,6 @@ const Home = () => {
     } catch (error) {
       alert(error);
     }
-  };
-
-  // get method to show expense and income data
-  const getExpenseIncome = async () => {
-    const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
-    const token = await AsyncStorage.getItem("@token");
-    try {
-      axios
-        .get(
-          `${root_url}api/home/ch?phonenumber_or_email=${phone_number_or_email}&token=${token}`
-        )
-        .then((res) => {
-          if (res.status === 202) {
-            res.data.forEach((data) => {
-              setIncomePercentage(parseFloat(data.Income_Percentage));
-              setExpensePercentage(parseFloat(data.Expense_Percentage));
-            });
-          } else {
-            showBottomAlert("error", "Error", "System Error");
-          }
-        })
-        .catch((err) => console.log(err));
-    } catch (error) {}
   };
 
   return (
@@ -269,8 +277,7 @@ const Home = () => {
           </Card.Content>
         </Card>
         <Text style={home_style.chartHeader}>
-          {month[current.getMonth()]}
-          {"   "}
+          {month[current.getMonth()]},{"  "}
           {current.getFullYear()}
         </Text>
         <Card.Content style={home_style.chartContainer}>
@@ -326,6 +333,7 @@ const Home = () => {
                     <Card.Title
                       title={category.Category_Title}
                       subtitle={category.Transaction_Type}
+                      subtitleStyle={{ textTransform: "capitalize" }}
                       left={(props) => (
                         <Text
                           style={{
@@ -374,6 +382,7 @@ const Home = () => {
                     <Card.Title
                       title={category.Category_Title}
                       subtitle={category.Transaction_Type}
+                      subtitleStyle={{ textTransform: "capitalize" }}
                       left={(props) => (
                         <Text
                           style={{
@@ -425,7 +434,7 @@ const Home = () => {
         ref={refRBSheet}
         closeOnDragDown={true}
         closeOnPressMask={true}
-        height={400}
+        height={500}
         customStyles={{
           container: {
             borderTopRightRadius: 20,
@@ -498,6 +507,16 @@ const Home = () => {
                 onChangeText={(amount) => setAmount(amount)}
               />
             )}
+            <TextInput
+              mode="outlined"
+              style={dialog_style.description}
+              theme={{ colors: { primary: "#0D3858" }, roundness: 10 }}
+              label="Description"
+              outlineColor="#0D3858"
+              name="description"
+              value={description}
+              onChangeText={(description) => setDescription(description)}
+            />
           </View>
 
           {!isSaved ? (
@@ -561,7 +580,7 @@ const home_style = StyleSheet.create({
     borderTopRightRadius: 20,
   },
   card: {
-    backgroundColor: "#124d78",
+    backgroundColor: "#fff",
     width: 317,
     height: 100,
     alignSelf: "center",
@@ -577,13 +596,13 @@ const home_style = StyleSheet.create({
   },
   cardText: {
     fontSize: 20,
-    color: "#fff",
+    color: "#0d3858",
     paddingBottom: 10,
   },
   budgetAmount: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#fff",
+    color: "#0d3858",
   },
   chartHeader: {
     top: 20,
@@ -614,7 +633,7 @@ const home_style = StyleSheet.create({
     fontSize: 20,
     color: "#fff",
     fontWeight: "bold",
-    marginBottom: 5,
+    marginBottom: 20,
     marginTop: 30,
     fontStyle: "italic",
     alignSelf: "center",
@@ -640,7 +659,7 @@ const home_style = StyleSheet.create({
     color: "#36c46f",
   },
   scrollContainer: {
-    marginBottom: 130,
+    marginBottom: "50%",
   },
   close_tbn: {
     left: 20,
@@ -676,6 +695,12 @@ const dialog_style = StyleSheet.create({
   input: {
     width: 320,
     marginTop: 10,
+    marginBottom: 10,
+    backgroundColor: "#fff",
+    borderColor: "#0D3858",
+  },
+  description: {
+    width: 320,
     marginBottom: 20,
     backgroundColor: "#fff",
     borderColor: "#0D3858",

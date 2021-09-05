@@ -24,13 +24,14 @@ const Name = () => {
 
   const getUserName = async () => {
     const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
+    const token = await AsyncStorage.getItem("@token");
     try {
       axios
         .get(
-          `${root_url}api/home/ub?phonenumber_or_email=${phone_number_or_email}`
+          `${root_url}api/home/ub?phonenumber_or_email=${phone_number_or_email}&token=${token}`
         )
         .then((res) => {
-          if (res.status === 200) {
+          if (res.status === 202) {
             res.data.forEach((element) => {
               setUserName(element.User_Name);
               setLoader(false);
