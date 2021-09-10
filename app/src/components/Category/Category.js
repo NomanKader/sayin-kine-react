@@ -17,6 +17,7 @@ import {
 } from "react-native-modal-bottom-alert";
 import { showBottomAlert } from "react-native-modal-bottom-alert";
 import { useEffect } from "react";
+import { useHistory } from "react-router";
 
 const topics = [
   {
@@ -130,6 +131,8 @@ const Category = () => {
   const [loading, setLoading] = React.useState(false);
   const [isSaved, setSaved] = React.useState(false);
 
+  const history = useHistory();
+
   useEffect(() => {
     setLoading(true);
     getCategory();
@@ -151,19 +154,32 @@ const Category = () => {
         axios
           .post(`${root_url}api/category`, categoryData)
           .then((res) => {
-            if (res.status == 202) {
+            if (res.status === 202) {
               getCategory();
               setSaved(false);
               showBottomAlert("success", "Congratulation!", "Category Created");
               setCategory("");
               setSticker("");
-            } else if (res.status == 409) {
+            } else if (res.status === 409) {
               showBottomAlert("info", "Warning!", "Category already exists");
-            } else if (res.status == 500) {
+            } else if (res.status === 500) {
               showBottomAlert(
                 "error",
                 "Error",
                 "Please check your internet connection!"
+              );
+            } else if (res.status === 401) {
+              showBottomAlert(
+                "error",
+                "Session Expire!",
+                "Please Login Again!"
+              );
+              history.push("/login");
+            } else {
+              showBottomAlert(
+                "error",
+                "Error!",
+                "Check your internet connection!"
               );
             }
           })
@@ -204,7 +220,11 @@ const Category = () => {
           setCategoryData(res.data);
           setLoading(false);
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err.message);
+          showBottomAlert("error", "Session Expire!", "Please login again!");
+          history.push("/login");
+        });
     } catch (error) {
       alert(error);
     }
@@ -219,11 +239,15 @@ const Category = () => {
       )
       .then((res) => {
         console.log(res.data);
-        if (res.status == 202) {
+        if (res.status === 202) {
           getCategory();
-        }
-        if (res.status == 500) {
+        } else if (res.status === 500) {
           showBottomAlert("error", "Error", "System Error");
+        } else if (res.status === 401) {
+          showBottomAlert("error", "Session Expire!", "Please Login Again!");
+          history.push("/login");
+        } else {
+          showBottomAlert("error", "Error!", "Check your internet connection!");
         }
       })
       .catch((err) => console.log(err.message));
@@ -296,7 +320,9 @@ const Category = () => {
             style={category_style.createBtn}
             elevation={50}
             uppercase={false}
-            onPress={sendCategory}
+            onPress={() => {
+              sendCategory();
+            }}
           >
             Create Category
           </Button>

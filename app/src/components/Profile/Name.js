@@ -8,6 +8,7 @@ import {
   BottomAlert,
   useRefBottomAlert,
 } from "react-native-modal-bottom-alert";
+import { useHistory } from "react-router";
 
 const Name = () => {
   const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
@@ -16,6 +17,8 @@ const Name = () => {
   const [updateName, setUpdateName] = React.useState("");
   const [loader, setLoader] = React.useState(false);
   const [btnLoader, setBtnLoader] = React.useState(false);
+
+  const history = useHistory();
 
   useEffect(() => {
     getUserName();
@@ -44,7 +47,11 @@ const Name = () => {
             );
           }
         })
-        .catch((err) => console.log(err.message));
+        .catch((err) => {
+          console.log(err.message);
+          showBottomAlert("error", "Session Expire!", "Please login again!");
+          history.push("/login");
+        });
     } catch (error) {
       alert(error);
     }
@@ -61,13 +68,16 @@ const Name = () => {
             `${root_url}api/setting?phonenumber_or_email=${phone_number_or_email}&new_name=${updateName}&token=${token}`
           )
           .then((res) => {
-            if (res.status === 200) {
+            console.log(res.status);
+            if (res.status === 202) {
               showBottomAlert(
                 "success",
                 "Congratulation!",
                 "User name has been updated"
               );
+              setUpdateName("");
               setBtnLoader(false);
+              getUserName();
             } else if (res.status === 500) {
               showBottomAlert(
                 "error",
@@ -75,9 +85,16 @@ const Name = () => {
                 "Check your internet connection or input field"
               );
               setBtnLoader(false);
-            } else if (res.status === 400) {
-              showBottomAlert("info", "Bad Request!", "Check your input field");
+            } else if (res.status === 401) {
+              showBottomAlert("error", "Session Expire!", "Please Login Again");
+              history.push("/login");
               setBtnLoader(false);
+            } else {
+              showBottomAlert(
+                "error",
+                "Error!",
+                "Check your internet connection!"
+              );
             }
           })
           .catch((err) => {

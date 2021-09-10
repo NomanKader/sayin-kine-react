@@ -24,6 +24,7 @@ import Calendar from "react-native-calendar-range-picker";
 import { Badge } from "react-native-elements";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useHistory } from "react-router";
 
 const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
 
@@ -52,7 +53,7 @@ const Dashboard = () => {
   month[11] = "Dec";
   const year = current.getFullYear();
   let currentMonth = current.getMonth() + 1;
-  let startDate = dateback.getDate();
+  let startDate = dateback.getDate() + 1;
   let startMonth = dateback.getMonth() + 1;
   let startYear = dateback.getFullYear();
   let endDate = current.getDate();
@@ -69,8 +70,9 @@ const Dashboard = () => {
     endDate = "0" + endDate;
   }
 
-  const start = `${startYear}-${startMonth}-${startDate + 1}`;
+  const start = `${startYear}-${startMonth}-${startDate}`;
   const end = `${year}-${currentMonth}-${endDate}`;
+  // console.log(start, end);
   const [checked, setChecked] = React.useState("all");
   const [tableData, setTableData] = React.useState([]);
   const [currentDate, setCurrentDate] = React.useState("");
@@ -83,6 +85,8 @@ const Dashboard = () => {
   const [incomeValue, setIncomeValue] = React.useState([]);
   const [loader, setLoader] = React.useState(false);
   const [isVisibleData, setVisibleData] = React.useState(false);
+
+  const history = useHistory();
 
   const incomeData = {
     labels: incomeTitle,
@@ -143,7 +147,11 @@ const Dashboard = () => {
             setVisibleData(false);
           }
         })
-        .catch((err) => console.log(err.message));
+        .catch((err) => {
+          console.log(err.message);
+          showBottomAlert("error", "Session Expire!", "Please login again!");
+          history.push("/login");
+        });
     } catch (error) {
       alert(error);
     }
@@ -173,7 +181,11 @@ const Dashboard = () => {
 
           setLoader(false);
         })
-        .catch((err) => console.log(err.message));
+        .catch((err) => {
+          console.log(err.message);
+          showBottomAlert("error", "Session Expire!", "Please login again!");
+          history.push("/login");
+        });
     } catch (error) {
       alert(error);
     }
@@ -192,7 +204,11 @@ const Dashboard = () => {
           setTableData(res.data);
           setLoader(false);
         })
-        .catch((err) => console.log(err.message));
+        .catch((err) => {
+          console.log(err.message);
+          showBottomAlert("error", "Session Expire!", "Please login again!");
+          history.push("/login");
+        });
     } catch (error) {
       alert(error);
     }

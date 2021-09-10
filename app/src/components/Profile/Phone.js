@@ -1,6 +1,13 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect } from "react";
-import { SafeAreaView, StyleSheet, View, Text, Image } from "react-native";
+import {
+  SafeAreaView,
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  ToastAndroid,
+} from "react-native";
 import { TextInput, Button } from "react-native-paper";
 import { showBottomAlert } from "react-native-modal-bottom-alert";
 import {
@@ -8,6 +15,7 @@ import {
   useRefBottomAlert,
 } from "react-native-modal-bottom-alert";
 import axios from "axios";
+import { useHistory } from "react-router";
 
 const Phone = () => {
   const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
@@ -15,6 +23,8 @@ const Phone = () => {
   const [isupdateData, setUpdateData] = React.useState("");
   const [isoriginalData, setOriginalData] = React.useState("");
   const [loader, setLoader] = React.useState(false);
+
+  const history = useHistory();
 
   useEffect(() => {
     getPhoneOrEmail();
@@ -51,14 +61,16 @@ const Phone = () => {
             `${root_url}api/setting?old_phonenumber_or_email=${isoriginalData}&new_phonenumber_or_email=${isupdateData}&token=${token}`
           )
           .then((res) => {
-            if (res.status === 200) {
+            if (res.status === 202) {
               AsyncStorage.setItem("@ph_number", isupdateData);
-              showBottomAlert(
-                "success",
-                "Congratulation!",
-                "Phone Number or Email has been updated"
-              );
+              getPhoneOrEmail();
+              setUpdateData("");
               setLoader(false);
+              history.push("/login");
+              ToastAndroid.show(
+                "Phone Number Successfully Updated! Please Login Again!",
+                ToastAndroid.LONG
+              );
             } else if (res.status === 500) {
               showBottomAlert(
                 "error",
@@ -66,9 +78,16 @@ const Phone = () => {
                 "Check your internet connection or input field"
               );
               setLoader(false);
-            } else if (res.status === 400) {
-              showBottomAlert("info", "Bad Request!", "Check your input field");
+            } else if (res.status === 401) {
+              showBottomAlert("error", "Session Expire!", "Please Login Again");
+              history.push("/login");
               setLoader(false);
+            } else {
+              showBottomAlert(
+                "error",
+                "Error!",
+                "Check your internet connection!"
+              );
             }
           })
           .catch((err) => {

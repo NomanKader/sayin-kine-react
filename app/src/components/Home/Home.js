@@ -28,11 +28,13 @@ import Speedometer from "react-native-speedometer-chart";
 import RBSheet from "react-native-raw-bottom-sheet";
 import Icon from "react-native-vector-icons/EvilIcons";
 import ModalDropdown from "react-native-modal-dropdown";
+import { useHistory } from "react-router";
 
 const Home = () => {
   const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
   const [user_name, setUserName] = React.useState("");
-  const [budgetAmount, setBudgetAmount] = React.useState("");
+  const [budget, setBudget] = React.useState("");
+  const [currency, setCurrency] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [checked, setChecked] = React.useState("income");
   const [categoryList, setCategoryList] = React.useState([]);
@@ -44,6 +46,8 @@ const Home = () => {
   const [incomePercentage, setIncomePercentage] = React.useState(0);
   const [expensePercentage, setExpensePercentage] = React.useState(0);
   const [moment, setMoment] = React.useState("");
+
+  const history = useHistory();
 
   let categoryArray = [];
 
@@ -92,7 +96,13 @@ const Home = () => {
           if (res.status === 202) {
             res.data.forEach((element) => {
               setUserName(element.User_Name);
-              setBudgetAmount(element.Budget);
+              const currentAmount = element.Budget.split(" ");
+              const currentBudget = currentAmount[0]
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+              const currentCurrency = currentAmount[1];
+              setBudget(currentBudget);
+              setCurrency(currentCurrency);
               setLoading(false);
             });
           } else {
@@ -103,7 +113,11 @@ const Home = () => {
             );
           }
         })
-        .catch((err) => console.log(err.message));
+        .catch((err) => {
+          console.log(err.message);
+          showBottomAlert("error", "Session Expire!", "Please login again!");
+          history.push("/login");
+        });
     } catch (error) {}
   };
 
@@ -125,7 +139,11 @@ const Home = () => {
             setCategoryList(categoryArray);
           });
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err.message);
+          showBottomAlert("error", "Session Expire!", "Please login again!");
+          history.push("/login");
+        });
     } catch (error) {}
   };
 
@@ -133,46 +151,68 @@ const Home = () => {
   const postCategory = async () => {
     const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
     const token = await AsyncStorage.getItem("@token");
-    const currency = budgetAmount.split(" ")[1];
     const budget = parseInt(budgetAmount);
     const inputAmount = parseInt(amount);
-    try {
-      if (inputAmount > budget && checked === "expense") {
-        showBottomAlert(
-          "error",
-          "Error",
-          "Your typed amount is more than your current budget"
-        );
-      } else {
-        setisSaved(true);
-        const formData = {
-          Phone_Number_Or_Email: phone_number_or_email,
-          Budget: budget,
-          Currency: currency,
-          Transaction_Type: checked,
-          Category: categoryItem,
-          Transaction_Amount: inputAmount,
-          Transaction_Details: description,
-          Token: token,
-        };
-        console.log(formData);
-        axios
-          .post(`${root_url}api/home_post`, formData)
-          .then((res) => {
-            getUserNameAndBudget();
-            setisSaved(false);
-            getCardData();
-            getExpenseIncome();
-            setisSaved(false);
-            ToastAndroid.show("Successfully Saved", ToastAndroid.SHORT);
-          })
-          .catch((err) => {
-            console.log(err);
-            setisSaved(false);
-          });
+    if (inputAmount != "" && categoryItem != "" && description != "") {
+      try {
+        if (inputAmount > budget && checked === "expense") {
+          showBottomAlert(
+            "error",
+            "Error",
+            "Your typed amount is more than your current budget"
+          );
+        } else {
+          setisSaved(true);
+          const formData = {
+            Phone_Number_Or_Email: phone_number_or_email,
+            Budget: budget,
+            Currency: "MMK",
+            Transaction_Type: checked,
+            Category: categoryItem,
+            Transaction_Amount: inputAmount,
+            Transaction_Details: description,
+            Token: token,
+          };
+          axios
+            .post(`${root_url}api/home_post`, formData)
+            .then((res) => {
+              if (res.status === 202) {
+                getUserNameAndBudget();
+                setisSaved(false);
+                getCardData();
+                getExpenseIncome();
+                setisSaved(false);
+                ToastAndroid.show("Successfully Saved", ToastAndroid.SHORT);
+                setAmount("");
+                setDescription("");
+                setCategoryItem("");
+              } else if (res.status === 401) {
+                showBottomAlert(
+                  "error",
+                  "Session Expire!",
+                  "Please Login Again"
+                );
+                history.push("/login");
+              } else if (res.status === 500) {
+                showBottomAlert("error", "Error!", "System Error!");
+              } else {
+                showBottomAlert(
+                  "error",
+                  "Error!",
+                  "Check your internet connection!"
+                );
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+              setisSaved(false);
+            });
+        }
+      } catch (error) {
+        alert(error);
       }
-    } catch (error) {
-      alert(error);
+    } else {
+      showBottomAlert("error", "Error", "Check the Data in your input fields");
     }
   };
 
@@ -188,7 +228,11 @@ const Home = () => {
         .then((res) => {
           setCategoryData(res.data);
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err.message);
+          showBottomAlert("error", "Session Expire!", "Please login again!");
+          history.push("/login");
+        });
     } catch (error) {}
   };
 
@@ -211,7 +255,11 @@ const Home = () => {
             showBottomAlert("error", "Error", "System Error");
           }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err.message);
+          showBottomAlert("error", "Session Expire!", "Please login again!");
+          history.push("/login");
+        });
     } catch (error) {}
   };
 
@@ -223,7 +271,6 @@ const Home = () => {
       const cardId = parseInt(id);
       const dataAmount = parseInt(amount);
       const budget = parseInt(budgetAmount);
-      console.log(cardId, dataAmount, budget);
       axios
         .delete(
           `${root_url}api/home?no=${cardId}&phonenumber_or_email=${phone_number_or_email}&budget=${budget}&transaction_amount=${dataAmount}&transaction_type=${type}&token=${token}`
@@ -237,6 +284,15 @@ const Home = () => {
             getExpenseIncome();
           } else if (res.status === 500) {
             showBottomAlert("error", "Error", "System Error");
+          } else if (res.status === 401) {
+            showBottomAlert("error", "Session Expire!", "Please Login Again!");
+            history.push("/login");
+          } else {
+            showBottomAlert(
+              "error",
+              "Error!",
+              "Check your internet connection!"
+            );
           }
         })
         .catch((err) => console.log(err.message));
@@ -272,7 +328,9 @@ const Home = () => {
             {loading === true ? (
               <Image source={require("../../assets/images/sayinkine.gif")} />
             ) : (
-              <Text style={home_style.budgetAmount}>{budgetAmount}</Text>
+              <Text style={home_style.budgetAmount}>
+                {budget} {currency}
+              </Text>
             )}
           </Card.Content>
         </Card>

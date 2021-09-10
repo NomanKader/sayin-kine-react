@@ -8,12 +8,14 @@ import {
   BottomAlert,
   useRefBottomAlert,
 } from "react-native-modal-bottom-alert";
+import { useHistory } from "react-router";
 
 const Feedback = () => {
   const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
 
   const [isfeedback, setFeedback] = React.useState("");
   const [loader, setLoader] = React.useState(false);
+  const history = useHistory();
 
   const postFeedback = async () => {
     const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
@@ -26,12 +28,13 @@ const Feedback = () => {
             `${root_url}api/setting/fb?phonenumber_or_email=${phone_number_or_email}&feedback=${isfeedback}&token=${token}`
           )
           .then((res) => {
-            if (res.status === 200) {
+            if (res.status === 202) {
               showBottomAlert(
                 "success",
                 "Congratulation!",
                 "Thank your for your feedback"
               );
+              setFeedback("");
               setLoader(false);
             } else if (res.status === 500) {
               showBottomAlert(
@@ -40,12 +43,9 @@ const Feedback = () => {
                 "Check your internet connection or input field!"
               );
               setLoader(false);
-            } else if (res.status === 400) {
-              showBottomAlert(
-                "info",
-                "Bad Request!",
-                "Check your input field!"
-              );
+            } else if (res.status === 401) {
+              showBottomAlert("error", "Session Expire!", "Please Login Again");
+              history.push("/login");
               setLoader(false);
             } else if (res.status === 502) {
               showBottomAlert(

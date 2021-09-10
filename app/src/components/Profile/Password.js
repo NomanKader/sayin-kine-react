@@ -1,13 +1,21 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
-import { SafeAreaView, StyleSheet, View, Text, Image } from "react-native";
+import {
+  ScrollView,
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  ToastAndroid,
+} from "react-native";
 import { TextInput, Button } from "react-native-paper";
 import { showBottomAlert } from "react-native-modal-bottom-alert";
 import {
   BottomAlert,
   useRefBottomAlert,
 } from "react-native-modal-bottom-alert";
+import { useHistory } from "react-router";
 
 const Password = () => {
   const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
@@ -18,6 +26,8 @@ const Password = () => {
   const [ConfirmPasswordErr, setConfirmPasswordErr] = React.useState(false);
   const [currentPassword, setCurrentPassword] = React.useState("");
   const [loader, setLoader] = React.useState(false);
+
+  const history = useHistory();
 
   const updatePassword = async () => {
     const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
@@ -35,13 +45,16 @@ const Password = () => {
             `${root_url}api/setting?phonenumber_or_email=${phone_number_or_email}&old_password=${currentPassword}&new_password=${password}&token=${token}`
           )
           .then((res) => {
-            if (res.status === 200) {
-              showBottomAlert(
-                "success",
-                "Congratulation!",
-                "Password has been updated!"
-              );
+            if (res.status === 202) {
+              setCurrentPassword("");
+              setPassword("");
+              setConfirmPassword("");
               setLoader(false);
+              history.push("/login");
+              ToastAndroid.show(
+                "Password Successfully Updated! Please Login Again!",
+                ToastAndroid.LONG
+              );
             } else if (res.status === 500) {
               showBottomAlert(
                 "error",
@@ -49,12 +62,9 @@ const Password = () => {
                 "Check your internet connection or input field!"
               );
               setLoader(false);
-            } else if (res.status === 400) {
-              showBottomAlert(
-                "info",
-                "Bad Request!",
-                "Check your input field!"
-              );
+            } else if (res.status === 401) {
+              showBottomAlert("error", "Session Expire!", "Please Login Again");
+              history.push("/login");
               setLoader(false);
             } else if (res.status === 406) {
               showBottomAlert(
@@ -63,6 +73,12 @@ const Password = () => {
                 "Your Old Password is incorrect!"
               );
               setLoader(false);
+            } else {
+              showBottomAlert(
+                "error",
+                "Error!",
+                "Check your internet connection!"
+              );
             }
           })
           .catch((err) => {
@@ -82,7 +98,7 @@ const Password = () => {
   };
 
   return (
-    <SafeAreaView style={password_style.container}>
+    <ScrollView style={password_style.container}>
       {/* Logo & Text */}
       <View style={password_style.header}>
         <Image
@@ -163,7 +179,7 @@ const Password = () => {
       )}
 
       <BottomAlert ref={(ref) => useRefBottomAlert(ref)} />
-    </SafeAreaView>
+    </ScrollView>
   );
 };
 

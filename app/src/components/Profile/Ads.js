@@ -8,38 +8,40 @@ import {
   BottomAlert,
   useRefBottomAlert,
 } from "react-native-modal-bottom-alert";
+import { useHistory } from "react-router";
 
 const phonenumber_or_email = AsyncStorage.getItem("@ph_number");
 let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const Ads = () => {
   const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
 
-  // const [thanks_msg, setThanksMsg] = React.useState(false);
   const [userName, setUserName] = React.useState("");
   const [isemail, setEmail] = React.useState("");
   const [loader, setLoader] = React.useState(false);
+
+  const history = useHistory();
 
   useEffect(() => {
     getUserName();
   }, []);
 
-  // show_thanks_msg = () => {
-  //   setThanksMsg(true);
-  //   alert(thanks_msg);
-  // };
-
   const getUserName = async () => {
     const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
+    const token = await AsyncStorage.getItem("@token");
     try {
       axios
         .get(
-          `${root_url}api/home/ub?phonenumber_or_email=${phone_number_or_email}`
+          `${root_url}api/home/ub?phonenumber_or_email=${phone_number_or_email}&token=${token}`
         )
         .then((res) => {
-          if (res.status === 200) {
+          if (res.status === 202) {
             res.data.forEach((element) => {
               setUserName(element.User_Name);
             });
+          } else if (res.status === 401) {
+            showBottomAlert("error", "Session Expire!", "Please Login Again");
+            history.push("/login");
+            setLoader(false);
           } else {
             showBottomAlert(
               "error",
@@ -66,13 +68,13 @@ const Ads = () => {
             `${root_url}api/setting/sub?phonenumber_or_email=${phone_number_or_email}&user_name=${userName}&token=${token}`
           )
           .then((res) => {
-            if (res.status === 200) {
+            if (res.status === 202) {
               showBottomAlert(
                 "success",
                 "Congratulation!",
                 "Thank your for your Subscribtion"
               );
-              // show_thanks_msg();
+              setEmail("");
               setLoader(false);
             } else if (res.status === 500) {
               showBottomAlert(
