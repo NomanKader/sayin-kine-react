@@ -151,6 +151,7 @@ const Home = () => {
   const postCategory = async () => {
     const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
     const token = await AsyncStorage.getItem("@token");
+    const currency = budgetAmount.split(" ")[1];
     const budget = parseInt(budgetAmount);
     const inputAmount = parseInt(amount);
     if (inputAmount != "" && categoryItem != "" && description != "") {
@@ -166,7 +167,7 @@ const Home = () => {
           const formData = {
             Phone_Number_Or_Email: phone_number_or_email,
             Budget: budget,
-            Currency: "MMK",
+            Currency: currency,
             Transaction_Type: checked,
             Category: categoryItem,
             Transaction_Amount: inputAmount,

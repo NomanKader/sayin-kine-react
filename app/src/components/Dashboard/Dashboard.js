@@ -9,10 +9,10 @@ import {
   ScrollView,
   Dimensions,
   FlatList,
+  ToastAndroid,
 } from "react-native";
 import {
   Button,
-  DataTable,
   FAB,
   IconButton,
   Title,
@@ -112,7 +112,6 @@ const Dashboard = () => {
     getTableData();
     getIncomeChartData();
     getExpenseChartData();
-    // checkData();
   }, []);
 
   const calendarRef = useRef();
@@ -149,8 +148,11 @@ const Dashboard = () => {
         })
         .catch((err) => {
           console.log(err.message);
-          showBottomAlert("error", "Session Expire!", "Please login again!");
           history.push("/login");
+          ToastAndroid.show(
+            "System Error! Please Login Again!",
+            ToastAndroid.LONG
+          );
         });
     } catch (error) {
       alert(error);
@@ -167,24 +169,31 @@ const Dashboard = () => {
           `${root_url}api/dashboard?phonenumber_or_email=${phone_number_or_email}&from_date=${startDateRange}&to_date=${endDateRange}&date_type=${dateRange}&report_type=income&detail=no&token=${token}`
         )
         .then((res) => {
-          res.data.forEach((incomeData) => {
-            incTitle.push(incomeData.Transaction_DateTime);
-            incValue.push(incomeData.Transaction_Amount);
-          });
-          if (startMonth != currentMonth) {
-            setIncomeTitle(incTitle.reverse());
-            setIncomeValue(incValue.reverse());
+          if (res.data.length === 0) {
+            setVisibleData(true);
           } else {
-            setIncomeTitle(incTitle);
-            setIncomeValue(incValue);
+            res.data.forEach((incomeData) => {
+              incTitle.push(incomeData.Transaction_DateTime);
+              incValue.push(incomeData.Transaction_Amount);
+            });
+            if (startMonth != currentMonth) {
+              setIncomeTitle(incTitle.reverse());
+              setIncomeValue(incValue.reverse());
+            } else {
+              setIncomeTitle(incTitle);
+              setIncomeValue(incValue);
+            }
+            setVisibleData(false);
+            setLoader(false);
           }
-
-          setLoader(false);
         })
         .catch((err) => {
           console.log(err.message);
-          showBottomAlert("error", "Session Expire!", "Please login again!");
           history.push("/login");
+          ToastAndroid.show(
+            "System Error! Please Login Again!",
+            ToastAndroid.LONG
+          );
         });
     } catch (error) {
       alert(error);
@@ -206,8 +215,11 @@ const Dashboard = () => {
         })
         .catch((err) => {
           console.log(err.message);
-          showBottomAlert("error", "Session Expire!", "Please login again!");
           history.push("/login");
+          ToastAndroid.show(
+            "System Error! Please Login Again!",
+            ToastAndroid.LONG
+          );
         });
     } catch (error) {
       alert(error);
@@ -453,6 +465,7 @@ const Dashboard = () => {
             getTableData();
             getIncomeChartData();
             getExpenseChartData();
+            setLoader(true);
             calendarRef.current.close();
           }}
         />

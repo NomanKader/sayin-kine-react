@@ -19,6 +19,7 @@ import AdsComponent from "./Ads";
 import Feedback from "./Feedback";
 import About from "./About";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useHistory } from "react-router";
 //import { screensEnabled } from 'react-native-screens';
 const NameContent = (props) => (
   <IconButton icon="account" size={20} style={{ top: 3 }} />
@@ -54,14 +55,13 @@ const Stack = createStackNavigator();
 function ProfileScreen({ navigation }) {
   //declaring hooks
   const [rippleColor, setRippleColor] = React.useState();
-  const [show_loading, setShowLoading] = React.useState(false);
   const [rippleRadius, setRippleRadius] = React.useState(0);
+  const history = useHistory();
   const rippleOverflow = false;
   //user interaction function
   const removeToken = () => {
     AsyncStorage.removeItem("@token");
-    setShowLoading(true);
-    NativeModules.DevSettings.reload();
+    history.push("/login");
   };
   return (
     <SafeAreaView style={profile_style.container}>
@@ -212,35 +212,26 @@ function ProfileScreen({ navigation }) {
           </TouchableNativeFeedback>
           {/* Finished About App Card */}
           {/* Logout Card */}
-          {show_loading == false ? (
-            <TouchableNativeFeedback
-              onPress={() => {
-                removeToken();
-                setRippleColor("#0D3858");
-                setRippleRadius(1);
-              }}
-              background={TouchableNativeFeedback.Ripple(
-                rippleColor,
-                rippleOverflow
-              )}
-            >
-              <Card style={profile_style.card} mode="outlined" elevation={50}>
-                <Card.Title
-                  style={profile_style.card_title}
-                  title="Log Out"
-                  left={LogoutContent}
-                  right={RightContent}
-                />
-              </Card>
-            </TouchableNativeFeedback>
-          ) : (
-            <ActivityIndicator
-              size={40}
-              animating={true}
-              color="#fff"
-              style={profile_style.activityindicator}
-            />
-          )}
+          <TouchableNativeFeedback
+            onPress={() => {
+              removeToken();
+              setRippleColor("#0D3858");
+              setRippleRadius(1);
+            }}
+            background={TouchableNativeFeedback.Ripple(
+              rippleColor,
+              rippleOverflow
+            )}
+          >
+            <Card style={profile_style.card} mode="outlined" elevation={50}>
+              <Card.Title
+                style={profile_style.card_title}
+                title="Log Out"
+                left={LogoutContent}
+                right={RightContent}
+              />
+            </Card>
+          </TouchableNativeFeedback>
           {/* Finished Logout Card */}
         </Card>
       </ScrollView>
