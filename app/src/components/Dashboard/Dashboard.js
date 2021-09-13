@@ -147,12 +147,25 @@ const Dashboard = () => {
           }
         })
         .catch((err) => {
-          console.log(err.message);
-          history.push("/login");
-          ToastAndroid.show(
-            "System Error! Please Login Again!",
-            ToastAndroid.LONG
-          );
+          if (err.message.split(" ").pop() === "401") {
+            history.push("/login");
+            ToastAndroid.show(
+              "Session Expire! Please Login Again!",
+              ToastAndroid.LONG
+            );
+          } else if (err.message.split(" ").pop() === "500") {
+            showBottomAlert(
+              "error",
+              "System Error!",
+              "Check your internet connection or input field!"
+            );
+          } else {
+            showBottomAlert(
+              "error",
+              "Error",
+              "Please check your internet connection!"
+            );
+          }
         });
     } catch (error) {
       alert(error);
@@ -188,12 +201,25 @@ const Dashboard = () => {
           }
         })
         .catch((err) => {
-          console.log(err.message);
-          history.push("/login");
-          ToastAndroid.show(
-            "System Error! Please Login Again!",
-            ToastAndroid.LONG
-          );
+          if (err.message.split(" ").pop() === "401") {
+            history.push("/login");
+            ToastAndroid.show(
+              "Session Expire! Please Login Again!",
+              ToastAndroid.LONG
+            );
+          } else if (err.message.split(" ").pop() === "500") {
+            showBottomAlert(
+              "error",
+              "System Error!",
+              "Check your internet connection or input field!"
+            );
+          } else {
+            showBottomAlert(
+              "error",
+              "Error",
+              "Please check your internet connection!"
+            );
+          }
         });
     } catch (error) {
       alert(error);
@@ -214,12 +240,25 @@ const Dashboard = () => {
           setLoader(false);
         })
         .catch((err) => {
-          console.log(err.message);
-          history.push("/login");
-          ToastAndroid.show(
-            "System Error! Please Login Again!",
-            ToastAndroid.LONG
-          );
+          if (err.message.split(" ").pop() === "401") {
+            history.push("/login");
+            ToastAndroid.show(
+              "Session Expire! Please Login Again!",
+              ToastAndroid.LONG
+            );
+          } else if (err.message.split(" ").pop() === "500") {
+            showBottomAlert(
+              "error",
+              "System Error!",
+              "Check your internet connection or input field!"
+            );
+          } else {
+            showBottomAlert(
+              "error",
+              "Error",
+              "Please check your internet connection!"
+            );
+          }
         });
     } catch (error) {
       alert(error);
@@ -377,53 +416,62 @@ const Dashboard = () => {
           </View>
 
           {/* table to show data */}
-          <View style={dashboard_style.datatable}>
-            <View style={dashboard_style.listWrapper}>
-              <Text style={{ flex: 2, paddingLeft: 5, paddingVertical: 10 }}>
-                No
-              </Text>
-              <Text style={{ flex: 3.5, paddingLeft: 15, paddingVertical: 10 }}>
-                Date
-              </Text>
-              <Text style={dashboard_style.row}>Type</Text>
-              <Text style={dashboard_style.row}>Title</Text>
-              <Text style={dashboard_style.row}>Details</Text>
-              <Text style={dashboard_style.row}>Amount</Text>
-            </View>
-            <FlatList
-              data={tableData}
-              renderItem={({ item }) => (
-                <View
-                  style={dashboard_style.listWrapper}
-                  key={tableData.indexOf(item)}
-                >
-                  <Text
-                    style={{
-                      flex: 2,
-                      paddingVertical: 10,
-                      paddingHorizontal: 5,
-                    }}
-                  >
-                    {tableData.indexOf(item) + 1}
-                  </Text>
-                  <Text style={{ flex: 4, paddingVertical: 10 }}>
-                    {item.Transaction_DateTime}
-                  </Text>
-                  <Text style={dashboard_style.row}>
-                    {item.Transaction_Type}
-                  </Text>
-                  <Text style={dashboard_style.row}>{item.Category}</Text>
-                  <Text style={dashboard_style.row}>
-                    {item.Transaction_Details}
-                  </Text>
-                  <Text style={dashboard_style.row}>
-                    {item.Transaction_Amount}
-                  </Text>
-                </View>
-              )}
-              keyExtractor={(item, index) => index.toString()}
+          {loader === true ? (
+            <Image
+              source={require("../../assets/images/sayinkine.gif")}
+              style={dashboard_style.loader}
             />
-          </View>
+          ) : (
+            <View style={dashboard_style.datatable}>
+              <View style={dashboard_style.listWrapper}>
+                <Text style={{ flex: 2, paddingLeft: 5, paddingVertical: 10 }}>
+                  No
+                </Text>
+                <Text
+                  style={{ flex: 3.5, paddingLeft: 15, paddingVertical: 10 }}
+                >
+                  Date
+                </Text>
+                <Text style={dashboard_style.row}>Type</Text>
+                <Text style={dashboard_style.row}>Title</Text>
+                <Text style={dashboard_style.row}>Details</Text>
+                <Text style={dashboard_style.row}>Amount</Text>
+              </View>
+              <FlatList
+                data={tableData}
+                renderItem={({ item }) => (
+                  <View
+                    style={dashboard_style.listWrapper}
+                    key={tableData.indexOf(item)}
+                  >
+                    <Text
+                      style={{
+                        flex: 2,
+                        paddingVertical: 10,
+                        paddingHorizontal: 5,
+                      }}
+                    >
+                      {tableData.indexOf(item) + 1}
+                    </Text>
+                    <Text style={{ flex: 4, paddingVertical: 10 }}>
+                      {item.Transaction_DateTime}
+                    </Text>
+                    <Text style={dashboard_style.row}>
+                      {item.Transaction_Type}
+                    </Text>
+                    <Text style={dashboard_style.row}>{item.Category}</Text>
+                    <Text style={dashboard_style.row}>
+                      {item.Transaction_Details}
+                    </Text>
+                    <Text style={dashboard_style.row}>
+                      {item.Transaction_Amount}
+                    </Text>
+                  </View>
+                )}
+                keyExtractor={(item, index) => index.toString()}
+              />
+            </View>
+          )}
         </ScrollView>
       )}
       <RBSheet

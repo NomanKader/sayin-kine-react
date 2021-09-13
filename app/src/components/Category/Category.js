@@ -138,8 +138,7 @@ const Category = () => {
     getCategory();
   }, []);
 
-  const sendCategory = async (e) => {
-    e.preventDefault();
+  const sendCategory = async () => {
     const phone_number_or_email = await AsyncStorage.getItem("@ph_number");
     const token = await AsyncStorage.getItem("@token");
     const categoryData = {
@@ -160,21 +159,6 @@ const Category = () => {
               showBottomAlert("success", "Congratulation!", "Category Created");
               setCategory("");
               setSticker("");
-            } else if (res.status === 409) {
-              showBottomAlert("info", "Warning!", "Category already exists");
-            } else if (res.status === 500) {
-              showBottomAlert(
-                "error",
-                "Error",
-                "Please check your internet connection!"
-              );
-            } else if (res.status === 401) {
-              showBottomAlert(
-                "error",
-                "Session Expire!",
-                "Please Login Again!"
-              );
-              history.push("/login");
             } else {
               showBottomAlert(
                 "error",
@@ -184,7 +168,23 @@ const Category = () => {
             }
           })
           .catch((err) => {
-            console.log(err);
+            if (err.message.split(" ").pop() === "401") {
+              history.push("/login");
+              ToastAndroid.show(
+                "Session Expire! Please Login Again!",
+                ToastAndroid.LONG
+              );
+            } else if (err.message.split(" ").pop() === "500") {
+              showBottomAlert("error", "Error!", "System Error!");
+            } else if (err.message.split(" ").pop() === "409") {
+              showBottomAlert("info", "Duplicate!", "Category Already Exits!");
+            } else {
+              showBottomAlert(
+                "error",
+                "Error",
+                "Please check your internet connection!"
+              );
+            }
             setSaved(false);
           });
       } else if (
@@ -221,9 +221,21 @@ const Category = () => {
           setLoading(false);
         })
         .catch((err) => {
-          console.log(err.message);
-          showBottomAlert("error", "Session Expire!", "Please login again!");
-          history.push("/login");
+          if (err.message.split(" ").pop() === "401") {
+            history.push("/login");
+            ToastAndroid.show(
+              "Session Expire! Please Login Again!",
+              ToastAndroid.LONG
+            );
+          } else if (err.message.split(" ").pop() === "500") {
+            showBottomAlert("error", "Error!", "System Error!");
+          } else {
+            showBottomAlert(
+              "error",
+              "Error",
+              "Please check your internet connection!"
+            );
+          }
         });
     } catch (error) {
       alert(error);
@@ -241,16 +253,27 @@ const Category = () => {
         console.log(res.data);
         if (res.status === 202) {
           getCategory();
-        } else if (res.status === 500) {
-          showBottomAlert("error", "Error", "System Error");
-        } else if (res.status === 401) {
-          showBottomAlert("error", "Session Expire!", "Please Login Again!");
-          history.push("/login");
         } else {
           showBottomAlert("error", "Error!", "Check your internet connection!");
         }
       })
-      .catch((err) => console.log(err.message));
+      .catch((err) => {
+        if (err.message.split(" ").pop() === "401") {
+          history.push("/login");
+          ToastAndroid.show(
+            "Session Expire! Please Login Again!",
+            ToastAndroid.LONG
+          );
+        } else if (err.message.split(" ").pop() === "500") {
+          showBottomAlert("error", "Error!", "System Error!");
+        } else {
+          showBottomAlert(
+            "error",
+            "Error",
+            "Please check your internet connection!"
+          );
+        }
+      });
   };
 
   return (

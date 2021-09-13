@@ -38,10 +38,6 @@ const Ads = () => {
             res.data.forEach((element) => {
               setUserName(element.User_Name);
             });
-          } else if (res.status === 401) {
-            showBottomAlert("error", "Session Expire!", "Please Login Again");
-            history.push("/login");
-            setLoader(false);
           } else {
             showBottomAlert(
               "error",
@@ -50,7 +46,21 @@ const Ads = () => {
             );
           }
         })
-        .catch((err) => console.log(err.message));
+        .catch((err) => {
+          if (err.message.split(" ").pop() === "401") {
+            history.push("/login");
+            ToastAndroid.show(
+              "Session Expire! Please Login Again!",
+              ToastAndroid.LONG
+            );
+          } else {
+            showBottomAlert(
+              "error",
+              "Error",
+              "Please check your internet connection!"
+            );
+          }
+        });
     } catch (error) {
       alert(error);
     }
@@ -63,6 +73,7 @@ const Ads = () => {
     const token = await AsyncStorage.getItem("@token");
     try {
       if (isemail !== "") {
+        setLoader(true);
         axios
           .post(
             `${root_url}api/setting/sub?phonenumber_or_email=${phone_number_or_email}&user_name=${userName}&token=${token}`
@@ -76,28 +87,35 @@ const Ads = () => {
               );
               setEmail("");
               setLoader(false);
-            } else if (res.status === 500) {
+            } else {
+              showBottomAlert(
+                "error",
+                "Error",
+                "Please check your internet connection!"
+              );
+            }
+          })
+          .catch((err) => {
+            if (err.message.split(" ").pop() === "401") {
+              history.push("/login");
+              ToastAndroid.show(
+                "Session Expire! Please Login Again!",
+                ToastAndroid.LONG
+              );
+            } else if (err.message.split(" ").pop() === "500") {
               showBottomAlert(
                 "error",
                 "System Error!",
                 "Check your internet connection or input field!"
               );
-              setLoader(false);
-            } else if (res.status === 400) {
-              showBottomAlert(
-                "info",
-                "Bad Request!",
-                "Check your input field!"
-              );
-              setLoader(false);
-            } else if (res.status === 502) {
+            } else {
               showBottomAlert(
                 "error",
-                "Connection Problem!",
-                "Check your Internet Connection!"
+                "Error",
+                "Please check your internet connection!"
               );
-              setLoader(false);
             }
+            setLoader(false);
           });
       } else {
         showBottomAlert(
@@ -106,7 +124,7 @@ const Ads = () => {
           "Please check your text fields correctly!"
         );
       }
-    } catch (error) {
+    } catch (err) {
       alert(error);
     }
   };

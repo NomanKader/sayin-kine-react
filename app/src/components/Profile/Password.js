@@ -55,24 +55,6 @@ const Password = () => {
                 "Password Successfully Updated! Please Login Again!",
                 ToastAndroid.LONG
               );
-            } else if (res.status === 500) {
-              showBottomAlert(
-                "error",
-                "System Error!",
-                "Check your internet connection or input field!"
-              );
-              setLoader(false);
-            } else if (res.status === 401) {
-              showBottomAlert("error", "Session Expire!", "Please Login Again");
-              history.push("/login");
-              setLoader(false);
-            } else if (res.status === 406) {
-              showBottomAlert(
-                "info",
-                "Check your Old Password!",
-                "Your Old Password is incorrect!"
-              );
-              setLoader(false);
             } else {
               showBottomAlert(
                 "error",
@@ -82,7 +64,31 @@ const Password = () => {
             }
           })
           .catch((err) => {
-            console.log(err.message);
+            if (err.message.split(" ").pop() === "401") {
+              history.push("/login");
+              ToastAndroid.show(
+                "Session Expire! Please Login Again!",
+                ToastAndroid.LONG
+              );
+            } else if (err.message.split(" ").pop() === "406") {
+              showBottomAlert(
+                "info",
+                "Check your Old Password!",
+                "Your Old Password is incorrect!"
+              );
+            } else if (err.message.split(" ").pop() === "500") {
+              showBottomAlert(
+                "error",
+                "System Error!",
+                "Check your internet connection or input field!"
+              );
+            } else {
+              showBottomAlert(
+                "error",
+                "Error",
+                "Please check your internet connection!"
+              );
+            }
             setLoader(false);
           });
       } else {

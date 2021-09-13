@@ -33,6 +33,7 @@ import { useHistory } from "react-router";
 const Home = () => {
   const root_url = "https://sayinkineapi.nksoftwarehouse.com/";
   const [user_name, setUserName] = React.useState("");
+  const [budgetAmount, setBudgetAmount] = React.useState("");
   const [budget, setBudget] = React.useState("");
   const [currency, setCurrency] = React.useState("");
   const [loading, setLoading] = React.useState(false);
@@ -96,6 +97,7 @@ const Home = () => {
           if (res.status === 202) {
             res.data.forEach((element) => {
               setUserName(element.User_Name);
+              setBudgetAmount(element.Budget);
               const currentAmount = element.Budget.split(" ");
               const currentBudget = currentAmount[0]
                 .toString()
@@ -114,11 +116,23 @@ const Home = () => {
           }
         })
         .catch((err) => {
-          console.log(err.message);
-          showBottomAlert("error", "Session Expire!", "Please login again!");
-          history.push("/login");
+          if (err.message.split(" ").pop() === "401") {
+            history.push("/login");
+            ToastAndroid.show(
+              "Session Expire! Please Login Again!",
+              ToastAndroid.LONG
+            );
+          } else {
+            showBottomAlert(
+              "error",
+              "Error",
+              "Please check your internet connection!"
+            );
+          }
         });
-    } catch (error) {}
+    } catch (error) {
+      alert(error);
+    }
   };
 
   // get method for select data
@@ -140,11 +154,25 @@ const Home = () => {
           });
         })
         .catch((err) => {
-          console.log(err.message);
-          showBottomAlert("error", "Session Expire!", "Please login again!");
-          history.push("/login");
+          if (err.message.split(" ").pop() === "401") {
+            history.push("/login");
+            ToastAndroid.show(
+              "Session Expire! Please Login Again!",
+              ToastAndroid.LONG
+            );
+          } else if (err.message.split(" ").pop() === "500") {
+            showBottomAlert("error", "Error!", "System Error!");
+          } else {
+            showBottomAlert(
+              "error",
+              "Error",
+              "Please check your internet connection!"
+            );
+          }
         });
-    } catch (error) {}
+    } catch (error) {
+      alert(error);
+    }
   };
 
   // post method to save a card
@@ -183,19 +211,14 @@ const Home = () => {
                 getCardData();
                 getExpenseIncome();
                 setisSaved(false);
-                ToastAndroid.show("Successfully Saved", ToastAndroid.SHORT);
+                showBottomAlert(
+                  "success",
+                  "Congratulation!",
+                  "Category Created"
+                );
                 setAmount("");
                 setDescription("");
                 setCategoryItem("");
-              } else if (res.status === 401) {
-                showBottomAlert(
-                  "error",
-                  "Session Expire!",
-                  "Please Login Again"
-                );
-                history.push("/login");
-              } else if (res.status === 500) {
-                showBottomAlert("error", "Error!", "System Error!");
               } else {
                 showBottomAlert(
                   "error",
@@ -205,8 +228,22 @@ const Home = () => {
               }
             })
             .catch((err) => {
-              console.log(err);
-              setisSaved(false);
+              if (err.message.split(" ").pop() === "401") {
+                history.push("/login");
+                ToastAndroid.show(
+                  "Session Expire! Please Login Again!",
+                  ToastAndroid.LONG
+                );
+                setisSaved(false);
+              } else if (err.message.split(" ").pop() === "500") {
+                showBottomAlert("error", "Error!", "System Error!");
+              } else {
+                showBottomAlert(
+                  "error",
+                  "Error!",
+                  "Check your internet connection!"
+                );
+              }
             });
         }
       } catch (error) {
@@ -230,11 +267,26 @@ const Home = () => {
           setCategoryData(res.data);
         })
         .catch((err) => {
-          console.log(err.message);
-          showBottomAlert("error", "Session Expire!", "Please login again!");
-          history.push("/login");
+          if (err.message.split(" ").pop() === "401") {
+            history.push("/login");
+            ToastAndroid.show(
+              "Session Expire! Please Login Again!",
+              ToastAndroid.LONG
+            );
+            setisSaved(false);
+          } else if (err.message.split(" ").pop() === "500") {
+            showBottomAlert("error", "Error!", "System Error!");
+          } else {
+            showBottomAlert(
+              "error",
+              "Error!",
+              "Check your internet connection!"
+            );
+          }
         });
-    } catch (error) {}
+    } catch (error) {
+      alert(error);
+    }
   };
 
   // get method to show expense and income data
@@ -257,11 +309,26 @@ const Home = () => {
           }
         })
         .catch((err) => {
-          console.log(err.message);
-          showBottomAlert("error", "Session Expire!", "Please login again!");
-          history.push("/login");
+          if (err.message.split(" ").pop() === "401") {
+            history.push("/login");
+            ToastAndroid.show(
+              "Session Expire! Please Login Again!",
+              ToastAndroid.LONG
+            );
+            setisSaved(false);
+          } else if (err.message.split(" ").pop() === "500") {
+            showBottomAlert("error", "Error!", "System Error!");
+          } else {
+            showBottomAlert(
+              "error",
+              "Error!",
+              "Check your internet connection!"
+            );
+          }
         });
-    } catch (error) {}
+    } catch (error) {
+      alert(error);
+    }
   };
 
   // delete method to remove specific card
@@ -283,11 +350,6 @@ const Home = () => {
             getUserNameAndBudget();
             getCardData();
             getExpenseIncome();
-          } else if (res.status === 500) {
-            showBottomAlert("error", "Error", "System Error");
-          } else if (res.status === 401) {
-            showBottomAlert("error", "Session Expire!", "Please Login Again!");
-            history.push("/login");
           } else {
             showBottomAlert(
               "error",
@@ -296,7 +358,24 @@ const Home = () => {
             );
           }
         })
-        .catch((err) => console.log(err.message));
+        .catch((err) => {
+          if (err.message.split(" ").pop() === "401") {
+            history.push("/login");
+            ToastAndroid.show(
+              "Session Expire! Please Login Again!",
+              ToastAndroid.LONG
+            );
+            setisSaved(false);
+          } else if (err.message.split(" ").pop() === "500") {
+            showBottomAlert("error", "Error!", "System Error!");
+          } else {
+            showBottomAlert(
+              "error",
+              "Error!",
+              "Check your internet connection!"
+            );
+          }
+        });
     } catch (error) {
       alert(error);
     }

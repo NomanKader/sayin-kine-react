@@ -9,7 +9,7 @@ import {
   TouchableNativeFeedback,
   NativeModules,
 } from "react-native";
-import { Card, IconButton, ActivityIndicator } from "react-native-paper";
+import { Card, IconButton } from "react-native-paper";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import NameComponent from "./Name";
@@ -20,6 +20,7 @@ import Feedback from "./Feedback";
 import About from "./About";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useHistory } from "react-router";
+import Currency from "./Currency";
 //import { screensEnabled } from 'react-native-screens';
 const NameContent = (props) => (
   <IconButton icon="account" size={20} style={{ top: 3 }} />
@@ -48,6 +49,14 @@ const LogoutContent = (props) => (
 );
 const AboutContent = (props) => (
   <IconButton icon="information" size={20} sstyle={profile_style.icon_button} />
+);
+
+const CurrencyContent = (props) => (
+  <IconButton
+    icon="currency-usd"
+    size={20}
+    sstyle={profile_style.icon_button}
+  />
 );
 const Stack = createStackNavigator();
 
@@ -188,6 +197,28 @@ function ProfileScreen({ navigation }) {
             </Card>
           </TouchableNativeFeedback>
           {/* Finished Feedback Card */}
+          {/* Currency Card */}
+          <TouchableNativeFeedback
+            onPress={() => {
+              setRippleColor("#0D3858");
+              setRippleRadius(1);
+              navigation.navigate("Change Currency");
+            }}
+            background={TouchableNativeFeedback.Ripple(
+              rippleColor,
+              rippleOverflow
+            )}
+          >
+            <Card style={profile_style.card} mode="outlined" elevation={50}>
+              <Card.Title
+                style={profile_style.card_title}
+                title="Change Currency"
+                left={CurrencyContent}
+                right={RightContent}
+              />
+            </Card>
+          </TouchableNativeFeedback>
+          {/* Finished Currency Card */}
 
           {/* About App Card */}
           <TouchableNativeFeedback
@@ -211,6 +242,7 @@ function ProfileScreen({ navigation }) {
             </Card>
           </TouchableNativeFeedback>
           {/* Finished About App Card */}
+
           {/* Logout Card */}
           <TouchableNativeFeedback
             onPress={() => {
@@ -262,6 +294,10 @@ function FeedBackScreen({ navigation }) {
 function AboutScreen({ navigation }) {
   return <About />;
 }
+
+function CurrencyScreen({ navigation }) {
+  return <Currency />;
+}
 //main function
 const Profile = () => {
   //declaring hooks
@@ -275,6 +311,7 @@ const Profile = () => {
           <Stack.Screen name="Password" component={PasswordScreen} />
           <Stack.Screen name="Remove Ads" component={AdsScreen} />
           <Stack.Screen name="Feedback" component={FeedBackScreen} />
+          <Stack.Screen name="Change Currency" component={CurrencyScreen} />
           <Stack.Screen name="About App" component={AboutScreen} />
         </Stack.Navigator>
       </NavigationContainer>
@@ -314,10 +351,11 @@ const profile_style = StyleSheet.create({
   back_card: {
     backgroundColor: "#0D3858",
     width: "100%",
-    height: 750,
+    height: 830,
     alignSelf: "center",
     marginTop: 30,
     marginBottom: 0,
+    paddingBottom: "20%",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     borderWidth: 1,

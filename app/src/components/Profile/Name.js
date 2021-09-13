@@ -48,9 +48,19 @@ const Name = () => {
           }
         })
         .catch((err) => {
-          console.log(err.message);
-          showBottomAlert("error", "Session Expire!", "Please login again!");
-          history.push("/login");
+          if (err.message.split(" ").pop() === "401") {
+            history.push("/login");
+            ToastAndroid.show(
+              "Session Expire! Please Login Again!",
+              ToastAndroid.LONG
+            );
+          } else {
+            showBottomAlert(
+              "error",
+              "Error",
+              "Please check your internet connection!"
+            );
+          }
         });
     } catch (error) {
       alert(error);
@@ -78,17 +88,6 @@ const Name = () => {
               setUpdateName("");
               setBtnLoader(false);
               getUserName();
-            } else if (res.status === 500) {
-              showBottomAlert(
-                "error",
-                "System Error!",
-                "Check your internet connection or input field"
-              );
-              setBtnLoader(false);
-            } else if (res.status === 401) {
-              showBottomAlert("error", "Session Expire!", "Please Login Again");
-              history.push("/login");
-              setBtnLoader(false);
             } else {
               showBottomAlert(
                 "error",
@@ -98,7 +97,25 @@ const Name = () => {
             }
           })
           .catch((err) => {
-            console.log(err.message);
+            if (err.message.split(" ").pop() === "401") {
+              history.push("/login");
+              ToastAndroid.show(
+                "Session Expire! Please Login Again!",
+                ToastAndroid.LONG
+              );
+            } else if (err.message.split(" ").pop() === "500") {
+              showBottomAlert(
+                "error",
+                "System Error!",
+                "Check your internet connection or input field!"
+              );
+            } else {
+              showBottomAlert(
+                "error",
+                "Error",
+                "Please check your internet connection!"
+              );
+            }
             setBtnLoader(false);
           });
       } else {

@@ -26,9 +26,9 @@ const About = () => {
     let phoneNumber = "";
 
     if (Platform.OS === "android") {
-      phoneNumber = "tel:${09969119949}";
+      phoneNumber = "tel:09969119949";
     } else {
-      phoneNumber = "telprompt:${09969119949}";
+      phoneNumber = "telprompt:09969119949";
     }
 
     Linking.openURL(phoneNumber);

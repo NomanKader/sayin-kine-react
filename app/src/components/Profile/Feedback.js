@@ -57,7 +57,25 @@ const Feedback = () => {
             }
           })
           .catch((err) => {
-            console.log(err.message);
+            if (err.message.split(" ").pop() === "401") {
+              history.push("/login");
+              ToastAndroid.show(
+                "Session Expire! Please Login Again!",
+                ToastAndroid.LONG
+              );
+            } else if (err.message.split(" ").pop() === "500") {
+              showBottomAlert(
+                "error",
+                "System Error!",
+                "Check your internet connection or input field!"
+              );
+            } else {
+              showBottomAlert(
+                "error",
+                "Error",
+                "Please check your internet connection!"
+              );
+            }
             setLoader(false);
           });
       } else {
