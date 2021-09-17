@@ -4,7 +4,7 @@
     "slug": "app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/assets/images/mainlogo.jpeg",
+    "icon": "./src/assets/images/sayin_kine_logo.png",
     "splash": {
       "image": "./src/assets/images/splash.png",
       "resizeMode": "contain",
@@ -21,7 +21,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./src/assets/images/mainlogo.jpeg",
+        "foregroundImage": "./src/assets/images/sayin_kine_logo.png",
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.nksoftwarehouse.sayinkine",
