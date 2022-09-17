@@ -31,7 +31,7 @@ const App = () => {
           `${root_url}api/ValidateToken?phone_number=${localPhone}&token=${token}`
         )
         .then((res) => {
-          console.log(res.data);
+          console.log(res.status);
           if (res.data == "401" || res.data == null) {
             AsyncStorage.removeItem("@token");
             AsyncStorage.removeItem("@ph_number");

@@ -72,7 +72,6 @@ const Dashboard = () => {
 
   const start = `${startYear}-${startMonth}-${startDate}`;
   const end = `${year}-${currentMonth}-${endDate}`;
-  // console.log(start, end);
   const [checked, setChecked] = React.useState("all");
   const [tableData, setTableData] = React.useState([]);
   const [currentDate, setCurrentDate] = React.useState("");
@@ -265,6 +264,22 @@ const Dashboard = () => {
     }
   };
 
+  // Refresh Table Data and Chart Info
+  const refreshInfo = () => {
+    try {
+      setLoader(true);
+      getExpenseChartData();
+      getIncomeChartData();
+      getTableData();
+    } catch (error) {
+      showBottomAlert(
+        "error",
+        "Error",
+        "Please check your internet connection!"
+      );
+    }
+  };
+
   // show date in button
   const showDateInButton = () => {
     const last = new Date(current.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -321,6 +336,16 @@ const Dashboard = () => {
         onPress={() => calendarRef.current.open()}
       >
         <Text style={{ fontSize: 14 }}>{currentDate}</Text>
+      </Button>
+
+      <Button
+        mode="contained"
+        style={dashboard_style.refreshBtn}
+        labelStyle={{ color: "#fff" }}
+        icon="refresh"
+        onPress={() => refreshInfo()}
+      >
+        <Text>Refresh Info</Text>
       </Button>
 
       {isVisibleData === true ? (
@@ -635,6 +660,14 @@ const dashboard_style = StyleSheet.create({
   },
   dateBtn: {
     marginTop: 30,
+    width: "auto",
+    alignSelf: "flex-end",
+    right: 20,
+    backgroundColor: "#0d3858",
+    elevation: 20,
+  },
+  refreshBtn: {
+    marginTop: 20,
     width: "auto",
     alignSelf: "flex-end",
     right: 20,

@@ -1,7 +1,6 @@
 import * as React from "react";
 import { BottomNavigation, Text } from "react-native-paper";
 import Category from "../Category/Category";
-// import CalendarComponent from "../Dashboard/CalendarComponent.js";
 import Dashboard from "../Dashboard/Dashboard";
 import Home from "../Home/Home";
 import Profile from "../Profile/Profile";
