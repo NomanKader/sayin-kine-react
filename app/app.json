@@ -31,8 +31,15 @@
       "favicon": "./src/assets/images/favicon.png",
       "build": {
         "babel": {
-          "include": ["react-router-native"]
+          "include": [
+            "react-router-native"
+          ]
         }
+      }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "29d349c6-f556-4f10-9e04-28022c409ba8"
       }
     }
   }
